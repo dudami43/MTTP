@@ -1,9 +1,12 @@
 #include <bits/stdc++.h>
-#include "functions.h"
 #include "parser.h"
-//g++ -std=c++11 main.cpp parser.cpp functions.cpp
+#include "classes.cpp"
+
+// Para compilar com g++11: g++ -std=c++11 main.cpp parser.cpp functions.cpp
+
 int main(int argc, char *argv[])
 {
+    // Inicializa a funcao randomica
     srand (time(NULL));
 
     char *file_name = new char[500];
@@ -13,32 +16,30 @@ int main(int argc, char *argv[])
     else
         strcat(file_name, argv[1]);
 
+    // Abre o arquivo indicado
     std::ifstream file;
     std::string filename;
     file.open(file_name);
 
+    // Delete referencia para o nome do arquivo
     delete file_name;
 
     if (file.is_open())
     {
         while (getline(file, filename))
         {
-            std::vector<std::vector<int>> adj_matrix, adj_list;
+            int aux;
             
             try
             {
-                std::cout << filename << "\n";
-                //adj_matrix = get_adj_matrix(filename);
-                //adj_list = get_adj_list(adj_matrix);
-
-               
+                std::cout << filename << ":\n";
+                aux = get_adj_matrix(filename);
             }
             catch (char const *param)
             {
                 std::cout << param << std::endl;
                 return 0;
             }
-            
         }
         file.close();
     }

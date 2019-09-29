@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include "classes.cpp"
 
-int get_adj_matrix(std::string filename)
+instance get_instance(std::string filename)
 {
     // Abre o arquivo com os dados da instancia
     std::ifstream file;
@@ -135,5 +135,5 @@ int get_adj_matrix(std::string filename)
         throw "Unable to open the file";
     }
    
-    return 0;
+    return instance;
 }

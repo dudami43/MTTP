@@ -1,1 +1,1 @@
-int get_adj_matrix(std::string filename);
+instance get_instance(std::string filename);

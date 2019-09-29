@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
-#include "parser.h"
 #include "classes.cpp"
+#include "parser.h"
 
 // Para compilar com g++11: g++ -std=c++11 main.cpp parser.cpp functions.cpp
 
@@ -28,12 +28,12 @@ int main(int argc, char *argv[])
     {
         while (getline(file, filename))
         {
-            int aux;
+            instance instance;
             
             try
             {
                 std::cout << filename << ":\n";
-                aux = get_adj_matrix(filename);
+                instance = get_instance(filename);
             }
             catch (char const *param)
             {

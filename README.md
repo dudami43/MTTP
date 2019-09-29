@@ -43,3 +43,4 @@ Encontrar a rota e o plano de coleta de máximo benefício, com as seguintes con
 					 +  ((distância entre n e 1)/(vmax - (f_v*peso da mochila ao sair de n))))
 
 		valor -= aluguel
+		total += valor

@@ -60,12 +60,7 @@ class Thief {
     public:
         std::vector<int> route;
         std::vector<int> items;
-        std::vector<float> timing;
-
-    //criar rota
-    //setar mochila
-    //avaliar rota
-    
+        std::vector<float> timing;   
 };
 
 class Instance {
@@ -135,6 +130,13 @@ class Instance {
             int used_capacity = 0;
             float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
             bool item_in_city = true;
+
+            for(int j = 0; j < thieves.size(); j++)
+            {
+                thieves[j].route.push_back(0);
+                thieves[j].timing.push_back(0);
+            }
+
             for(int i = 0; i < cities.size(); i++)
             {
                 item_in_city = true;
@@ -159,7 +161,7 @@ class Instance {
                                 thieves[j].route.push_back(i);
                                 //adicionar tempo que ele saiu da cidade
                                 float new_time = 0;
-                                if(thieves[j].timing.size() >= 1 && thieves[j].route.size() >= 2)
+                                if(thieves[j].timing.size() > 1 && thieves[j].route.size() >= 2)
                                 {
                                     new_time = thieves[j].timing.back();                                    
                                     new_time += this->cities_distance[thieves[j].route[thieves[j].route.size() - 1]][thieves[j].route[thieves[j].route.size() - 2]]/this->cur_speed;
@@ -189,6 +191,11 @@ class Instance {
                 }
                 if(used_capacity == this->max_capacity) break;                
             }
+            for(int j = 0; j < thieves.size(); j++)
+            {
+                thieves[j].route.push_back(0);
+                thieves[j].timing.push_back(cities_distance[thieves[j].route[thieves[j].route.size() - 1]][0]);
+            } 
             
         }
 
@@ -208,6 +215,52 @@ class Instance {
                 }
                 std::cout << std::endl;
             }
+        }
+
+        float evaluateRoutes()
+        {
+            float total = 0;
+            for(int i = 0; i < this->thieves.size(); i++)
+            {
+                float value = 0;
+                float rent = 0;
+                float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
+                int weight_n = 1;
+                for(int k = 1; k < backpack.size(); k++)
+                {
+                    if(backpack[k].first == thieves[i].timing.back())
+                    {
+                        weight_n = backpack[k].second;
+                        break;
+                    }
+                }
+
+                for(int j = 2; j < thieves[i].items.size(); j++)
+                {
+                    value += (this->items[thieves[i].items[j]].weight * this->items[thieves[i].items[j]].value);
+                }
+                
+                for(int j = 1; j < thieves[i].route.size() - 1; j++)
+                {
+                    int weight_i = 1;
+                    for(int k = 1; k < backpack.size(); k++)
+                    {
+                        if(backpack[k].first == thieves[i].timing[j])
+                        {
+                            weight_i = backpack[k].second;
+                            break;
+                        }
+                    }
+                    
+                    rent += this->renting_ratio * ( (cities_distance[j][j+1] / (f_v * weight_i))  + (cities_distance[j][j+1] / (f_v * weight_n)));
+                }
+                
+                value -= rent;
+                std::cout << "Valor do ladrão " << i << " : " << value << std::endl;
+                
+                total += value;
+            }
+            return total;
         }
 
 };

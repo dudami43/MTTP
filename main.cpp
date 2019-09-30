@@ -35,10 +35,12 @@ int main(int argc, char *argv[])
                 instance = get_instance(filename);
                 instance.addThief();
                 instance.addThief();
-                instance.addThief();
-                instance.addThief();
+                //instance.addThief();
+                //instance.addThief();
                 instance.initialRoutes();
                 instance.printRoutes();
+                float aux = instance.evaluateRoutes();
+                std::cout << aux << std::endl;
             }
             catch (char const *param)
             {

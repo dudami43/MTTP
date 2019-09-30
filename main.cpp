@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     {
         while (getline(file, filename))
         {
-            instance instance;
+            Instance instance;
             
             try
             {

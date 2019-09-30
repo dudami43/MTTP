@@ -1,1 +1,1 @@
-instance get_instance(std::string filename);
+Instance get_instance(std::string filename);

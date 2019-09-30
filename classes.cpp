@@ -1,50 +1,50 @@
 #include<bits/stdc++.h>
 
-class item {
+class Item {
     public:
         float weight, value;
 
     // Construtor padrao
-    item(){
+    Item(){
         weight = 0.0;
         value = 0.0;
     }
 
     // Construtor
-    item(float weight, float value){
+    Item(float weight, float value){
         this->weight = weight;
         this->value = value;
     }
 };
 
-class city {
+class City {
     public:
         float x, y;
-        std::vector<item> itens;
+        std::vector<Item> itens;
 
         // Construtor padrao
-        city(){
+        City(){
             x = 0.0;
             y = 0.0;
         }
 
         // Construtor
-        city(float x, float y){
+        City(float x, float y){
             this->x = x;
             this->y = y;
         }
 };
 
-class instance {
+class Instance {
     public:
         // Atributos
         int num_cities, num_items, max_capacity;
         double min_speed, max_speed, renting_ratio;
         std::vector<std::vector<double> > cities_distance;
-        std::vector<city> cities;
+        std::vector<City> cities;
 
         // Construtor padrao
-        instance(){
+        Instance(){
             num_cities = 0;
             num_items = 0;
             max_capacity = 0;
@@ -54,7 +54,7 @@ class instance {
         }
 
         // Construtor
-        instance(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){
+        Instance(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){
             
             // Seta os dados base da instancia
             this->num_cities = num_cities;

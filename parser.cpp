@@ -1,14 +1,14 @@
 #include <bits/stdc++.h>
 #include "classes.cpp"
 
-instance get_instance(std::string filename)
+Instance get_instance(std::string filename)
 {
     // Abre o arquivo com os dados da instancia
     std::ifstream file;
     file.open("data/"+filename);
 
     // Cria uma classe instancia com os dados adquiridos
-    instance instance; 
+    Instance instance; 
 
     if(file.is_open())
     {
@@ -87,7 +87,7 @@ instance get_instance(std::string filename)
             ss >> index >> x >> y;
 
             // Adiciona a cidade a lista de cidades
-            city city_i(x, y);
+            City city_i(x, y);
             instance.cities.push_back(city_i);
         
             // Calcula a distancia da cidade i para todas que ja foram add
@@ -117,7 +117,7 @@ instance get_instance(std::string filename)
             ss >> index >> profit >> weight >> city_index;
 
             // Adiciona o item a cidade em que esta localizado
-            item item_i(weight, profit);
+            Item item_i(weight, profit);
             instance.cities[city_index-1].itens.push_back(item_i);
         }
 

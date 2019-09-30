@@ -15,9 +15,6 @@ Encontrar a rota e o plano de coleta de máximo benefício, com as seguintes con
 	[float]max speed
 	[int]num mochileiros
 	[float]aluguel
-	- o índice dos itens a seguir indica o mochileiro referente a cada um
-	lista[lista] de rotas
-	lista[lista] de itens pegos
 #### classe vertice ####
 *Ao ler cada vértice, atualizar o peso no grafo*
 	

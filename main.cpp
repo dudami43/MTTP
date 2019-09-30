@@ -29,10 +29,9 @@ int main(int argc, char *argv[])
         while (getline(file, filename))
         {
             Instance instance;
-            
             try
             {
-                std::cout << filename << ":\n";
+                std::cout << filename << "\n";
                 instance = get_instance(filename);
             }
             catch (char const *param)

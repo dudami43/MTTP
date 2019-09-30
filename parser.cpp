@@ -1,11 +1,14 @@
 #include <bits/stdc++.h>
 #include "classes.cpp"
+#include "parser.h"
 
 Instance get_instance(std::string filename)
 {
     // Abre o arquivo com os dados da instancia
     std::ifstream file;
-    file.open("data/"+filename);
+
+    std::string name = "data/" + filename;
+    file.open(name.substr(0,name.length() - 1));
 
     // Cria uma classe instancia com os dados adquiridos
     Instance instance; 
@@ -116,19 +119,26 @@ Instance get_instance(std::string filename)
             std::stringstream ss(line);
             ss >> index >> profit >> weight >> city_index;
 
+            // Cria o item
+            Item item_i(weight, profit, city_index);
+            
             // Adiciona o item a cidade em que esta localizado
-            Item item_i(weight, profit);
-            instance.cities[city_index-1].itens.push_back(item_i);
+            instance.cities[city_index-1].items_idx.push_back(i);
+
+            // Adiciona o item no vetor de itens da instancia
+            instance.items.push_back(item_i);
         }
 
-        /* for(auto x: instance.cities){
+        /*(for(auto x: instance.cities){
             std::cout << std::endl;
             std::cout << "Coordenada: (" << x.x << ", " << x.y << ")" << std::endl;
             std::cout << "Itens: \n";
-            for(auto y: x.itens){
-                std::cout << "------" << y.value << " " << y.weight << std::endl;
+            for(auto y: x.items_idx){
+                std::cout << "Item " << y << " => ";
+                std::cout << instance.items[y].value << " ";
+                std::cout << instance.items[y].weight << std::endl;
             }
-        }std::cout << std::endl; */
+        }std::cout << std::endl;*/
 
     }else
     {

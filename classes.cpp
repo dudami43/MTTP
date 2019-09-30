@@ -3,6 +3,7 @@
 class Item {
     public:
         float weight, value;
+        int city_idx;
 
     // Construtor padrao
     Item(){
@@ -11,16 +12,17 @@ class Item {
     }
 
     // Construtor
-    Item(float weight, float value){
+    Item(float weight, float value, int city_idx){
         this->weight = weight;
         this->value = value;
+        this->city_idx = city_idx;
     }
 };
 
 class City {
     public:
         float x, y;
-        std::vector<Item> items;
+        std::vector<int> items_idx;
 
         // Construtor padrao
         City(){
@@ -36,15 +38,34 @@ class City {
 
         int takeItem(int position)
         {
-            int aux = this->items[position];
-            this->items.erase (this->items.begin(),this->items.begin()+position);
+            int aux = this->items_idx[position];
+            if(this->items_idx.size() > 1)
+            {
+                this->items_idx.erase(this->items_idx.begin()+position);
+            }
+            else
+            {
+                this->items_idx.clear();
+            }           
             return aux;
         }
 
         void returnItem(int index)
         {
-            this->items.pushback(index);
+            this->items_idx.push_back(index);
         }
+};
+
+class Thief {
+    public:
+        std::vector<int> route;
+        std::vector<int> items;
+        std::vector<float> timing;
+
+    //criar rota
+    //setar mochila
+    //avaliar rota
+    
 };
 
 class Instance {
@@ -56,6 +77,7 @@ class Instance {
         std::vector<City> cities;
         std::vector<Thief> thieves;
         std::vector<std::pair<float,int>> backpack; //<tempo, peso>
+        std::vector<Item> items;
 
         // Construtor padrao
         Instance(){
@@ -105,64 +127,87 @@ class Instance {
         void addThief()
         {
             Thief thief;
-            thieves.pushback(thief);
+            thieves.push_back(thief);
         }
 
         void initialRoutes()
         {
-            used_capacity = 0;
+            int used_capacity = 0;
             float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
-            while(used_capacity < this->max_capacity)
+            bool item_in_city = true;
+            for(int i = 0; i < cities.size(); i++)
             {
-                for(int i = 0; i < cities.size(); i++)
+                item_in_city = true;
+                while(cities[i].items_idx.size() > 0 && item_in_city)
                 {
-                    while(cities[i].items.size() > 0){
-                        for(int j = 0; j < thieves.size(); j++)
+                    for(int j = 0; j < thieves.size(); j++)
+                    {
+                        //pegar alguma coisa 
+                        int x = rand() % cities[i].items_idx.size();
+                        int this_one = this->cities[i].takeItem(x);
+                        Item item_taken = this->items[this_one];
+
+                        if(item_taken.weight < this->max_capacity - used_capacity)
                         {
-
-                            //pegar alguma coisa 
-                            int this_one = cities[i].items.takeItem(abs(rand() % cities[i].items.size()));
-                            Item item_taken = this->items[this_one];
-
-                            if(item_taken.weight < this->max_capacity - used_capacity)
-                            {
-                                thieves[j].items.pushback(item_taken);
-                                used_capacity += item_taken.weight;
-                                
-                                //adicionar cidade na rota
-                                thieves[j].route.pushback(i);
-                                //adicionar tempo que ele saiu da cidade
-                                //tempo que ele sai da cidade = o ultimo tempo + (distancia da ultima cidade com a penultima)/velocidade
-                                try{
-                                    float new_time = thieves[j].timing.back();                                    
-                                    new_time = this->cities_distance[thieves[j].route[len(thieves[j].route) - 1]][thieves[j].route[len(thieves[j].route) - 2]]/this->cur_speed;
-                                }
-                                catch(int e)
-                                {
-                                    float new_time = 0;
-                                }
-                                thieves[j].timing.pushback(new_time);
-                                //diminuir velocidade
-                                this->cur_speed = cur_speed * f_v;
-                                if(cities[i].items.size() == 0) break;
+                            if(std::find(thieves[j].items.begin(), thieves[j].items.end(), this_one) == thieves[j].items.end()) {
+                                thieves[j].items.push_back(this_one);
                             }
+                            used_capacity += item_taken.weight;
+
+                            //adicionar cidade na rota
+                            if(std::find(thieves[j].route.begin(), thieves[j].route.end(), i) == thieves[j].route.end()) {
+                                thieves[j].route.push_back(i);
+                                //adicionar tempo que ele saiu da cidade
+                                float new_time = 0;
+                                if(thieves[j].timing.size() >= 1 && thieves[j].route.size() >= 2)
+                                {
+                                    new_time = thieves[j].timing.back();                                    
+                                    new_time += this->cities_distance[thieves[j].route[thieves[j].route.size() - 1]][thieves[j].route[thieves[j].route.size() - 2]]/this->cur_speed;
+                                }
+                                thieves[j].timing.push_back(new_time);
+                                this->backpack.push_back(std::make_pair(new_time, used_capacity));
+                            }
+
+                            //diminuir velocidade
+                            if(cur_speed - f_v > this->min_speed)
+                            {
+                                this->cur_speed = cur_speed - f_v;
+                            }
+                            else
+                            {
+                                this->cur_speed = this->min_speed;
+                            }
+                            
+                            if(cities[i].items_idx.size() == 0)  break;
                         }
-                    }    
-                if(used_capacity == this->max_capacity) break;                
+                        else
+                        {
+                            item_in_city = false;
+                            break;
+                        }
+                    }
                 }
+                if(used_capacity == this->max_capacity) break;                
+            }
+            
+        }
+
+        void printRoutes()
+        {
+            for(int i = 0; i < this->thieves.size(); i++)
+            {
+                std::cout << "ladrão " << i << std::endl << "rota: ";
+                for(int j = 0; j < thieves[i].route.size(); j++)
+                {
+                    std::cout << "cidade " << thieves[i].route[j] << " tempo " << thieves[i].timing[j] << std::endl;
+                }
+                std::cout << "\nitems: ";
+                for(int j = 0; j < thieves[i].items.size(); j++)
+                {
+                    std::cout << thieves[i].items[j] << " " << std::endl;
+                }
+                std::cout << std::endl;
             }
         }
 
 };
-
-class Thief {
-    public:
-        std::vector<int> route;
-        std::vector<Item> items;
-        std::vector<float> timing;
-
-    //criar rota
-    //setar mochila
-    //avaliar rota
-    
-}

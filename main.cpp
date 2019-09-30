@@ -33,6 +33,12 @@ int main(int argc, char *argv[])
             {
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
+                instance.addThief();
+                instance.addThief();
+                instance.addThief();
+                instance.addThief();
+                instance.initialRoutes();
+                instance.printRoutes();
             }
             catch (char const *param)
             {

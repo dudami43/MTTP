@@ -116,19 +116,26 @@ Instance get_instance(std::string filename)
             std::stringstream ss(line);
             ss >> index >> profit >> weight >> city_index;
 
+            // Cria o item
+            Item item_i(weight, profit, city_index);
+            
             // Adiciona o item a cidade em que esta localizado
-            Item item_i(weight, profit);
-            instance.cities[city_index-1].itens.push_back(item_i);
+            instance.cities[city_index-1].itens_idx.push_back(i);
+
+            // Adiciona o item no vetor de itens da instancia
+            instance.itens.push_back(item_i);
         }
 
-        /* for(auto x: instance.cities){
+        for(auto x: instance.cities){
             std::cout << std::endl;
             std::cout << "Coordenada: (" << x.x << ", " << x.y << ")" << std::endl;
             std::cout << "Itens: \n";
-            for(auto y: x.itens){
-                std::cout << "------" << y.value << " " << y.weight << std::endl;
+            for(auto y: x.itens_idx){
+                std::cout << "Item " << y << " => ";
+                std::cout << instance.itens[y].value << " ";
+                std::cout << instance.itens[y].weight << std::endl;
             }
-        }std::cout << std::endl; */
+        }std::cout << std::endl;
 
     }else
     {

@@ -3,6 +3,7 @@
 class Item {
     public:
         float weight, value;
+        int city_idx;
 
     // Construtor padrao
     Item(){
@@ -11,16 +12,17 @@ class Item {
     }
 
     // Construtor
-    Item(float weight, float value){
+    Item(float weight, float value, int city_idx){
         this->weight = weight;
         this->value = value;
+        this->city_idx = city_idx;
     }
 };
 
 class City {
     public:
         float x, y;
-        std::vector<Item> itens;
+        std::vector<int> itens_idx;
 
         // Construtor padrao
         City(){
@@ -42,6 +44,7 @@ class Instance {
         double min_speed, max_speed, renting_ratio;
         std::vector<std::vector<double> > cities_distance;
         std::vector<City> cities;
+        std::vector<Item> itens;
 
         // Construtor padrao
         Instance(){

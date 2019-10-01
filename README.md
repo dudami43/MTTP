@@ -17,7 +17,8 @@ Encontrar a rota e o plano de coleta de máximo benefício, com as seguintes con
 	[float]aluguel
 #### classe vertice ####
 *Ao ler cada vértice, atualizar o peso no grafo*
-	
+
+	coordenadas do vertice
 	lista de itens presentes no lugar
 #### classe item ####
 	valor

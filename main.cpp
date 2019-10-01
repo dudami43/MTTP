@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
                 //instance.addThief();
                 //instance.addThief();
                 instance.initialRoutes();
-                instance.printRoutes();
+                //instance.printRoutes();
                 float aux = instance.evaluateRoutes();
                 std::cout << aux << std::endl;
             }

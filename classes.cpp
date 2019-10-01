@@ -60,7 +60,7 @@ class Thief {
     public:
         std::vector<int> route;
         std::vector<int> items;
-        std::vector<float> timing;   
+        std::vector<int> backpack_weight;   
 };
 
 class Instance {
@@ -70,8 +70,7 @@ class Instance {
         double min_speed, max_speed, renting_ratio, cur_speed;
         std::vector<std::vector<double> > cities_distance;
         std::vector<City> cities;
-        std::vector<Thief> thieves;
-        std::vector<std::pair<float,int>> backpack; //<tempo, peso>
+        std::vector<std::pair<double,Thief>> thieves; //<velocidade, ladrão>
         std::vector<Item> items;
 
         // Construtor padrao
@@ -122,7 +121,7 @@ class Instance {
         void addThief()
         {
             Thief thief;
-            thieves.push_back(thief);
+            thieves.push_back(std::make_pair(this->max_speed, thief));
         }
 
         void initialRoutes()
@@ -131,10 +130,10 @@ class Instance {
             float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
             bool item_in_city = true;
 
-            for(int j = 0; j < thieves.size(); j++)
+            for(int j = 0; j < thieves.size(); j++) 
             {
-                thieves[j].route.push_back(0);
-                thieves[j].timing.push_back(0);
+                thieves[j].second.route.push_back(0);
+                thieves[j].second.backpack_weight.push_back(0);
             }
 
             for(int i = 0; i < cities.size(); i++)
@@ -151,33 +150,33 @@ class Instance {
 
                         if(item_taken.weight < this->max_capacity - used_capacity)
                         {
-                            if(std::find(thieves[j].items.begin(), thieves[j].items.end(), this_one) == thieves[j].items.end()) {
-                                thieves[j].items.push_back(this_one);
+                            if(std::find(thieves[j].second.items.begin(), thieves[j].second.items.end(), this_one) == thieves[j].second.items.end())
+                            {
+                                thieves[j].second.items.push_back(this_one);
                             }
                             used_capacity += item_taken.weight;
 
                             //adicionar cidade na rota
-                            if(std::find(thieves[j].route.begin(), thieves[j].route.end(), i) == thieves[j].route.end()) {
-                                thieves[j].route.push_back(i);
-                                //adicionar tempo que ele saiu da cidade
-                                float new_time = 0;
-                                if(thieves[j].timing.size() > 1 && thieves[j].route.size() >= 2)
-                                {
-                                    new_time = thieves[j].timing.back();                                    
-                                    new_time += this->cities_distance[thieves[j].route[thieves[j].route.size() - 1]][thieves[j].route[thieves[j].route.size() - 2]]/this->cur_speed;
-                                }
-                                thieves[j].timing.push_back(new_time);
-                                this->backpack.push_back(std::make_pair(new_time, used_capacity));
-                            }
-
-                            //diminuir velocidade
-                            if(cur_speed - f_v > this->min_speed)
-                            {
-                                this->cur_speed = cur_speed - f_v;
+                            std::vector<int>::iterator it = std::find(thieves[j].second.route.begin(), thieves[j].second.route.end(), i);
+                            if(it == thieves[j].second.route.end())
+                             {
+                                thieves[j].second.route.push_back(i);
+                                thieves[j].second.backpack_weight.push_back(item_taken.weight);
                             }
                             else
                             {
-                                this->cur_speed = this->min_speed;
+                                int index = std::distance(thieves[j].second.route.begin(), it);
+                                thieves[j].second.backpack_weight[index] += item_taken.weight;
+                            }
+                            
+                            //diminuir velocidade
+                            if(thieves[j].first - f_v > this->min_speed)
+                            {
+                                thieves[j].first = thieves[j].first;
+                            }
+                            else
+                            {
+                                thieves[j].first = this->min_speed;
                             }
                             
                             if(cities[i].items_idx.size() == 0)  break;
@@ -193,8 +192,8 @@ class Instance {
             }
             for(int j = 0; j < thieves.size(); j++)
             {
-                thieves[j].route.push_back(0);
-                thieves[j].timing.push_back(cities_distance[thieves[j].route[thieves[j].route.size() - 1]][0]);
+                thieves[j].second.route.push_back(0);
+                thieves[j].second.backpack_weight.push_back(0);
             } 
             
         }
@@ -204,14 +203,14 @@ class Instance {
             for(int i = 0; i < this->thieves.size(); i++)
             {
                 std::cout << "ladrao " << i << std::endl << "rota: ";
-                for(int j = 0; j < thieves[i].route.size(); j++)
+                for(int j = 0; j < thieves[i].second.route.size(); j++)
                 {
-                    std::cout << "cidade " << thieves[i].route[j] << " tempo " << thieves[i].timing[j] << std::endl;
+                    std::cout << "cidade " << thieves[i].second.route[j] << " em " << j << std::endl;
                 }
                 std::cout << "\nitems: ";
-                for(int j = 0; j < thieves[i].items.size(); j++)
+                for(int j = 0; j < thieves[i].second.items.size(); j++)
                 {
-                    std::cout << thieves[i].items[j] << " " << std::endl;
+                    std::cout << thieves[i].second.items[j] << " " << std::endl;
                 }
                 std::cout << std::endl;
             }
@@ -220,44 +219,42 @@ class Instance {
         float evaluateRoutes()
         {
             float total = 0;
+            int weight_j = 0, weight_n = 0;
+            float value = 0;
+            float rent = 0;
+            float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
+
             for(int i = 0; i < this->thieves.size(); i++)
             {
-                float value = 0;
-                float rent = 0;
-                float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
-                int weight_n = 1;
-                for(int k = 1; k < backpack.size(); k++)
+                value = rent = 0;
+
+                weight_n = 0;
+
+                for(int k = 0; k < thieves[i].second.backpack_weight.size(); k++)
                 {
-                    if(backpack[k].first == thieves[i].timing.back())
-                    {
-                        weight_n = backpack[k].second;
-                        break;
-                    }
+                    weight_n += thieves[i].second.backpack_weight[k];
                 }
 
-                for(int j = 2; j < thieves[i].items.size(); j++)
+                for(int j = 2; j < thieves[i].second.items.size(); j++)
                 {
-                    value += (this->items[thieves[i].items[j]].weight * this->items[thieves[i].items[j]].value);
+                    value += (this->items[thieves[i].second.items[j]].weight * this->items[thieves[i].second.items[j]].value);
                 }
                 
-                for(int j = 1; j < thieves[i].route.size() - 1; j++)
+                for(int j = 1; j < thieves[i].second.route.size() - 1; j++)
                 {
-                    int weight_i = 1;
-                    for(int k = 1; k < backpack.size(); k++)
+                    weight_j = 0;
+                    for(int k = 0; k < j; k++)
                     {
-                        if(backpack[k].first == thieves[i].timing[j])
-                        {
-                            weight_i = backpack[k].second;
-                            break;
-                        }
+                        weight_j += thieves[i].second.backpack_weight[k];
                     }
-                    
-                    rent += this->renting_ratio * ( (cities_distance[j][j+1] / (f_v * weight_i))  + (cities_distance[j][j+1] / (f_v * weight_n)));
+
+                    rent += ( (cities_distance[j][j+1] / (this->max_speed - (f_v * weight_j)))  + (cities_distance[0][thieves[i].second.route.size() - 1] / (this->max_speed - (f_v * weight_n))));
                 }
                 
-                value -= rent;
-                std::cout << "Valor do ladrao " << i << " : " << value << std::endl;
+                value -= this->renting_ratio * rent;
                 
+                std::cout << "Valor do ladrão " << i << " : " << value << std::endl;
+
                 total += value;
             }
             return total;

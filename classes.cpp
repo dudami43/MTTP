@@ -203,7 +203,7 @@ class Instance {
         {
             for(int i = 0; i < this->thieves.size(); i++)
             {
-                std::cout << "ladrão " << i << std::endl << "rota: ";
+                std::cout << "ladrao " << i << std::endl << "rota: ";
                 for(int j = 0; j < thieves[i].route.size(); j++)
                 {
                     std::cout << "cidade " << thieves[i].route[j] << " tempo " << thieves[i].timing[j] << std::endl;
@@ -256,7 +256,7 @@ class Instance {
                 }
                 
                 value -= rent;
-                std::cout << "Valor do ladrão " << i << " : " << value << std::endl;
+                std::cout << "Valor do ladrao " << i << " : " << value << std::endl;
                 
                 total += value;
             }

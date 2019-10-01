@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
                 std::cout << param << std::endl;
                 return 0;
             }
+
+            break;
         }
         file.close();
     }

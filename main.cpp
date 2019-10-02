@@ -33,14 +33,12 @@ int main(int argc, char *argv[])
             {
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
-                instance.addThief();
-                instance.addThief();
-                instance.addThief();
-                instance.addThief();
+                instance.addThief(4);
                 instance.initialRoutes();
                 //instance.printRoutes();
-                float aux = instance.evaluateRoutes();
-                std::cout << aux << std::endl;
+                float evaluate = instance.evaluateRoutes();
+                float maxZ = instance.maxZ();
+                std::cout << evaluate << " =? " << maxZ << std::endl;
             }
             catch (char const *param)
             {

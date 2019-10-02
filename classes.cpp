@@ -72,6 +72,7 @@ class Instance {
         std::vector<City> cities;
         std::vector<std::pair<double,Thief>> thieves; //<velocidade, ladrão>
         std::vector<Item> items;
+        std::vector<bool> taked_items;
 
         // Construtor padrao
         Instance(){
@@ -102,6 +103,9 @@ class Instance {
             std::vector<double> empty_distance;
             empty_distance.assign(num_cities, 0.0);
             cities_distance.assign(num_cities, empty_distance);
+
+            // Inicializa todos os items como "nao pego"
+            taked_items.assign(num_cities, false);
         }
 
         void setValues(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){
@@ -120,10 +124,11 @@ class Instance {
             cities_distance.assign(num_cities, empty_distance);
         }
 
-        void addThief()
+        void addThief(int n = 1)
         {
             Thief thief;
-            thieves.push_back(std::make_pair(this->max_speed, thief));
+            for(int i = 0; i < n; i++)
+                thieves.push_back(std::make_pair(this->max_speed, thief));
         }
 
         void initialRoutes()
@@ -223,9 +228,9 @@ class Instance {
         float evaluateRoutes()
         {
             float total = 0;
-            int weight_j = 0, weight_n = 0;
-            float value = 0;
-            float rent = 0;
+            int weight_j, weight_n;
+            float value;
+            float rent;
             float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
 
             for(int i = 0; i < this->thieves.size(); i++)
@@ -270,4 +275,46 @@ class Instance {
             return total;
         }
 
+        float maxZ(){
+            // Funcao objetivo
+            double maxZ;
+
+            // Constante V
+            double v = (this->max_speed - this->min_speed)/this->max_capacity;
+
+            // Variaveis
+            int total_value = 0;
+
+            // Soma todo os valores dos itens
+            for(int i = 0; i < this->taked_items.size(); i++)
+            {
+                if(this->taked_items[i] == 1)
+                {
+                    total_value += this->items[i].value;
+                }
+            }
+
+            // Calcula custo do percurso para todos os ladroes
+            double time = 0;
+            for(auto thief: this->thieves)
+            {
+                // Soma o tempo gasto da primeira cidade ate a ultima
+                double Wx_i = 0;
+                for(int i = 0; i < (thief.second.route.size() - 1); i++)
+                {   
+                    Wx_i += thief.second.backpack_weight[i];
+                    time += (this->cities_distance[i][i+1])/(this->max_speed - v*Wx_i);
+                }
+
+                // Soma o tempo gasto da ultima ate a inicial
+                int last_city_idx = thief.second.route.size() - 2;
+                double Wx_n = Wx_i + thief.second.backpack_weight[last_city_idx];
+                time += (this->cities_distance[last_city_idx][last_city_idx + 1])/(this->max_speed - v*Wx_n);
+            }
+
+            // Calcula funcao maxZ
+            maxZ = total_value - this->renting_ratio*time;
+
+            return maxZ;
+        }
 };

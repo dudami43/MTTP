@@ -232,9 +232,10 @@ class Instance {
         {
             float total = 0;
             int weight_j, weight_n;
-            float value;
-            float rent;
+            float value, total_value = 0.0;
+            float rent, time = 0.0;
             float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
+            int current_city = 0;
 
             for(int i = 0; i < this->thieves.size(); i++)
             {
@@ -252,28 +253,31 @@ class Instance {
                     value += (this->items[thieves[i].second.items[j]].value);
                 }
                 
-                for(int j = 0; j < thieves[i].second.route.size() - 1; j++)
-                {
-                    weight_j = 0;
-                    for(int k = 0; k < j; k++)
-                    {
-                        weight_j += thieves[i].second.backpack_weight[k];
-                    }
-
-                    rent += (cities_distance[j][j+1]) / (this->max_speed - (f_v * weight_j));
+                weight_j = 0;
+                for(int j = 0; j < (thieves[i].second.route.size() - 1); j++)
+                {   
+                    current_city = thieves[i].second.route[j];
+                    weight_j += thieves[i].second.backpack_weight[j];
+                    rent += (this->cities_distance[current_city][current_city+1])/(this->max_speed - f_v*weight_j);
                 }
                 
-                rent += cities_distance[0][thieves[i].second.route.size() - 1] / (this->max_speed - (f_v * weight_n));
+                current_city =  thieves[i].second.route[thieves[i].second.route.size() - 2];
+                rent += cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n));
+                std::cout << "Aluguel da ultima " << cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n)) << std::endl;
+                total_value += value;
+                time+= rent;
 
-                std::cout << i << " roubou " << value << " enquanto pagava " << this->renting_ratio *rent << std::endl;
+                //std::cout << i << " roubou " << value << " enquanto pagava " << this->renting_ratio *rent << std::endl;
 
                 value -= this->renting_ratio * rent;
                 
-                std::cout << "Valor do ladrao " << i << " : " << value << std::endl;
+                //std::cout << "Valor do ladrao " << i << " : " << value << std::endl;
 
                 total += value;
             }
-            std::cout << "A capacidade da mochila utilizada foi " << this->used_capacity << " de " << this->max_capacity << std::endl;
+
+            std::cout << "duda\n";
+            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
 
             return total;
         }
@@ -303,19 +307,22 @@ class Instance {
                 for(int i = 0; i < (thief.second.route.size() - 1); i++)
                 {   
                     Wx_i += thief.second.backpack_weight[i];
+                    std::cout << "RAFAEL W" << i << " " << Wx_i << std::endl;
                     time += (this->cities_distance[i][i+1])/(this->max_speed - v*Wx_i);
                 }
 
                 // Soma o tempo gasto da ultima ate a inicial
                 int last_city_idx = thief.second.route.size() - 2;
                 double Wx_n = Wx_i + thief.second.backpack_weight[last_city_idx];
-                time += (this->cities_distance[last_city_idx][last_city_idx + 1])/(this->max_speed - v*Wx_n);
+                time += (this->cities_distance[last_city_idx][0])/(this->max_speed - (v*Wx_n));
+                std::cout << "Aluguel da ultima " << (this->cities_distance[last_city_idx][0])/(this->max_speed - (v*Wx_n)) << std::endl; 
             }
 
             // Calcula funcao maxZ
             maxZ = total_value - this->renting_ratio*time;
-
-            // Retorna maxZ
+            
+            std::cout << "rafael\n";
+            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
             return maxZ;
         }
 };

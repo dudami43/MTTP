@@ -246,19 +246,21 @@ class Instance {
                     value += (this->items[thieves[i].second.items[j]].value);
                 }
                 
-                weight_j = 0;
-                for(int j = 0; j < (thieves[i].second.route.size() - 1); j++)
-                {   
-                    current_city = thieves[i].second.route[j];
-                    weight_j += thieves[i].second.backpack_weight[j];
-                    rent += (this->cities_distance[current_city][current_city+1])/(this->max_speed - f_v*weight_j);
-                }
-                
-                for(int k = 0; k < thieves[i].second.backpack_weight.size(); k++)
+                for(int k = 0; k < thieves[i].second.backpack_weight.size() -  1; k++)
                 {
                     weight_n += thieves[i].second.backpack_weight[k];
                 }
 
+                weight_j = 0;
+                for(int j = 0; j < (thieves[i].second.route.size() - 2); j++)
+                {   
+                    current_city = thieves[i].second.route[j];
+                    weight_j += thieves[i].second.backpack_weight[j];
+                    rent += (this->cities_distance[current_city][current_city+1])/(this->max_speed - f_v*weight_j);
+                    std::cout << j <<" DUDA WN " << weight_j << std::endl;
+                }
+
+                std::cout <<"DUDA WN " << weight_n << std::endl;
                 current_city =  thieves[i].second.route[thieves[i].second.route.size() - 2];
                 std::cout << "Aluguel sem a ultima " << rent << std::endl;
                 rent += cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n));
@@ -314,6 +316,7 @@ class Instance {
                 int last_city_idx = thief.second.route.size() - 2;
                 current_city =  thief.second.route[last_city_idx];
                 double Wx_n = Wx_i + thief.second.backpack_weight[last_city_idx];
+                std::cout <<"RAFAEL WN " << Wx_n << std::endl;
                 std::cout << "Aluguel sem a ultima " << time << std::endl;
                 time += (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n));
                 std::cout << "Aluguel da ultima " << (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n)) << std::endl; 

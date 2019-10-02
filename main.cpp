@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
                 instance = get_instance(filename);
                 instance.addThief();
                 instance.addThief();
-                //instance.addThief();
-                //instance.addThief();
+                instance.addThief();
+                instance.addThief();
                 instance.initialRoutes();
                 //instance.printRoutes();
                 float aux = instance.evaluateRoutes();
@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
                 return 0;
             }
 
-            break;
         }
         file.close();
     }

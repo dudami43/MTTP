@@ -315,6 +315,7 @@ class Instance {
             // Calcula funcao maxZ
             maxZ = total_value - this->renting_ratio*time;
 
+            // Retorna maxZ
             return maxZ;
         }
 };

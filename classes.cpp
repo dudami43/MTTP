@@ -72,7 +72,7 @@ class Instance {
         std::vector<City> cities;
         std::vector<std::pair<double,Thief>> thieves; //<velocidade, ladrão>
         std::vector<Item> items;
-        std::vector<bool> taked_items;
+        std::vector<int> taked_items;
 
         // Construtor padrao
         Instance(){
@@ -87,8 +87,7 @@ class Instance {
         }
 
         // Construtor
-        Instance(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){
-            
+        Instance(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){ 
             // Seta os dados base da instancia
             this->num_cities = num_cities;
             this->num_items = num_items;
@@ -102,10 +101,10 @@ class Instance {
             // Gera uma matriz com num_cities linhas e colunas preenchidas com as distancias zeradas
             std::vector<double> empty_distance;
             empty_distance.assign(num_cities, 0.0);
-            cities_distance.assign(num_cities, empty_distance);
+            this->cities_distance.assign(num_cities, empty_distance);
 
             // Inicializa todos os items como "nao pego"
-            taked_items.assign(num_cities, false);
+            this->taked_items.assign(num_items, 0);
         }
 
         void setValues(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){
@@ -121,7 +120,10 @@ class Instance {
             // Gera uma matriz com num_cities linhas e colunas preenchidas com as distancias zeradas
             std::vector<double> empty_distance;
             empty_distance.assign(num_cities, 0.0);
-            cities_distance.assign(num_cities, empty_distance);
+            this->cities_distance.assign(num_cities, empty_distance);
+
+            // Inicializa todos os items como "nao pego"
+            this->taked_items.assign(num_items, 0);
         }
 
         void addThief(int n = 1)
@@ -159,6 +161,7 @@ class Instance {
                             if(std::find(thieves[j].second.items.begin(), thieves[j].second.items.end(), this_one) == thieves[j].second.items.end())
                             {
                                 thieves[j].second.items.push_back(this_one);
+                                this->taked_items.at(this_one) = 1;
                             }
                             this->used_capacity += item_taken.weight;
 
@@ -288,10 +291,7 @@ class Instance {
             // Soma todo os valores dos itens
             for(int i = 0; i < this->taked_items.size(); i++)
             {
-                if(this->taked_items[i] == 1)
-                {
-                    total_value += this->items[i].value;
-                }
+                total_value += this->items[i].value*this->taked_items[i];
             }
 
             // Calcula custo do percurso para todos os ladroes

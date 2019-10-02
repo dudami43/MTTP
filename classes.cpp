@@ -46,7 +46,7 @@ class City {
             else
             {
                 this->items_idx.clear();
-            }           
+            }
             return aux;
         }
 
@@ -207,12 +207,14 @@ class Instance {
                 {
                     std::cout << "cidade " << thieves[i].second.route[j] << " em " << j << std::endl;
                 }
-                std::cout << "\nitems: ";
+                std::cout << "\nitems: \n";
+                int totalValue = 0;
                 for(int j = 0; j < thieves[i].second.items.size(); j++)
-                {
-                    std::cout << thieves[i].second.items[j] << " " << std::endl;
+                {   
+                    totalValue += this->items[thieves[i].second.items[j]].value;
+                    std::cout << "Valor: " << this->items[thieves[i].second.items[j]].value << "   Peso: " << this->items[thieves[i].second.items[j]].weight << std::endl;
                 }
-                std::cout << std::endl;
+                std::cout << "Valor total adquirido: " << totalValue << std::endl;
             }
         }
 
@@ -237,7 +239,7 @@ class Instance {
 
                 for(int j = 2; j < thieves[i].second.items.size(); j++)
                 {
-                    value += (this->items[thieves[i].second.items[j]].weight * this->items[thieves[i].second.items[j]].value);
+                    value += (this->items[thieves[i].second.items[j]].value);
                 }
                 
                 for(int j = 1; j < thieves[i].second.route.size() - 1; j++)
@@ -252,8 +254,10 @@ class Instance {
                 }
                 
                 value -= this->renting_ratio * rent;
+
+                this->printRoutes();
                 
-                std::cout << "Valor do ladrão " << i << " : " << value << std::endl;
+                std::cout << "Valor do ladrao " << i << " : " << value << std::endl;
 
                 total += value;
             }

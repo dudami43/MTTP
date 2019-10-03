@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
                 instance.initialRoutes();
                 //instance.printRoutes();
                 float evaluate = instance.evaluateRoutes();
-                float maxZ = instance.maxZ();
+                double maxZ = instance.maxZ();
                 std::cout << evaluate << " =? " << maxZ << std::endl;
             }
             catch (char const *param)

@@ -282,7 +282,7 @@ class Instance {
             return total;
         }
 
-        float maxZ(){
+        double maxZ(){
             // Funcao objetivo
             double maxZ;
 

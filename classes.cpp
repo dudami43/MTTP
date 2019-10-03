@@ -75,7 +75,8 @@ class Instance {
         std::vector<int> taked_items;
 
         // Construtor padrao
-        Instance(){
+        Instance()
+        {
             num_cities = 0;
             num_items = 0;
             max_capacity = 0;
@@ -86,7 +87,8 @@ class Instance {
         }
 
         // Construtor
-        Instance(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){ 
+        Instance(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio)
+        { 
             // Seta os dados base da instancia
             this->num_cities = num_cities;
             this->num_items = num_items;
@@ -105,7 +107,8 @@ class Instance {
             this->taked_items.assign(num_items, 0);
         }
 
-        void setValues(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio){
+        void setValues(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio)
+        {
             
             // Seta os dados base da instancia
             this->num_cities = num_cities;
@@ -208,6 +211,135 @@ class Instance {
             
         }
 
+        void greedySolution()
+        {
+            /**
+             * Passo 1:
+             * Ordena os itens por custo beneficio(valor/peso)
+             * 
+             * Passo 2:
+             * A cada iteracao um ladrao escolhe um item para pegar(em ordem decrescente de custo beneficio)
+             * ate que nenhum consiga mais pegar nenhum item
+             * 
+             * Passo 3:
+             * Para cada ladrao, ordena os itens do mesmo de maneira que ele pegue os itens das cidades mais
+             * distantes primeiro e passe apenas uma vez em cada cidade
+            **/
+
+            // Cria um vector com os indices ordenados decrescentemente
+            std::vector<int> sorted_items_idx;
+            for(int i = 0; i < this->items.size(); i++)
+            {
+                sorted_items_idx.push_back(i);
+            }
+
+            // Adiciona a cidade inicial como ponto de partida de todos os ladroes
+            for(auto thief: this->thieves)
+            {
+                thief.second.route.push_back(0);
+                thief.second.backpack_weight.push_back(0);
+            }
+
+            // Ordena o indice dos itens por custo beneficio (valor/peso)
+            std::sort(sorted_items_idx.begin(), sorted_items_idx.end(), [=](int i, int j)
+            {
+                return this->items[sorted_items_idx[i]].value / this->items[sorted_items_idx[i]].weight < this->items[sorted_items_idx[j]].value / this->items[sorted_items_idx[j]].weight;
+            });
+
+            // Enquanto algum ladrao escolheu um item
+            bool taked = true;
+            while(taked)
+            {
+                taked = false;
+
+                for(auto thief: this->thieves)
+                {
+                    for(int i = sorted_items_idx.size() - 1; i >= 0; i--)
+                    {
+
+                        if(thief.second.items.size() != 0 && thief.second.route.size() != 0)
+                            std::cout << "tamanho antes: " << thief.second.items.size() << " " << thief.second.route.size() << std::endl;
+                        // Se o item ainda n foi pego, e cabe na mochila
+                        if(!this->taked_items[sorted_items_idx[i]] && (this->items[sorted_items_idx[i]].weight < this->max_capacity - this->used_capacity))
+                        {
+                            // Pega o item
+                            this->taked_items[sorted_items_idx[i]] = true;
+                            taked = true;
+
+                            // Adiciona o item a mochila do ladrao
+                            thief.second.items.push_back(sorted_items_idx[i]);
+                            
+                            // Adiciona a cidade a rota
+                            auto pos = std::find(thief.second.route.begin(), thief.second.route.end(), this->items[sorted_items_idx[i]].city_idx);
+                            if(pos == thief.second.route.end())
+                            {
+                                thief.second.route.push_back(this->items[sorted_items_idx[i]].city_idx);
+                            }
+
+                            std::cout << "tamanho dentro: " << thief.second.items.size() << " " << thief.second.route.size() << std::endl;
+
+                            // Deixe outro ladrao escolher
+                            break;
+                        }
+                        if(thief.second.items.size() != 0 && thief.second.route.size() != 0)
+                            std::cout << "tamanho depois: " << thief.second.items.size() << " " << thief.second.route.size() << std::endl;
+                    }
+                }
+            }
+
+            std::cout << "Pegou os itens de todos os ladroes" << std::endl;
+            
+            for(auto thief: this->thieves){
+                std::cout << "Itens: \n";
+                std::cout << "Qtd: " << thief.second.items.size() << std::endl;
+                for(auto x: thief.second.items){
+                    std::cout << x << " ";
+                }std::cout<<std::endl;
+
+                std::cout << "Rota: \n";
+                std::cout << "Qtd: " << thief.second.route.size() << std::endl;
+                for(auto x: thief.second.route){
+                    std::cout << x << " ";
+                }std::cout<<std::endl;
+            }
+            for(auto thief: this->thieves)
+            {
+                // Ordena os itens de maneira que ele va nas cidades mais distantes primeiro(pegando todos os itens de uma cidade de uma vez)
+                for(auto x: thief.second.route){
+                    std::cout << x << " ";
+                }std::cout<<std::endl;
+                
+                std::sort(thief.second.route.begin() + 1, thief.second.route.end(), [&](int i, int j)
+                {
+                    return this->cities_distance[thief.second.route[i]][0] > this->cities_distance[thief.second.route[j]][0];
+                });
+
+                for(int i = 0; i < thief.second.route.size(); i++){
+                    std::cout << this->cities_distance[thief.second.route[i]][0] << " ";
+                }std::cout << std::endl;
+
+                std::cout << "Ordenou a rota" << std::endl;
+            
+                // Seta os pesos de quando ele sai de cada cidade
+                for(auto visited_city: thief.second.route)
+                {
+                    double weight_city = 0;
+                    // Soma o peso de todos os itens pertencentes a cidade atual
+                    for(auto stolen_item: thief.second.items)
+                    {
+                        if(this->items[stolen_item].city_idx == visited_city){
+                            weight_city += this->items[stolen_item].weight;
+                        }
+                    }
+
+                    // Seta o peso de quando sai da cidade atual como o peso calculado
+                    thief.second.backpack_weight.push_back(weight_city);
+                }
+            }
+
+            std::cout << "Terminou ladrao" << std::endl;
+        }
+
         void printRoutes()
         {
             for(int i = 0; i < this->thieves.size(); i++)
@@ -229,13 +361,13 @@ class Instance {
             }
         }
 
-        float evaluateRoutes()
+        double evaluateRoutes()
         {
-            float total = 0;
+            double total = 0;
             int weight_j, weight_n;
-            float value, total_value = 0.0;
-            float rent, time = 0.0;
-            float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
+            double value, total_value = 0.0;
+            double rent, time = 0.0;
+            double f_v = (this->max_speed - this->min_speed)/this->max_capacity;
             int current_city = 0, next_city = 0;
 
             for(int i = 0; i < this->thieves.size(); i++)
@@ -281,7 +413,8 @@ class Instance {
             return total;
         }
 
-        double maxZ(){
+        double maxZ()
+        {
             // Funcao objetivo
             double maxZ;
 

@@ -6,107 +6,77 @@
 
 int main(int argc, char *argv[])
 {
-    // Inicializa a funcao randomica
-    srand (time(NULL));
+    Instance instance(4, 6, 3, 0.1, 1.0, 1.0);
 
-    char *file_name = new char[500];
-    strcpy(file_name, "files/");
-    if(argc == 1)
-        strcat(file_name, "pvanet_files");
-    else
-        strcat(file_name, argv[1]);
+    City city_1(0, 0);
+    City city_2(0, 0);
+    City city_3(0, 0);
+    City city_4(0, 0);
 
-    // Abre o arquivo indicado
-    std::ifstream file;
-    std::string filename;
-    file.open(file_name);
+    instance.cities.push_back(city_1);
+    instance.cities.push_back(city_2);
+    instance.cities.push_back(city_3);
+    instance.cities.push_back(city_4);
+    instance.cities_distance[0][1] = instance.cities_distance[1][0] = 5;
+    instance.cities_distance[0][2] = instance.cities_distance[2][0] = 6;
+    instance.cities_distance[0][3] = instance.cities_distance[3][0] = 6;
+    instance.cities_distance[1][2] = instance.cities_distance[2][1] = 5;
+    instance.cities_distance[1][3] = instance.cities_distance[3][1] = 6;
+    instance.cities_distance[3][2] = instance.cities_distance[2][3] = 4;
 
-    // Delete referencia para o nome do arquivo
-    delete file_name;
+    Item item_21(2, 20, 2);
+    instance.cities[1].items_idx.push_back(0);
+    instance.items.push_back(item_21);
 
-    if (file.is_open())
+    Item item_22(3, 30, 2);
+    instance.cities[1].items_idx.push_back(1);
+    instance.items.push_back(item_22);
+
+    Item item_31(3, 100, 3);
+    instance.cities[2].items_idx.push_back(2);
+    instance.items.push_back(item_31);
+
+    Item item_32(1, 40, 3);
+    instance.cities[2].items_idx.push_back(3);
+    instance.items.push_back(item_32);
+
+    Item item_33(1, 40, 3);
+    instance.cities[3].items_idx.push_back(4);
+    instance.items.push_back(item_33);
+
+    Item item_41(2, 20, 4);
+    instance.cities[3].items_idx.push_back(5);
+    instance.items.push_back(item_41);
+    
+    instance.addThief(1);
+
+    instance.thieves[0].second.route = {0, 1, 3, 2, 0};
+    instance.thieves[0].second.backpack_weight = {0, 0, 0, 2, 0};
+    instance.thieves[0].second.items = {3, 4};
+    instance.taked_items = {0, 0, 0, 1, 1, 0};
+    instance.thieves[0].first = 0.4;
+
+    // instance.printRoutes();
+    
+    float evaluate = instance.evaluateRoutes();
+    double maxZ = instance.maxZ();
+    std::cout << evaluate << " =? " << maxZ << std::endl;
+
+    /*try
     {
-        while (getline(file, filename))
-        {
-            Instance instance(4, 6, 3, 0.1, 1.0, 1.0);
-
-            City city_1(0, 0);
-            City city_2(0, 0);
-            City city_3(0, 0);
-            City city_4(0, 0);
-
-            instance.cities.push_back(city_1);
-            instance.cities.push_back(city_2);
-            instance.cities.push_back(city_3);
-            instance.cities.push_back(city_4);
-            instance.cities_distance[0][1] = instance.cities_distance[1][0] = 5;
-            instance.cities_distance[0][2] = instance.cities_distance[2][0] = 6;
-            instance.cities_distance[0][3] = instance.cities_distance[3][0] = 6;
-            instance.cities_distance[1][2] = instance.cities_distance[2][1] = 5;
-            instance.cities_distance[1][3] = instance.cities_distance[3][1] = 6;
-            instance.cities_distance[3][2] = instance.cities_distance[2][3] = 4;
-            
-
-            Item item_21(2, 20, 2);
-            instance.cities[1].items_idx.push_back(0);
-            instance.items.push_back(item_21);
-
-            Item item_22(3, 30, 2);
-            instance.cities[1].items_idx.push_back(1);
-            instance.items.push_back(item_22);
-
-            Item item_31(3, 100, 3);
-            instance.cities[2].items_idx.push_back(2);
-            instance.items.push_back(item_31);
-
-            Item item_32(1, 40, 3);
-            instance.cities[2].items_idx.push_back(3);
-            instance.items.push_back(item_32);
-
-            Item item_33(1, 40, 3);
-            instance.cities[3].items_idx.push_back(4);
-            instance.items.push_back(item_33);
-
-            Item item_41(2, 20, 4);
-            instance.cities[3].items_idx.push_back(5);
-            instance.items.push_back(item_41);
-            
-            instance.addThief(1);
-
-            instance.thieves[0].second.route = {0, 1, 3, 2, 0};
-            instance.thieves[0].second.backpack_weight = {0, 0, 0, 2, 0};
-            instance.thieves[0].second.items = {3, 4};
-            instance.taked_items = {0, 0, 0, 1, 1, 0};
-            instance.thieves[0].first = 0.4;
-
-            // instance.printRoutes();
-            
-            float evaluate = instance.evaluateRoutes();
-            double maxZ = instance.maxZ();
-            std::cout << evaluate << " =? " << maxZ << std::endl;
-
-            /*try
-            {
-                std::cout << filename << "\n";
-                instance = get_instance(filename);
-                instance.initialRoutes();
-                //instance.printRoutes();
-                float evaluate = instance.evaluateRoutes();
-                double maxZ = instance.maxZ();
-                std::cout << evaluate << " =? " << maxZ << std::endl;
-            }
-            catch (char const *param)
-            {
-                std::cout << param << std::endl;
-                return 0;
-            }*/
-
-        }
-        file.close();
+        std::cout << filename << "\n";
+        instance = get_instance(filename);
+        instance.initialRoutes();
+        //instance.printRoutes();
+        float evaluate = instance.evaluateRoutes();
+        double maxZ = instance.maxZ();
+        std::cout << evaluate << " =? " << maxZ << std::endl;
     }
-    else
+    catch (char const *param)
     {
-        throw "Unable to open the file";
-    }
+        std::cout << param << std::endl;
+        return 0;
+    }*/
+
     return 0;
 }

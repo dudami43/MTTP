@@ -141,7 +141,6 @@ class Instance {
                 thieves[j].second.route.push_back(0);
                 thieves[j].second.backpack_weight.push_back(0);
             }
-
             for(int i = 0; i < cities.size(); i++)
             {
                 item_in_city = true;
@@ -186,7 +185,11 @@ class Instance {
                                 thieves[j].first = this->min_speed;
                             }
                             
-                            if(cities[i].items_idx.size() == 0)  break;
+                            if(cities[i].items_idx.size() == 0)
+                            {
+                                item_in_city = false;
+                                break;
+                            }  
                         }
                         else
                         {
@@ -273,7 +276,6 @@ class Instance {
                 total += value;
             }
 
-            std::cout << "duda\n";
             std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl << std::endl;
 
             return total;
@@ -322,7 +324,6 @@ class Instance {
             // Calcula funcao maxZ
             maxZ = total_value - this->renting_ratio*time;
             
-            std::cout << "rafael\n";
             std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl << std::endl;
             return maxZ;
         }

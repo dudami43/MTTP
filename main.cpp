@@ -28,13 +28,14 @@ int main(int argc, char *argv[])
     {
         while (getline(file, filename))
         {
-            
+            Instance instance;
             try
             {
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
+                instance.addThief(1);
                 instance.initialRoutes();
-                //instance.printRoutes();
+                instance.printRoutes();
                 float evaluate = instance.evaluateRoutes();
                 double maxZ = instance.maxZ();
                 std::cout << evaluate << " =? " << maxZ << std::endl;

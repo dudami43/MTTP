@@ -257,14 +257,13 @@ class Instance {
                     current_city = thieves[i].second.route[j];
                     weight_j += thieves[i].second.backpack_weight[j];
                     rent += (this->cities_distance[current_city][current_city+1])/(this->max_speed - f_v*weight_j);
-                    std::cout << j <<" DUDA WN " << weight_j << std::endl;
                 }
 
-                std::cout <<"DUDA WN " << weight_n << std::endl;
                 current_city =  thieves[i].second.route[thieves[i].second.route.size() - 2];
-                std::cout << "Aluguel sem a ultima " << rent << std::endl;
+
+                //std::cout << "Aluguel sem a ultima " << rent << std::endl;
                 rent += cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n));
-                std::cout << "Aluguel da ultima " << cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n)) << std::endl;
+                //std::cout << "Aluguel da ultima " << cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n)) << std::endl;
                 total_value += value;
                 time+= rent;
 
@@ -278,7 +277,7 @@ class Instance {
             }
 
             std::cout << "duda\n";
-            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
+            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl << std::endl;
 
             return total;
         }
@@ -305,7 +304,7 @@ class Instance {
             {
                 // Soma o tempo gasto da primeira cidade ate a ultima
                 double Wx_i = 0;
-                for(int i = 0; i < (thief.second.route.size() - 1); i++)
+                for(int i = 0; i < (thief.second.route.size() - 2); i++)
                 {   
                     current_city = thief.second.route[i];
                     Wx_i += thief.second.backpack_weight[i];
@@ -316,17 +315,17 @@ class Instance {
                 int last_city_idx = thief.second.route.size() - 2;
                 current_city =  thief.second.route[last_city_idx];
                 double Wx_n = Wx_i + thief.second.backpack_weight[last_city_idx];
-                std::cout <<"RAFAEL WN " << Wx_n << std::endl;
-                std::cout << "Aluguel sem a ultima " << time << std::endl;
+                
+                //std::cout << "Aluguel sem a ultima " << time << std::endl;
                 time += (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n));
-                std::cout << "Aluguel da ultima " << (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n)) << std::endl; 
+                //std::cout << "Aluguel da ultima " << (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n)) << std::endl; 
             }
 
             // Calcula funcao maxZ
             maxZ = total_value - this->renting_ratio*time;
             
             std::cout << "rafael\n";
-            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
+            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl << std::endl;
             return maxZ;
         }
 };

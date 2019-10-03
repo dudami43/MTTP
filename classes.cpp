@@ -67,7 +67,7 @@ class Instance {
     public:
         // Atributos
         int num_cities, num_items, max_capacity, used_capacity;
-        double min_speed, max_speed, renting_ratio, cur_speed;
+        double min_speed, max_speed, renting_ratio;
         std::vector<std::vector<double> > cities_distance;
         std::vector<City> cities;
         std::vector<std::pair<double,Thief>> thieves; //<velocidade, ladrão>
@@ -82,7 +82,6 @@ class Instance {
             used_capacity = 0;
             min_speed = 0.0;
             max_speed = 0.0;
-            cur_speed = 0.0;
             renting_ratio = 0.0;
         }
 
@@ -95,7 +94,6 @@ class Instance {
             this->used_capacity = 0;
             this->min_speed = min_speed;
             this->max_speed = max_speed;
-            this->cur_speed = max_speed;
             this->renting_ratio = renting_ratio;
 
             // Gera uma matriz com num_cities linhas e colunas preenchidas com as distancias zeradas
@@ -235,7 +233,7 @@ class Instance {
             float value, total_value = 0.0;
             float rent, time = 0.0;
             float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
-            int current_city = 0;
+            int current_city = 0, next_city = 0;
 
             for(int i = 0; i < this->thieves.size(); i++)
             {
@@ -255,15 +253,14 @@ class Instance {
                 for(int j = 0; j < (thieves[i].second.route.size() - 2); j++)
                 {   
                     current_city = thieves[i].second.route[j];
+                    next_city = thieves[i].second.route[j+1];
                     weight_j += thieves[i].second.backpack_weight[j];
-                    rent += (this->cities_distance[current_city][current_city+1])/(this->max_speed - f_v*weight_j);
+                    rent += (this->cities_distance[current_city][next_city])/(this->max_speed - f_v*weight_j);
                 }
 
                 current_city =  thieves[i].second.route[thieves[i].second.route.size() - 2];
 
-                //std::cout << "Aluguel sem a ultima " << rent << std::endl;
                 rent += cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n));
-                //std::cout << "Aluguel da ultima " << cities_distance[0][current_city] / (this->max_speed - (f_v * weight_n)) << std::endl;
                 total_value += value;
                 time+= rent;
 
@@ -299,7 +296,7 @@ class Instance {
             }
 
             // Calcula custo do percurso para todos os ladroes
-            double time = 0;int current_city = 0;
+            double time = 0;int current_city = 0;int next_city = 0;
             for(auto thief: this->thieves)
             {
                 // Soma o tempo gasto da primeira cidade ate a ultima
@@ -307,8 +304,9 @@ class Instance {
                 for(int i = 0; i < (thief.second.route.size() - 2); i++)
                 {   
                     current_city = thief.second.route[i];
+                    next_city = thief.second.route[i + 1];
                     Wx_i += thief.second.backpack_weight[i];
-                    time += (this->cities_distance[current_city][current_city+1])/(this->max_speed - v*Wx_i);
+                    time += (this->cities_distance[current_city][next_city])/(this->max_speed - v*Wx_i);
                 }
 
                 // Soma o tempo gasto da ultima ate a inicial

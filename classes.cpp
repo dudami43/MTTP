@@ -234,10 +234,10 @@ class Instance {
             }
 
             // Adiciona a cidade inicial como ponto de partida de todos os ladroes
-            for(auto thief: this->thieves)
+            for(int i = 0; i < this->thieves.size(); i++)
             {
-                thief.second.route.push_back(0);
-                thief.second.backpack_weight.push_back(0);
+                thieves[i].second.route.push_back(0);
+                thieves[i].second.backpack_weight.push_back(0);
             }
 
             // Ordena o indice dos itens por custo beneficio (valor/peso)
@@ -252,80 +252,68 @@ class Instance {
             {
                 taked = false;
 
-                for(auto thief: this->thieves)
+                for(int j = 0; j < this->thieves.size(); j++)
                 {
                     for(int i = sorted_items_idx.size() - 1; i >= 0; i--)
                     {
-
-                        if(thief.second.items.size() != 0 && thief.second.route.size() != 0)
-                            std::cout << "tamanho antes: " << thief.second.items.size() << " " << thief.second.route.size() << std::endl;
                         // Se o item ainda n foi pego, e cabe na mochila
                         if(!this->taked_items[sorted_items_idx[i]] && (this->items[sorted_items_idx[i]].weight < this->max_capacity - this->used_capacity))
                         {
                             // Pega o item
                             this->taked_items[sorted_items_idx[i]] = true;
+                            this->used_capacity += this->items[sorted_items_idx[i]].weight;
                             taked = true;
 
                             // Adiciona o item a mochila do ladrao
-                            thief.second.items.push_back(sorted_items_idx[i]);
+                            this->thieves[j].second.items.push_back(sorted_items_idx[i]);
                             
                             // Adiciona a cidade a rota
-                            auto pos = std::find(thief.second.route.begin(), thief.second.route.end(), this->items[sorted_items_idx[i]].city_idx);
-                            if(pos == thief.second.route.end())
+                            auto pos = std::find(this->thieves[j].second.route.begin(), this->thieves[j].second.route.end(), this->items[sorted_items_idx[i]].city_idx);
+                            if(pos == this->thieves[j].second.route.end())
                             {
-                                thief.second.route.push_back(this->items[sorted_items_idx[i]].city_idx);
+                                this->thieves[j].second.route.push_back(this->items[sorted_items_idx[i]].city_idx);
                             }
-
-                            std::cout << "tamanho dentro: " << thief.second.items.size() << " " << thief.second.route.size() << std::endl;
 
                             // Deixe outro ladrao escolher
                             break;
                         }
-                        if(thief.second.items.size() != 0 && thief.second.route.size() != 0)
-                            std::cout << "tamanho depois: " << thief.second.items.size() << " " << thief.second.route.size() << std::endl;
                     }
                 }
             }
-
-            std::cout << "Pegou os itens de todos os ladroes" << std::endl;
             
-            for(auto thief: this->thieves){
+            /*for(auto thief: this->thieves)
+            {
                 std::cout << "Itens: \n";
                 std::cout << "Qtd: " << thief.second.items.size() << std::endl;
-                for(auto x: thief.second.items){
+                for(auto x: thief.second.items)
+                {
                     std::cout << x << " ";
                 }std::cout<<std::endl;
+                std::cout << "Fim Itens" << std::endl;
 
                 std::cout << "Rota: \n";
                 std::cout << "Qtd: " << thief.second.route.size() << std::endl;
-                for(auto x: thief.second.route){
+                for(auto x: thief.second.route)
+                {
                     std::cout << x << " ";
                 }std::cout<<std::endl;
-            }
-            for(auto thief: this->thieves)
+                std::cout << "Fim Rota" << std::endl;
+            }*/
+
+            for(int j = 0; j < this->thieves.size(); j++)
             {
                 // Ordena os itens de maneira que ele va nas cidades mais distantes primeiro(pegando todos os itens de uma cidade de uma vez)
-                for(auto x: thief.second.route){
-                    std::cout << x << " ";
-                }std::cout<<std::endl;
-                
-                std::sort(thief.second.route.begin() + 1, thief.second.route.end(), [&](int i, int j)
+                std::sort(this->thieves[j].second.route.begin() + 1, this->thieves[j].second.route.end(), [&](int k1, int k2)
                 {
-                    return this->cities_distance[thief.second.route[i]][0] > this->cities_distance[thief.second.route[j]][0];
+                    return this->cities_distance[k1][0] < this->cities_distance[k2][0];
                 });
 
-                for(int i = 0; i < thief.second.route.size(); i++){
-                    std::cout << this->cities_distance[thief.second.route[i]][0] << " ";
-                }std::cout << std::endl;
-
-                std::cout << "Ordenou a rota" << std::endl;
-            
                 // Seta os pesos de quando ele sai de cada cidade
-                for(auto visited_city: thief.second.route)
+                for(auto visited_city: this->thieves[j].second.route)
                 {
                     double weight_city = 0;
                     // Soma o peso de todos os itens pertencentes a cidade atual
-                    for(auto stolen_item: thief.second.items)
+                    for(auto stolen_item: this->thieves[j].second.items)
                     {
                         if(this->items[stolen_item].city_idx == visited_city){
                             weight_city += this->items[stolen_item].weight;
@@ -333,11 +321,9 @@ class Instance {
                     }
 
                     // Seta o peso de quando sai da cidade atual como o peso calculado
-                    thief.second.backpack_weight.push_back(weight_city);
+                    this->thieves[j].second.backpack_weight.push_back(weight_city);
                 }
             }
-
-            std::cout << "Terminou ladrao" << std::endl;
         }
 
         void printRoutes()
@@ -408,7 +394,7 @@ class Instance {
                 total += value;
             }
 
-            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl << std::endl;
+            //std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
 
             return total;
         }
@@ -422,7 +408,7 @@ class Instance {
             double v = (this->max_speed - this->min_speed)/this->max_capacity;
 
             // Variaveis
-            int total_value = 0;
+            long long int total_value = 0;
 
             // Soma todo os valores dos itens
             for(int i = 0; i < this->taked_items.size(); i++)
@@ -441,14 +427,25 @@ class Instance {
                     current_city = thief.second.route[i];
                     next_city = thief.second.route[i + 1];
                     Wx_i += thief.second.backpack_weight[i];
+
                     time += (this->cities_distance[current_city][next_city])/(this->max_speed - v*Wx_i);
+                    
+                    /*std::cout << std::endl;
+                    std::cout << "iteration " << i << std::endl;
+                    std::cout << "time " << time << std::endl;
+                    std::cout << "cities_distance " << this->cities_distance[current_city][next_city] << std::endl;
+                    std::cout << "Max Speed " << this->max_speed << std::endl;
+                    std::cout << "Const Speed " << v << std::endl;
+                    std::cout << "Wx_i " << Wx_i << std::endl;
+                    std::cout << "time " << time << std::endl;
+                    std::cout << std::endl;*/
                 }
 
                 // Soma o tempo gasto da ultima ate a inicial
                 int last_city_idx = thief.second.route.size() - 2;
                 current_city =  thief.second.route[last_city_idx];
                 double Wx_n = Wx_i + thief.second.backpack_weight[last_city_idx];
-                
+         
                 //std::cout << "Aluguel sem a ultima " << time << std::endl;
                 time += (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n));
                 //std::cout << "Aluguel da ultima " << (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n)) << std::endl; 
@@ -457,7 +454,7 @@ class Instance {
             // Calcula funcao maxZ
             maxZ = total_value - this->renting_ratio*time;
             
-            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl << std::endl;
+            //std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
             return maxZ;
         }
 };

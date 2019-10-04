@@ -34,11 +34,14 @@ int main(int argc, char *argv[])
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
                 instance.addThief(1);
-                //instance.initialRoutes();
-                //instance.printRoutes();
-                instance.greedySolution();
+                instance.initialRoutes();
                 float evaluate = instance.evaluateRoutes();
                 double maxZ = instance.maxZ();
+                std::cout << evaluate << " =? " << maxZ << std::endl;
+                //instance.printRoutes();
+                instance.greedySolution();
+                evaluate = instance.evaluateRoutes();
+                maxZ = instance.maxZ();
                 std::cout << evaluate << " =? " << maxZ << std::endl;
             }
             catch (char const *param)
@@ -46,9 +49,9 @@ int main(int argc, char *argv[])
                 std::cout << param << std::endl;
                 return 0;
             }
-
         }
         file.close();
+        
     }
     else
     {

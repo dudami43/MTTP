@@ -8,6 +8,7 @@ Instance get_instance(std::string filename)
     std::ifstream file;
 
     std::string name = "data/" + filename;
+    //std::cout << name << "" << std::endl;
     //file.open(name.substr(0,name.length() - 1));
     file.open(name);
 
@@ -67,8 +68,7 @@ Instance get_instance(std::string filename)
         // Seta os dados adquiridos
         instance.setValues(num_cities, num_items, max_capacity, min_speed, max_speed, renting_ratio);
         
-        /* std::cout << std::endl;
-        std::cout << "Dados da instancia: " << std::endl;
+        /*std::cout << "Dados da instancia: " << std::endl;
         std::cout << "-----Tipo de peso: " << weight_type << std::endl;
         std::cout << "-----Numero de cidades: " << instance.num_cities << std::endl;
         std::cout << "-----Numero de itens: " << instance.num_items << std::endl; 
@@ -76,7 +76,7 @@ Instance get_instance(std::string filename)
         std::cout << "-----Velocidade minima: " << instance.min_speed << std::endl; 
         std::cout << "-----Velocidade maxima: " << instance.max_speed << std::endl;
         std::cout << "-----Taxa da mochila: " << instance.renting_ratio << std::endl;
-        std::cout << std::endl; */
+        std::cout << std::endl;*/
 
         // Le o cabecalho dos vertices
         getline(file, line);
@@ -121,7 +121,7 @@ Instance get_instance(std::string filename)
             ss >> index >> profit >> weight >> city_index;
 
             // Cria o item
-            Item item_i(weight, profit, city_index);
+            Item item_i(weight, profit, city_index-1);
             
             // Adiciona o item a cidade em que esta localizado
             instance.cities[city_index-1].items_idx.push_back(i);

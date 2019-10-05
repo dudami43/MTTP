@@ -189,6 +189,23 @@ class Instance {
             this->thieves[choosed_thief].second.backpack_weight[city_2] = aux;
         }
 
+        void move_cities(bool verbose = false)
+        {
+            // Escolhe um ladrao aleatorio
+            int choosed_thief = rand() % this->thieves.size();
+
+            // Escolhe aleatoriamente duas cidades distintas(e que nao sejam a inicial) do ladrao
+            int city_1 = rand() % this->thieves[choosed_thief].second.route.size();
+            while(city_1 == 0) city_1 = rand() % this->thieves[choosed_thief].second.route.size();
+            int new_pos = rand() % this->thieves[choosed_thief].second.route.size();
+            while(new_pos == 0) new_pos = rand() % this->thieves[choosed_thief].second.route.size();
+
+            // Printa as cidades escolhidas
+            if(verbose)
+                //Trocou a cidade X para a segunda posicao
+                ;
+        }
+
         /**
          * Solucoes iniciais
          **/
@@ -244,7 +261,7 @@ class Instance {
                             //diminuir velocidade
                             if(thieves[j].first - f_v > this->min_speed)
                             {
-                                thieves[j].first = thieves[j].first;
+                                thieves[j].first = thieves[j].first - f_v;
                             }
                             else
                             {

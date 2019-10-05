@@ -22,41 +22,43 @@ int main(int argc, char *argv[])
     instance.cities_distance[0][3] = instance.cities_distance[3][0] = 6;
     instance.cities_distance[1][2] = instance.cities_distance[2][1] = 5;
     instance.cities_distance[1][3] = instance.cities_distance[3][1] = 6;
-    instance.cities_distance[3][2] = instance.cities_distance[2][3] = 4;
+    instance.cities_distance[2][3] = instance.cities_distance[3][2] = 4;
 
-    Item item_21(2, 20, 2);
+    Item item_21(2, 20, 1);
     instance.cities[1].items_idx.push_back(0);
     instance.items.push_back(item_21);
 
-    Item item_22(3, 30, 2);
+    Item item_22(3, 30, 1);
     instance.cities[1].items_idx.push_back(1);
     instance.items.push_back(item_22);
 
-    Item item_31(3, 100, 3);
+    Item item_31(3, 100, 2);
     instance.cities[2].items_idx.push_back(2);
     instance.items.push_back(item_31);
 
-    Item item_32(1, 40, 3);
+    Item item_32(1, 40, 2);
     instance.cities[2].items_idx.push_back(3);
     instance.items.push_back(item_32);
 
-    Item item_33(1, 40, 3);
+    Item item_33(1, 40, 2);
     instance.cities[3].items_idx.push_back(4);
     instance.items.push_back(item_33);
 
-    Item item_41(2, 20, 4);
+    Item item_41(2, 20, 3);
     instance.cities[3].items_idx.push_back(5);
     instance.items.push_back(item_41);
     
     instance.addThief(1);
 
-    instance.thieves[0].second.route = {0, 1, 3, 2, 0};
+    /* instance.thieves[0].second.route = {0, 1, 3, 2, 0};
     instance.thieves[0].second.backpack_weight = {0, 0, 0, 2, 0};
     instance.thieves[0].second.items = {3, 4};
     instance.taked_items = {0, 0, 0, 1, 1, 0};
-    instance.thieves[0].first = 0.4;
+    instance.thieves[0].first = 0.4; */
 
-    // instance.printRoutes();
+    instance.greedySolution();
+
+    //instance.printRoutes();
     
     float evaluate = instance.evaluateRoutes();
     double maxZ = instance.maxZ();

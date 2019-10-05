@@ -9,8 +9,10 @@ Instance get_instance(std::string filename)
 
     std::string name = "data/" + filename;
     //std::cout << name << "" << std::endl;
-    //file.open(name.substr(0,name.length() - 1));
-    file.open(name);
+    if(name[name.size()-1] == '\r')
+        file.open(name.substr(0,name.length() - 1));
+    else
+        file.open(name);
 
     // Cria uma classe instancia com os dados adquiridos
     Instance instance; 

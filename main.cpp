@@ -34,15 +34,25 @@ int main(int argc, char *argv[])
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
                 instance.addThief(1);
+                
+                std::cout << std::endl;
+                std::cout << "rand: \n";
                 instance.initialRoutes();
                 float evaluate = instance.evaluateRoutes();
-                double maxZ = instance.maxZ();
-                std::cout << evaluate << " =? " << maxZ << std::endl;
-                //instance.printRoutes();
+                double objectiveFunction = instance.objectiveFunction();
+                std::cout << evaluate << " =? " << objectiveFunction << std::endl;
+                std::cout << std::endl;
+
+                std::cout << std::endl;
+                std::cout << "greedy: \n";
+                std::cout << "Capacidade maxima da mochila: " << instance.max_capacity << std::endl;
                 instance.greedySolution();
                 evaluate = instance.evaluateRoutes();
-                maxZ = instance.maxZ();
-                std::cout << evaluate << " =? " << maxZ << std::endl;
+                objectiveFunction = instance.objectiveFunction();
+                std::cout << evaluate << " =? " << objectiveFunction << std::endl;
+                std::cout << std::endl;
+
+                //instance.swap_cities(true);
             }
             catch (char const *param)
             {

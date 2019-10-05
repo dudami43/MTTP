@@ -285,8 +285,8 @@ class Instance {
             }
         }
 
-        // Guloso
-        void greedySolution()
+        // Guloso: valor/peso
+        void greedySolution1()
         {
             /**
              * Passo 1:
@@ -357,25 +357,6 @@ class Instance {
                     }
                 }
             }
-            
-            /*for(auto thief: this->thieves)
-            {
-                std::cout << "Itens: \n";
-                std::cout << "Qtd: " << thief.second.items.size() << std::endl;
-                for(auto x: thief.second.items)
-                {
-                    std::cout << x << " ";
-                }std::cout<<std::endl;
-                std::cout << "Fim Itens" << std::endl;
-
-                std::cout << "Rota: \n";
-                std::cout << "Qtd: " << thief.second.route.size() << std::endl;
-                for(auto x: thief.second.route)
-                {
-                    std::cout << x << " ";
-                }std::cout<<std::endl;
-                std::cout << "Fim Rota" << std::endl;
-            }*/
 
             for(int j = 0; j < this->thieves.size(); j++)
             {
@@ -401,6 +382,112 @@ class Instance {
                     this->thieves[j].second.backpack_weight.push_back(weight_city);
                 }
             }
+        }
+
+        void greedySolution()
+        {
+            this->cleanSolution();
+            std::vector<Item> cost_benefit(this->thieves.size());
+            std::vector<int> stolen_items(this->thieves.size());
+            std::vector<int> reserved_items(this->items.size());
+            for(int i = 0; i < reserved_items.size(); i++)
+            {
+                reserved_items[i] = 0;
+            }
+            for(int i = 0; i < this->thieves.size(); i++)
+            {
+                this->thieves[i].second.route.push_back(0);
+                float better_cb = 0;
+                int better_index = 0;
+                Item better_item = this->items[0];
+                for(int j = 0; j < this->items.size(); j++)
+                {
+                    if(reserved_items[j] == 0)
+                    {
+                        float cur_cb = this->items[j].value/(this->items[j].weight * this->cities_distance[0][this->items[j].city_idx]);
+                        if(cur_cb > better_cb )
+                        {
+                            better_cb = cur_cb;
+                            better_index = j;
+                            better_item = this->items[j];
+                        }
+                        else if(cur_cb == better_cb && this->cities_distance[0][this->items[j].city_idx] < this->cities_distance[0][better_item.city_idx])
+                        {
+                            better_cb = cur_cb;
+                            better_index = j;
+                            better_item = this->items[j];
+                        }
+                    }
+                }
+                reserved_items[better_index] = 1;
+                stolen_items[i] = better_index;
+            }
+            bool items_available = true;
+            while(this->used_capacity < this->max_capacity && items_available)
+            {
+                for(int i = 0; i < this->thieves.size(); i++)
+                {
+                    if(this->used_capacity + this->items[stolen_items[i]].weight < this->max_capacity)
+                    {
+                        this->taked_items.push_back(stolen_items[i]); //marca o item como roubado
+                        this->used_capacity += this->items[stolen_items[i]].weight;
+                        this->thieves[i].second.items.push_back(stolen_items[i]);
+                        this->taked_items[stolen_items[i]] = 1;
+                        this->thieves[i].second.route.push_back(this->items[stolen_items[i]].city_idx); //marca a cidade como visitada
+                    }
+                    float better_cb = -1;
+                    int better_index = 0;
+                    Item better_item = this->items[0];
+                    for(int j = 0; j < this->items.size(); j++)
+                    {
+                        if(reserved_items[j] == 0)
+                        {
+                            float cur_cb = this->items[j].value/this->items[j].weight;
+                            if(this->items[stolen_items[i]].city_idx != this->items[j].city_idx)
+                            {
+                                cur_cb = this->items[j].value/(this->items[j].weight * this->cities_distance[this->items[stolen_items[i]].city_idx][this->items[j].city_idx]);
+                            }
+                            if(cur_cb > better_cb )
+                            {
+                                better_cb = cur_cb;
+                                better_index = j;
+                                better_item = this->items[j];
+                            }
+                            else if(cur_cb == better_cb && this->cities_distance[0][this->items[j].city_idx] < this->cities_distance[this->items[stolen_items[i]].city_idx][better_item.city_idx])
+                            {
+                                better_cb = cur_cb;
+                                better_index = j;
+                                better_item = this->items[j];
+                            }
+                            items_available = true;
+                        }
+                        else
+                        {
+                            items_available = false;
+                        }
+                    }
+                    reserved_items[better_index] = 1;
+                    stolen_items[i] = better_index;
+                }
+            }
+            for(int j = 0; j < this->thieves.size(); j++)
+            {
+                for(auto visited_city: this->thieves[j].second.route)
+                {
+                    double weight_city = 0;
+                    // Soma o peso de todos os itens pertencentes a cidade atual
+                    for(auto stolen_item: this->thieves[j].second.items)
+                    {
+                        if(this->items[stolen_item].city_idx == visited_city){
+                            weight_city += this->items[stolen_item].weight;
+                        }
+                    }
+
+                    // Seta o peso de quando sai da cidade atual como o peso calculado
+                    this->thieves[j].second.backpack_weight.push_back(weight_city);
+                } 
+            }           
+            
         }
 
         /**

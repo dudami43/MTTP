@@ -46,13 +46,18 @@ int main(int argc, char *argv[])
                 std::cout << std::endl;
                 std::cout << "greedy: \n";
                 std::cout << "Capacidade maxima da mochila: " << instance.max_capacity << std::endl;
+                instance.greedySolution1();
+                evaluate = instance.evaluateRoutes();
+                objectiveFunction = instance.objectiveFunction();
+                std::cout << evaluate << " =? " << objectiveFunction << std::endl;
+                std::cout << std::endl;
+                
+                std::cout << "greedy2: \n";
                 instance.greedySolution();
                 evaluate = instance.evaluateRoutes();
                 objectiveFunction = instance.objectiveFunction();
                 std::cout << evaluate << " =? " << objectiveFunction << std::endl;
                 std::cout << std::endl;
-
-                //instance.swap_cities(true);
             }
             catch (char const *param)
             {

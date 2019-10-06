@@ -36,24 +36,6 @@ class City {
             this->y = y;
         }
 
-        int takeItem(int position)
-        {
-            int aux = this->items_idx[position];
-            if(this->items_idx.size() > 1)
-            {
-                this->items_idx.erase(this->items_idx.begin()+position);
-            }
-            else
-            {
-                this->items_idx.clear();
-            }
-            return aux;
-        }
-
-        void returnItem(int index)
-        {
-            this->items_idx.push_back(index);
-        }
 };
 
 class Thief {
@@ -210,81 +192,6 @@ class Instance {
          * Solucoes iniciais
          **/
 
-        // Randomico
-        void initialRoutes()
-        {   
-            // reseta a solucao(para caso aja alguma)
-            this->cleanSolution();
-
-            float f_v = (this->max_speed - this->min_speed)/this->max_capacity;
-            bool item_in_city = true;
-
-            for(int j = 0; j < thieves.size(); j++) 
-            {
-                thieves[j].second.route.push_back(0);
-                thieves[j].second.backpack_weight.push_back(0);
-            }
-            for(int i = 0; i < cities.size(); i++)
-            {
-                item_in_city = true;
-                while(cities[i].items_idx.size() > 0 && item_in_city)
-                {
-                    for(int j = 0; j < thieves.size(); j++)
-                    {
-                        //pegar alguma coisa 
-                        int x = rand() % cities[i].items_idx.size();
-                        int this_one = this->cities[i].takeItem(x);
-                        Item item_taken = this->items[this_one];
-
-                        if(item_taken.weight < this->max_capacity - this->used_capacity)
-                        {
-                            if(std::find(thieves[j].second.items.begin(), thieves[j].second.items.end(), this_one) == thieves[j].second.items.end())
-                            {
-                                thieves[j].second.items.push_back(this_one);
-                                this->taked_items.at(this_one) = 1;
-                            }
-                            this->used_capacity += item_taken.weight;
-
-                            //adicionar cidade na rota
-                            std::vector<int>::iterator it = std::find(thieves[j].second.route.begin(), thieves[j].second.route.end(), i);
-                            if(it == thieves[j].second.route.end())
-                             {
-                                thieves[j].second.route.push_back(i);
-                                thieves[j].second.backpack_weight.push_back(item_taken.weight);
-                            }
-                            else
-                            {
-                                int index = std::distance(thieves[j].second.route.begin(), it);
-                                thieves[j].second.backpack_weight[index] += item_taken.weight;
-                            }
-                            
-                            //diminuir velocidade
-                            if(thieves[j].first - f_v > this->min_speed)
-                            {
-                                thieves[j].first = thieves[j].first - f_v;
-                            }
-                            else
-                            {
-                                thieves[j].first = this->min_speed;
-                            }
-                            
-                            if(cities[i].items_idx.size() == 0)
-                            {
-                                item_in_city = false;
-                                break;
-                            }  
-                        }
-                        else
-                        {
-                            item_in_city = false;
-                            break;
-                        }
-                    }
-                }
-                if(this->used_capacity == this->max_capacity) break;                
-            }
-        }
-
         // Guloso: valor/peso
         void greedySolution1()
         {
@@ -384,22 +291,26 @@ class Instance {
             }
         }
 
+        //Guloso: valor/(peso*distancia)
         void greedySolution()
         {
             this->cleanSolution();
-            std::vector<Item> cost_benefit(this->thieves.size());
+
             std::vector<int> stolen_items(this->thieves.size());
             std::vector<int> reserved_items(this->items.size());
+
             for(int i = 0; i < reserved_items.size(); i++)
             {
                 reserved_items[i] = 0;
             }
+
             for(int i = 0; i < this->thieves.size(); i++)
             {
                 this->thieves[i].second.route.push_back(0);
                 float better_cb = 0;
                 int better_index = 0;
                 Item better_item = this->items[0];
+
                 for(int j = 0; j < this->items.size(); j++)
                 {
                     if(reserved_items[j] == 0)
@@ -419,9 +330,12 @@ class Instance {
                         }
                     }
                 }
+
                 reserved_items[better_index] = 1;
                 stolen_items[i] = better_index;
+
             }
+
             bool items_available = true;
             while(this->used_capacity < this->max_capacity && items_available)
             {
@@ -429,15 +343,31 @@ class Instance {
                 {
                     if(this->used_capacity + this->items[stolen_items[i]].weight < this->max_capacity)
                     {
-                        this->taked_items.push_back(stolen_items[i]); //marca o item como roubado
-                        this->used_capacity += this->items[stolen_items[i]].weight;
-                        this->thieves[i].second.items.push_back(stolen_items[i]);
-                        this->taked_items[stolen_items[i]] = 1;
-                        this->thieves[i].second.route.push_back(this->items[stolen_items[i]].city_idx); //marca a cidade como visitada
+                        if(!this->taked_items[stolen_items[i]])
+                        {
+                            this->taked_items.push_back(stolen_items[i]); //marca o item como roubado
+                            this->used_capacity += this->items[stolen_items[i]].weight;
+                            this->thieves[i].second.items.push_back(stolen_items[i]);
+                            this->taked_items[stolen_items[i]] = 1;
+
+                            std::vector<int>::iterator it = std::find(thieves[i].second.route.begin(), thieves[i].second.route.end(), this->items[stolen_items[i]].city_idx);
+                            if(it == thieves[i].second.route.end())
+                            {
+                                thieves[i].second.route.push_back(this->items[stolen_items[i]].city_idx);
+                                thieves[i].second.backpack_weight.push_back(this->items[stolen_items[i]].weight);
+                            }
+                            else
+                            {
+                                int index = std::distance(thieves[i].second.route.begin(), it);
+                                thieves[i].second.backpack_weight[index] += this->items[stolen_items[i]].weight;
+                            }
+                        }
                     }
+
                     float better_cb = -1;
                     int better_index = 0;
                     Item better_item = this->items[0];
+
                     for(int j = 0; j < this->items.size(); j++)
                     {
                         if(reserved_items[j] == 0)
@@ -466,28 +396,12 @@ class Instance {
                             items_available = false;
                         }
                     }
+
                     reserved_items[better_index] = 1;
                     stolen_items[i] = better_index;
-                }
-            }
-            for(int j = 0; j < this->thieves.size(); j++)
-            {
-                for(auto visited_city: this->thieves[j].second.route)
-                {
-                    double weight_city = 0;
-                    // Soma o peso de todos os itens pertencentes a cidade atual
-                    for(auto stolen_item: this->thieves[j].second.items)
-                    {
-                        if(this->items[stolen_item].city_idx == visited_city){
-                            weight_city += this->items[stolen_item].weight;
-                        }
-                    }
 
-                    // Seta o peso de quando sai da cidade atual como o peso calculado
-                    this->thieves[j].second.backpack_weight.push_back(weight_city);
-                } 
-            }           
-            
+                }
+            }            
         }
 
         /**
@@ -513,7 +427,7 @@ class Instance {
                 std::cout << "ladrao " << i << std::endl;std::cout << "items: \n";
                 for(int j = 0; j < thieves[i].second.items.size(); j++)
                 {   
-                    std::cout << "item " << thieves[i].second.items[j] << " na cidade " << this->items[thieves[i].second.items[j]].city_idx << std::endl;
+                    std::cout << "item " << thieves[i].second.items[j] << " com valor " << this->items[thieves[i].second.items[j]].value << std::endl;
                 }
             }
         }
@@ -530,64 +444,8 @@ class Instance {
         }
 
         /**
-         * Funcoes de avaliacao
+         * Funcao de avaliacao
          **/
-
-        double evaluateRoutes()
-        {
-            double total = 0;
-            int weight_j, weight_n;
-            double value, total_value = 0.0;
-            double rent, time = 0.0;
-            double f_v = (this->max_speed - this->min_speed)/this->max_capacity;
-            int current_city = 0, next_city = 0;
-
-            for(int i = 0; i < this->thieves.size(); i++)
-            {
-                weight_n = value = rent = 0;
-
-                for(int j = 0; j < thieves[i].second.items.size(); j++)
-                {
-                    value += (this->items[thieves[i].second.items[j]].value);
-                }
-                
-                for(int k = 0; k < thieves[i].second.backpack_weight.size(); k++)
-                {
-                    weight_n += thieves[i].second.backpack_weight[k];
-                }
-
-                weight_j = 0;
-                for(int j = 0; j < (thieves[i].second.route.size() - 1); j++)
-                {   
-                    current_city = thieves[i].second.route[j];
-                    next_city = thieves[i].second.route[j+1];
-                    weight_j += thieves[i].second.backpack_weight[j];
-                    rent += (this->cities_distance[current_city][next_city])/(this->max_speed - f_v*weight_j);
-                }
-
-                current_city =  thieves[i].second.route[thieves[i].second.route.size() - 1];
-                
-                //std::cout << "Aluguel sem a ultima " << rent << std::endl;
-                rent += cities_distance[current_city][0] / (this->max_speed - (f_v * weight_n));
-                //std::cout << "idx_cidade: " << current_city << " max_speed: " << this->max_speed ;
-                //std::cout << " v_const: " << f_v << " Wn: " << weight_n << std::endl; 
-                //std::cout << "Aluguel da ultima " << cities_distance[current_city][0] / (this->max_speed - (f_v * weight_n)) << std::endl; 
-                total_value += value;
-                time+= rent;
-
-                //std::cout << i << " roubou " << value << " enquanto pagava " << this->renting_ratio *rent << std::endl;
-
-                value -= this->renting_ratio * rent;
-                
-                //std::cout << "Valor do ladrao " << i << " : " << value << std::endl;
-
-                total += value;
-            }
-
-            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
-
-            return total;
-        }
 
         double objectiveFunction()
         {
@@ -636,7 +494,16 @@ class Instance {
             // Calcula funcao maxZ
             maxZ = total_value - this->renting_ratio*time;
             
-            std::cout << "Valor recolhido " << total_value << " com aluguel de  " << this->renting_ratio*time << std::endl;
             return maxZ;
+        }
+
+        /**
+         * Verificação de restrições
+         **/
+
+        bool solutionValid()
+        {
+            //capacidade da mochila
+            return this->used_capacity <= this->max_capacity;
         }
 };

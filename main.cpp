@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include "classes.cpp"
 #include "parser.h"
+#include "functions.h"
 
 // Para compilar com g++11: g++ -std=c++11 main.cpp parser.cpp functions.cpp
 
@@ -34,30 +35,11 @@ int main(int argc, char *argv[])
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
                 instance.addThief(1);
-                
-                std::cout << std::endl;
-                std::cout << "rand: \n";
-                instance.initialRoutes();
-                float evaluate = instance.evaluateRoutes();
-                double objectiveFunction = instance.objectiveFunction();
-                std::cout << evaluate << " =? " << objectiveFunction << std::endl;
-                std::cout << std::endl;
-
-                std::cout << std::endl;
-                std::cout << "greedy: \n";
-                std::cout << "Capacidade maxima da mochila: " << instance.max_capacity << std::endl;
-                instance.greedySolution1();
-                evaluate = instance.evaluateRoutes();
-                objectiveFunction = instance.objectiveFunction();
-                std::cout << evaluate << " =? " << objectiveFunction << std::endl;
-                std::cout << std::endl;
-                
-                std::cout << "greedy2: \n";
                 instance.greedySolution();
-                evaluate = instance.evaluateRoutes();
-                objectiveFunction = instance.objectiveFunction();
-                std::cout << evaluate << " =? " << objectiveFunction << std::endl;
-                std::cout << std::endl;
+                double objectiveFunction = instance.objectiveFunction();
+                std::cout << objectiveFunction << " ";
+                // double new_val = localSearch(instance);
+                // std::cout << new_val << std::endl;
             }
             catch (char const *param)
             {

@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
                 instance.greedySolution();
                 double objectiveFunction = instance.objectiveFunction();
                 std::cout << objectiveFunction << " ";
-                // double new_val = localSearch(instance);
+                double new_val = localSearch(instance);
                 // std::cout << new_val << std::endl;
             }
             catch (char const *param)

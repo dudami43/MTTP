@@ -5,16 +5,17 @@
 /**
  *Busca Local
 **/
-double localSearch(Instance inst)
+double localSearch(Instance& inst)
 {
     double current_value = inst.objectiveFunction();
     std::cout << current_value << std::endl;
     double best_value = current_value;
     Instance prev_inst;
     bool improving = true;
-    while(improving)
+    int tries = 0;
+    while(improving && tries < 10)
     {
-        prev_inst = inst;
+        //prev_inst = inst;
         inst.swap_cities();
         if(inst.solutionValid())
         {
@@ -32,10 +33,13 @@ double localSearch(Instance inst)
         }
         else
         {
-            prev_inst = inst;
+            //prev_inst = inst;
+            tries++;
         }
+        improving = false;
         
     }
     std::cout << "Melhor valor: " << best_value << std::endl;
+    
     return best_value;
 }

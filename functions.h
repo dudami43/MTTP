@@ -1,1 +1,1 @@
-double localSearch(Instance inst);
+double localSearch(Instance& inst);

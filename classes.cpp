@@ -17,6 +17,12 @@ class Item {
         this->value = value;
         this->city_idx = city_idx;
     }
+
+    Item(const Item& item){
+        this->weight = item.weight;
+        this->value = item.value;
+        this->city_idx = item.city_idx;
+    }
 };
 
 class City {
@@ -36,6 +42,13 @@ class City {
             this->y = y;
         }
 
+        City(const City& city)
+        {
+            this->x = city.x;
+            this->y = city.y;
+            this->items_idx = city.items_idx;
+        }
+
 };
 
 class Thief {
@@ -43,6 +56,18 @@ class Thief {
         std::vector<int> route;
         std::vector<int> items;
         std::vector<int> backpack_weight;   
+
+    Thief()
+    {
+        
+    }
+
+    Thief(const Thief& thief)
+    {
+        this->route = thief.route;
+        this->items = thief.items;
+        this->backpack_weight = thief.backpack_weight;
+    }
 };
 
 class Instance {
@@ -94,6 +119,46 @@ class Instance {
 
             // Inicializa todos os items como "nao pego"
             this->taked_items.assign(num_items, 0);
+        }
+
+        //Construtor de cópia
+        Instance(const Instance& inst)
+        {
+
+            this->num_cities = inst.num_cities;
+            this->num_items = inst.num_items;
+            this->max_capacity = inst.max_capacity;
+            this->used_capacity = inst.used_capacity;
+            this->min_speed = inst.min_speed;
+            this->max_speed = inst.max_speed;
+            this->renting_ratio = inst.renting_ratio;
+            this->cities_distance = inst.cities_distance;
+            this->taked_items = inst.taked_items;
+
+            this->cities = inst.cities;
+            this->thieves = inst.thieves; 
+            this->items = inst.items;
+
+        } 
+
+        Instance& operator=( const Instance& inst )
+        {
+            
+            this->num_cities = inst.num_cities;
+            this->num_items = inst.num_items;
+            this->max_capacity = inst.max_capacity;
+            this->used_capacity = inst.used_capacity;
+            this->min_speed = inst.min_speed;
+            this->max_speed = inst.max_speed;
+            this->renting_ratio = inst.renting_ratio;
+            this->cities_distance = inst.cities_distance;
+            this->taked_items = inst.taked_items;
+
+            this->cities = inst.cities;
+            this->thieves = inst.thieves; 
+            this->items = inst.items;
+
+            return *this;
         }
 
         void setValues(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio)

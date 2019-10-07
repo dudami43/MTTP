@@ -36,8 +36,6 @@ double localSearch(Instance& inst)
             //prev_inst = inst;
             tries++;
         }
-        improving = false;
-        
     }
     std::cout << "Melhor valor: " << best_value << std::endl;
     

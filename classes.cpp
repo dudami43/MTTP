@@ -23,6 +23,15 @@ class Item {
         this->value = item.value;
         this->city_idx = item.city_idx;
     }
+
+    Item& operator=( const Item& item )
+    {
+        this->weight = item.weight;
+        this->value = item.value;
+        this->city_idx = item.city_idx;
+        return *this;
+    }
+    
 };
 
 class City {
@@ -31,13 +40,15 @@ class City {
         std::vector<int> items_idx;
 
         // Construtor padrao
-        City(){
+        City()
+        {
             x = 0.0;
             y = 0.0;
         }
 
         // Construtor
-        City(float x, float y){
+        City(float x, float y)
+        {
             this->x = x;
             this->y = y;
         }
@@ -49,6 +60,13 @@ class City {
             this->items_idx = city.items_idx;
         }
 
+        City& operator=( const City& city )
+        {
+            this->x = city.x;
+            this->y = city.y;
+            this->items_idx = city.items_idx;
+            return *this;
+        }
 };
 
 class Thief {
@@ -68,6 +86,16 @@ class Thief {
         this->items = thief.items;
         this->backpack_weight = thief.backpack_weight;
     }
+
+    Thief& operator=( const Thief& thief )
+    {
+        this->route = thief.route;
+        this->items = thief.items;
+        this->backpack_weight = thief.backpack_weight;
+        return *this;
+    }
+
+
 };
 
 class Instance {
@@ -98,6 +126,7 @@ class Instance {
             min_speed = 0.0;
             max_speed = 0.0;
             renting_ratio = 0.0;
+            
         }
 
         // Construtor
@@ -140,10 +169,9 @@ class Instance {
             this->items = inst.items;
 
         } 
-
+        
         Instance& operator=( const Instance& inst )
         {
-            
             this->num_cities = inst.num_cities;
             this->num_items = inst.num_items;
             this->max_capacity = inst.max_capacity;
@@ -160,6 +188,8 @@ class Instance {
 
             return *this;
         }
+
+
 
         void setValues(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio)
         {
@@ -572,3 +602,6 @@ class Instance {
             return this->used_capacity <= this->max_capacity;
         }
 };
+
+
+

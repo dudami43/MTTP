@@ -37,8 +37,11 @@ int main(int argc, char *argv[])
                 instance.addThief(1);
                 instance.greedySolution();
                 double objectiveFunction = instance.objectiveFunction();
-                std::cout << objectiveFunction << " ";
-                double new_val = localSearch(instance);
+                std::cout << instance.objectiveFunction() << " ";
+                Instance teste;
+                teste = instance;
+                std::cout << teste.objectiveFunction() << std::endl;
+                // double new_val = localSearch(instance);
                 // std::cout << new_val << std::endl;
             }
             catch (char const *param)

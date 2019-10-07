@@ -58,27 +58,15 @@ int main(int argc, char *argv[])
 
     instance.greedySolution();
 
-    //instance.printRoutes();
-    
-    float evaluate = instance.evaluateRoutes();
-    double maxZ = instance.maxZ();
-    std::cout << evaluate << " =? " << maxZ << std::endl;
 
-    /*try
-    {
-        std::cout << filename << "\n";
-        instance = get_instance(filename);
-        instance.initialRoutes();
-        //instance.printRoutes();
-        float evaluate = instance.evaluateRoutes();
-        double maxZ = instance.maxZ();
-        std::cout << evaluate << " =? " << maxZ << std::endl;
-    }
-    catch (char const *param)
-    {
-        std::cout << param << std::endl;
-        return 0;
-    }*/
+    ////////////////////////
+    instance.greedySolution();
+    double objectiveFunction = instance.objectiveFunction();
+    std::cout << instance.objectiveFunction() << " ";
+    Instance teste;
+    teste = instance;
+    std::cout << teste.objectiveFunction() << std::endl;
+    ////////////////////////
 
     return 0;
 }

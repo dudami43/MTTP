@@ -36,13 +36,16 @@ int main(int argc, char *argv[])
                 instance = get_instance(filename);
                 instance.addThief(1);
                 instance.greedySolution();
+                // instance.printRoutes();
+                // instance.printItems();
+                // instance.printWeights();
                 double objectiveFunction = instance.objectiveFunction();
-                std::cout << instance.objectiveFunction() << " ";
-                Instance teste;
-                teste = instance;
-                std::cout << teste.objectiveFunction() << std::endl;
-                // double new_val = localSearch(instance);
-                // std::cout << new_val << std::endl;
+                std::cout << instance.objectiveFunction() << " \n";
+                // Instance teste;
+                // teste = instance;
+                // std::cout << teste.objectiveFunction() << std::endl;
+                double new_val = localSearch(instance);
+                std::cout << new_val << std::endl;
             }
             catch (char const *param)
             {

@@ -391,112 +391,71 @@ class Instance {
         {
             this->cleanSolution();
 
-            std::vector<int> stolen_items(this->thieves.size());
-            std::vector<int> reserved_items(this->items.size());
+            std::vector<int> better_item(this->thieves.size());
+            std::vector<int> aux_taked_items(this->items.size(), 0);
+            bool items_remaining = true;
 
-            for(int i = 0; i < reserved_items.size(); i++)
-            {
-                reserved_items[i] = 0;
-            }
+            int current_city = 0;
 
             for(int i = 0; i < this->thieves.size(); i++)
             {
-                this->thieves[i].second.route.push_back(0);
-                float better_cb = 0;
-                int better_index = 0;
-                Item better_item = this->items[0];
-
-                for(int j = 0; j < this->items.size(); j++)
-                {
-                    if(reserved_items[j] == 0)
-                    {
-                        float cur_cb = this->items[j].value/(this->items[j].weight * this->cities_distance[0][this->items[j].city_idx]);
-                        if(cur_cb > better_cb )
-                        {
-                            better_cb = cur_cb;
-                            better_index = j;
-                            better_item = this->items[j];
-                        }
-                        else if(cur_cb == better_cb && this->cities_distance[0][this->items[j].city_idx] < this->cities_distance[0][better_item.city_idx])
-                        {
-                            better_cb = cur_cb;
-                            better_index = j;
-                            better_item = this->items[j];
-                        }
-                    }
-                }
-
-                reserved_items[better_index] = 1;
-                stolen_items[i] = better_index;
-
+                this->thieves[i].second.route.push_back(current_city);
+                this->thieves[i].second.backpack_weight.push_back(0);
             }
 
-            bool items_available = true;
-            while(this->used_capacity < this->max_capacity && items_available)
+            while(items_remaining)
             {
                 for(int i = 0; i < this->thieves.size(); i++)
                 {
-                    if(this->used_capacity + this->items[stolen_items[i]].weight < this->max_capacity)
-                    {
-                        if(!this->taked_items[stolen_items[i]])
-                        {
-                            this->taked_items.push_back(stolen_items[i]); //marca o item como roubado
-                            this->used_capacity += this->items[stolen_items[i]].weight;
-                            this->thieves[i].second.items.push_back(stolen_items[i]);
-                            this->taked_items[stolen_items[i]] = 1;
-
-                            std::vector<int>::iterator it = std::find(thieves[i].second.route.begin(), thieves[i].second.route.end(), this->items[stolen_items[i]].city_idx);
-                            if(it == thieves[i].second.route.end())
-                            {
-                                thieves[i].second.route.push_back(this->items[stolen_items[i]].city_idx);
-                                thieves[i].second.backpack_weight.push_back(this->items[stolen_items[i]].weight);
-                            }
-                            else
-                            {
-                                int index = std::distance(thieves[i].second.route.begin(), it);
-                                thieves[i].second.backpack_weight[index] += this->items[stolen_items[i]].weight;
-                            }
-                        }
-                    }
-
-                    float better_cb = -1;
-                    int better_index = 0;
-                    Item better_item = this->items[0];
-
+                    float best_val = 0;
+                    int best_index = 0;
+                    float cur_val = 0;
                     for(int j = 0; j < this->items.size(); j++)
                     {
-                        if(reserved_items[j] == 0)
+                        if(aux_taked_items[j] == 0)
                         {
-                            float cur_cb = this->items[j].value/this->items[j].weight;
-                            if(this->items[stolen_items[i]].city_idx != this->items[j].city_idx)
+                            cur_val = this->items[j].value / ( this->items[j].weight * this->cities_distance[current_city][this->items[j].city_idx]);
+                            if(cur_val > best_val)
                             {
-                                cur_cb = this->items[j].value/(this->items[j].weight * this->cities_distance[this->items[stolen_items[i]].city_idx][this->items[j].city_idx]);
+                                best_val = cur_val;
+                                best_index = j;
                             }
-                            if(cur_cb > better_cb )
-                            {
-                                better_cb = cur_cb;
-                                better_index = j;
-                                better_item = this->items[j];
-                            }
-                            else if(cur_cb == better_cb && this->cities_distance[0][this->items[j].city_idx] < this->cities_distance[this->items[stolen_items[i]].city_idx][better_item.city_idx])
-                            {
-                                better_cb = cur_cb;
-                                better_index = j;
-                                better_item = this->items[j];
-                            }
-                            items_available = true;
+                            items_remaining = true;
                         }
                         else
                         {
-                            items_available = false;
+                            items_remaining = false;
                         }
                     }
+                    better_item[i] = best_index;
+                    aux_taked_items[best_index] = 1;
 
-                    reserved_items[better_index] = 1;
-                    stolen_items[i] = better_index;
+                    if(this->items[best_index].weight < this->max_capacity - this->used_capacity)
+                    {
+                        current_city = this->items[best_index].city_idx;
 
-                }
-            }            
+                        // Pega o item
+                        this->taked_items[best_index] = true;
+                        this->used_capacity += this->items[best_index].weight;
+
+                        // Adiciona o item a mochila do ladrao
+                        this->thieves[i].second.items.push_back(best_index);
+                        
+                        // Adiciona a cidade a rota
+                        auto pos = std::find(this->thieves[i].second.route.begin(), this->thieves[i].second.route.end(), this->items[best_index].city_idx);
+                        if(pos == this->thieves[i].second.route.end())
+                        {
+                            this->thieves[i].second.route.push_back(current_city);
+                            this->thieves[i].second.backpack_weight.push_back(this->items[best_index].weight);
+                        }
+                        else
+                        {
+                            int index = std::distance(thieves[i].second.route.begin(), pos);
+                            this->thieves[i].second.backpack_weight[index] += this->items[best_index].weight;
+                        }
+                    }
+                }    
+            }
         }
 
         /**

@@ -15,7 +15,7 @@ double localSearch(Instance& inst)
     int tries = 0;
     while(improving && tries < 10)
     {
-        //prev_inst = inst;
+        prev_inst = inst;
         inst.swap_cities();
         if(inst.solutionValid())
         {
@@ -23,7 +23,6 @@ double localSearch(Instance& inst)
             
             if(current_value > best_value)
             {
-                std::cout << "Improved: " << current_value << std::endl;
                 best_value = current_value;
             }
             else
@@ -33,11 +32,10 @@ double localSearch(Instance& inst)
         }
         else
         {
-            //prev_inst = inst;
+            prev_inst = inst;
             tries++;
         }
     }
-    std::cout << "Melhor valor: " << best_value << std::endl;
     
     return best_value;
 }

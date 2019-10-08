@@ -77,7 +77,9 @@ class Thief {
 
     Thief()
     {
-        
+        route.reserve(50);
+        items.reserve(50);
+        backpack_weight.reserve(50);
     }
 
     Thief(const Thief& thief)
@@ -126,7 +128,6 @@ class Instance {
             min_speed = 0.0;
             max_speed = 0.0;
             renting_ratio = 0.0;
-            
         }
 
         // Construtor

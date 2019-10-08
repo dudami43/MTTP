@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
                 instance.addThief(1);
-                instance.greedySolution();
+                instance.greedySolution1();
                 double objectiveFunction = instance.objectiveFunction();
                 std::cout << instance.objectiveFunction() << " ";
                 Instance teste;

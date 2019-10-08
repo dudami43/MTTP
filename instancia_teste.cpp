@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
     instance.taked_items = {0, 0, 0, 1, 1, 0};
     instance.thieves[0].first = 0.4; */
 
-    instance.greedySolution();
+    //instance.greedySolution();
 
 
     ////////////////////////
-    instance.greedySolution();
+    instance.greedySolution1();
     double objectiveFunction = instance.objectiveFunction();
     std::cout << instance.objectiveFunction() << " ";
     Instance teste;

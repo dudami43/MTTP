@@ -8,7 +8,6 @@
 double localSearch(Instance& inst)
 {
     double current_value = inst.objectiveFunction();
-    std::cout << current_value << std::endl;
     double best_value = current_value;
     Instance prev_inst;
     bool improving = true;

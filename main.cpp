@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
                 // Instance teste;
                 // teste = instance;
                 // std::cout << teste.objectiveFunction() << std::endl;
-                double new_val = localSearch(instance);
-                std::cout << new_val << std::endl;
+                // double new_val = localSearch(instance);
+                // std::cout << new_val << std::endl;
             }
             catch (char const *param)
             {

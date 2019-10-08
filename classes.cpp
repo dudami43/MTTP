@@ -387,7 +387,7 @@ class Instance {
             }
         }
 
-        //Guloso: valor/(peso*distancia)
+        //Guloso: valor/distancia   
         void greedySolution()
         {
             this->cleanSolution();
@@ -415,7 +415,7 @@ class Instance {
                     {
                         if(aux_taked_items[j] == 0)
                         {
-                            cur_val = this->items[j].value / ( this->items[j].weight * this->cities_distance[current_city][this->items[j].city_idx]);
+                            cur_val = this->items[j].value / this->cities_distance[current_city][this->items[j].city_idx];
                             if(cur_val > best_val)
                             {
                                 best_val = cur_val;

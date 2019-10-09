@@ -34,17 +34,20 @@ int main(int argc, char *argv[])
             {
                 // std::cout << filename << "\n";
                 instance = get_instance(filename);
-                instance.addThief(1);
+                instance.addThief(2);
                 instance.greedySolution();
-                instance.output();
+                
+                // instance.printRoutes();
+                instance.printItems();
+                // instance.printWeights();
+                
+                instance.swap_items_btw_thieves(true);
+                instance.printItems();
 
-                // double objectiveFunction = instance.objectiveFunction();
-                // std::cout << instance.objectiveFunction() << " \n";
-                // Instance teste;
-                // teste = instance;
-                // std::cout << teste.objectiveFunction() << std::endl;
-                // double new_val = localSearch(instance);
-                // std::cout << new_val << std::endl;
+                double objectiveFunction = instance.objectiveFunction();
+                std::cout << instance.objectiveFunction() << " \n";
+
+                break;
             }
             catch (char const *param)
             {

@@ -151,7 +151,7 @@ class Instance {
             this->taked_items.assign(num_items, 0);
         }
 
-        //Construtor de cópia
+        // Construtor de cópia
         Instance(const Instance& inst)
         {
 
@@ -171,6 +171,7 @@ class Instance {
 
         } 
         
+        // Sobrecarga do operador de atribuicao
         Instance& operator=( const Instance& inst )
         {
             this->num_cities = inst.num_cities;
@@ -190,8 +191,7 @@ class Instance {
             return *this;
         }
 
-
-
+        // Seta os valores basicos da instancia
         void setValues(int num_cities, int num_items, int max_capacity, double min_speed, double max_speed, double renting_ratio)
         {
             
@@ -212,6 +212,7 @@ class Instance {
             this->taked_items.assign(num_items, 0);
         }
 
+        // Adiciona n ladroes a instancia
         void addThief(int n = 1)
         {
             Thief thief;
@@ -219,6 +220,7 @@ class Instance {
                 thieves.push_back(std::make_pair(this->max_speed, thief));
         }
 
+        // Zera a solucao da instancia(caso haja alguma)
         void cleanSolution()
         {
             // Inicializa todos os items como "nao pego"
@@ -267,21 +269,68 @@ class Instance {
             this->thieves[choosed_thief].second.backpack_weight[city_2] = aux;
         }
 
+        // Escolhe um ladrao aleatorio e troca a ordem em que uma cidade aleatoria eh visitada
         void move_cities(bool verbose = false)
         {
             // Escolhe um ladrao aleatorio
             int choosed_thief = rand() % this->thieves.size();
 
-            // Escolhe aleatoriamente duas cidades distintas(e que nao sejam a inicial) do ladrao
-            int city_1 = rand() % this->thieves[choosed_thief].second.route.size();
-            while(city_1 == 0) city_1 = rand() % this->thieves[choosed_thief].second.route.size();
+            // Escolhe aleatoriamente uma cidade(diferente da inicial) e uma nova posicao(diferente da inicial) para move-la
+            int choosed_city = rand() % this->thieves[choosed_thief].second.route.size();
+            while(choosed_city == 0) choosed_city = rand() % this->thieves[choosed_thief].second.route.size();
             int new_pos = rand() % this->thieves[choosed_thief].second.route.size();
-            while(new_pos == 0) new_pos = rand() % this->thieves[choosed_thief].second.route.size();
+            while(new_pos == 0 || choosed_city == new_pos) new_pos = rand() % this->thieves[choosed_thief].second.route.size();
 
             // Printa as cidades escolhidas
             if(verbose)
-                //Trocou a cidade X para a segunda posicao
-                ;
+                std::cout << "Moveu a cidade " << this->thieves[choosed_thief].second.route[choosed_city] << " para a posicao " << new_pos << " da rota." << std::endl;
+            
+            int aux = this->thieves[choosed_thief].second.route[choosed_city];
+            if(new_pos < choosed_city)
+            {
+                // Caso a nova posicao seja antes da posicao atual, entao remova a cidade da solucao antes de inseri-la novamente
+                this->thieves[choosed_thief].second.route.erase(this->thieves[choosed_thief].second.route.begin() + choosed_city);
+                this->thieves[choosed_thief].second.route.insert(this->thieves[choosed_thief].second.route.begin() + new_pos, aux);
+            }
+            else
+            {
+                // Caso a nova posicao seja depois da posicao atual, entao insira a cidade da solucao antes de remove-la
+                this->thieves[choosed_thief].second.route.insert(this->thieves[choosed_thief].second.route.begin() + new_pos + 1, aux);
+                this->thieves[choosed_thief].second.route.erase(this->thieves[choosed_thief].second.route.begin() + choosed_city);
+            }
+        }
+
+        // Escolhe dois ladroes aleatoriamente e troca dois itens(um de cada) entre eles
+        void swap_items_btw_thieves(bool verbose = false)
+        {
+            // Escolhe dois ladroes aleatoriamente
+            int thief_1 = rand() % this->thieves.size();
+            int thief_2 = rand() % this->thieves.size();
+            while(thief_2 == thief_1) thief_2 = rand() % this->thieves.size();
+
+            // Escolhe aleatoriamente um item de cada ladrao
+            int item_1 = rand() % this->thieves[thief_1].second.items.size();
+            int item_2 = rand() % this->thieves[thief_2].second.items.size();
+
+            // Printa os itens que foram trocados
+            if(verbose)
+                std::cout << "Trocou o item " << item_1 << " do ladrao " << thief_1 << " com o item " << item_2 << " do ladrao " << thief_2 << std::endl;
+
+            // Troca os itens entre os ladroes
+            std::iter_swap(this->thieves[thief_1].second.items.begin() + item_1, this->thieves[thief_2].second.items.begin() + item_2);
+        }
+
+        // Escolhe aleatoriamente um item de cada ladrao e troca com os outros
+        void swap_items_btw_all_thieves(bool verbose = false)
+        {
+            // Escolhe um item de cada ladrao
+            std::vector<int> choosed_items; 
+            for(int i = 0; i < this->thieves.size(); i++){
+                int aux = rand() % this->thieves[i].second.items.size();
+                choosed_items.push_back(aux);
+            }
+
+            // ...
         }
 
         /**
@@ -462,7 +511,8 @@ class Instance {
         /**
          * Funcoes de impressao
          **/
-
+        
+        // Printa a rota de cada ladrao
         void printRoutes()
         {
             for(int i = 0; i < this->thieves.size(); i++)
@@ -475,6 +525,7 @@ class Instance {
             }
         }
 
+        // Printa os itens de cada ladrao
         void printItems()
         {
             for(int i = 0; i < this->thieves.size(); i++)
@@ -487,6 +538,7 @@ class Instance {
             }
         }
 
+        // Printa o peso adquirido em cada cidade, de cada ladrao
         void printWeights()
         {
             for(int i = 0; i < this->thieves.size(); i++)

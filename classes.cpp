@@ -619,6 +619,24 @@ class Instance {
             }
         }
 
+        void output()
+        {
+            for(int i = 0; i < this->thieves.size(); i++)
+            {
+                std::cout << "[";
+                for(int j = 1; j < thieves[i].second.route.size() - 1; j++)
+                {
+                    std::cout <<thieves[i].second.route[j] << ",";
+                }
+                std::cout << thieves[i].second.route[thieves[i].second.route.size() - 1] << "]\n[";
+                for(int j = 0; j < thieves[i].second.items.size() - 1; j++)
+                {   
+                    std::cout << thieves[i].second.items[j] << ",";
+                }
+                std::cout << thieves[i].second.items[thieves[i].second.items.size() - 1] << "]\n";
+            }
+        }
+
         /**
          * Funcao de avaliacao
          **/

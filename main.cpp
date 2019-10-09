@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
             Instance instance;
             try
             {
-                std::cout << filename << "\n";
+                // std::cout << filename << "\n";
                 instance = get_instance(filename);
                 instance.addThief(2);
                 instance.greedySolution();

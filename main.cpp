@@ -32,15 +32,14 @@ int main(int argc, char *argv[])
             Instance instance;
             try
             {
-                std::cout << filename << "\n";
+                // std::cout << filename << "\n";
                 instance = get_instance(filename);
                 instance.addThief(1);
                 instance.greedySolution();
-                // instance.printRoutes();
-                // instance.printItems();
-                // instance.printWeights();
-                double objectiveFunction = instance.objectiveFunction();
-                std::cout << instance.objectiveFunction() << " \n";
+                instance.output();
+
+                // double objectiveFunction = instance.objectiveFunction();
+                // std::cout << instance.objectiveFunction() << " \n";
                 // Instance teste;
                 // teste = instance;
                 // std::cout << teste.objectiveFunction() << std::endl;

@@ -98,7 +98,7 @@ Instance get_instance(std::string filename)
         
             // Calcula a distancia da cidade i para todas que ja foram add
             for(int j = i-1; j >= 0; j--){
-                instance.cities_distance[i][j] = sqrt( pow(instance.cities[i].x - instance.cities[j].x, 2) + pow(instance.cities[i].y - instance.cities[j].y, 2) );
+                instance.cities_distance[i][j] = ceil( sqrt( pow(instance.cities[i].x - instance.cities[j].x, 2) + pow(instance.cities[i].y - instance.cities[j].y, 2) ) );
                 instance.cities_distance[j][i] = instance.cities_distance[i][j];
             }
         }

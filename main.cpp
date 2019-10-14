@@ -34,18 +34,18 @@ int main(int argc, char *argv[])
             {
                 // std::cout << filename << "\n";
                 instance = get_instance(filename);
-                instance.addThief(2);
+                instance.addThief(5);
                 instance.greedySolution();
-                
+                instance.output();
                 // instance.printRoutes();
-                instance.printItems();
+                // instance.printItems();
                 // instance.printWeights();
                 
-                instance.swap_items_btw_thieves(true);
-                instance.printItems();
-
+                //instance.swap_items_btw_thieves(true);
+                //instance.printItems();
+                //std::cout << instance.used_capacity << " " << instance.max_capacity << std::endl;
                 double objectiveFunction = instance.objectiveFunction();
-                std::cout << instance.objectiveFunction() << " \n";
+                std::cout << objectiveFunction << std::endl;
 
                 break;
             }

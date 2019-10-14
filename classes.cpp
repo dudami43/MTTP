@@ -554,7 +554,7 @@ class Instance {
                         current_city = this->items[best_index].city_idx;
 
                         // Pega o item
-                        this->taked_items[best_index] = true;
+                        this->taked_items[best_index] = 1;
                         this->used_capacity += this->items[best_index].weight;
 
                         // Adiciona o item a mochila do ladrao
@@ -602,7 +602,7 @@ class Instance {
                 std::cout << "ladrao " << i << std::endl;std::cout << "items: \n";
                 for(int j = 0; j < thieves[i].second.items.size(); j++)
                 {   
-                    std::cout << "item " << thieves[i].second.items[j] << " com valor " << this->items[thieves[i].second.items[j]].value << std::endl;
+                    std::cout << "item " << thieves[i].second.items[j] << " com valor " << this->items[thieves[i].second.items[j]].value << " e peso " << this->items[thieves[i].second.items[j]].weight <<  std::endl;
                 }
             }
         }
@@ -626,14 +626,14 @@ class Instance {
                 std::cout << "[";
                 for(int j = 1; j < thieves[i].second.route.size() - 1; j++)
                 {
-                    std::cout <<thieves[i].second.route[j] << ",";
+                    std::cout <<thieves[i].second.route[j]+1 << ",";
                 }
-                std::cout << thieves[i].second.route[thieves[i].second.route.size() - 1] << "]\n[";
+                std::cout << thieves[i].second.route[thieves[i].second.route.size() - 1]+1 << "]\n[";
                 for(int j = 0; j < thieves[i].second.items.size() - 1; j++)
                 {   
-                    std::cout << thieves[i].second.items[j] << ",";
+                    std::cout << thieves[i].second.items[j]+1 << ",";
                 }
-                std::cout << thieves[i].second.items[thieves[i].second.items.size() - 1] << "]\n";
+                std::cout << thieves[i].second.items[thieves[i].second.items.size() - 1]+1 << "]\n";
             }
         }
 
@@ -686,6 +686,7 @@ class Instance {
             }
 
             // Calcula funcao maxZ
+            std::cout << "Profit " << total_value << " Rent " << time << std::endl;
             maxZ = total_value - this->renting_ratio*time;
             
             return maxZ;

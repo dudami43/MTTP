@@ -7,15 +7,18 @@
 **/
 double localSearch(Instance& inst)
 {
+
     double current_value = inst.objectiveFunction();
     double best_value = current_value;
     Instance prev_inst;
     bool improving = true;
     int tries = 0;
+
     while(improving && tries < 10)
     {
         prev_inst = inst;
         inst.swap_cities();
+        
         if(inst.solutionValid())
         {
             current_value = inst.objectiveFunction();

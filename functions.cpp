@@ -7,35 +7,37 @@
 **/
 double localSearch(Instance& inst)
 {
-
-    double current_value = inst.objectiveFunction();
-    double best_value = current_value;
-    Instance prev_inst;
-    bool improving = true;
+    double current_value, best_value = inst.objectiveFunction();
+    Instance initial_instance;
     int tries = 0;
+    int thief = rand() % inst.thieves.size();
 
-    while(improving && tries < 10)
+    // Procura duas cidades que melhoram a solucao atual
+    for(int i = 1; i < inst.thieves[thief].second.route.size(); i++)
     {
-        prev_inst = inst;
-        inst.swap_cities();
-        
-        if(inst.solutionValid())
+        for(int j = i + 1; j < inst.thieves[thief].second.route.size(); j++)
         {
-            current_value = inst.objectiveFunction();
+            // Salva o estado da instancia
+            initial_instance = inst;
+
+            // Muda para o proximo vizinho
+            inst.swap_cities(thief, i, j);
             
-            if(current_value > best_value)
+            // Valida solucao
+            if(inst.solutionValid())
             {
-                best_value = current_value;
+                // Avalia a nova solucao
+                current_value = inst.objectiveFunction();
+                
+                // Verifica se eh melhor que a atual
+                if(current_value > best_value)
+                {
+                    return current_value;
+                }
             }
-            else
-            {
-                improving = false;
-            }
-        }
-        else
-        {
-            prev_inst = inst;
-            tries++;
+
+            // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+            inst = initial_instance;
         }
     }
     

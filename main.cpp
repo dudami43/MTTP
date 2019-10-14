@@ -34,20 +34,28 @@ int main(int argc, char *argv[])
             {
                 // std::cout << filename << "\n";
                 instance = get_instance(filename);
-                instance.addThief(5);
+                instance.addThief(2);
                 instance.greedySolution();
-                instance.output();
+                
                 // instance.printRoutes();
                 // instance.printItems();
                 // instance.printWeights();
-                
-                //instance.swap_items_btw_thieves(true);
-                //instance.printItems();
-                //std::cout << instance.used_capacity << " " << instance.max_capacity << std::endl;
-                double objectiveFunction = instance.objectiveFunction();
-                std::cout << objectiveFunction << std::endl;
+                // instance.output();
 
-                break;
+                double objectiveFunction = instance.objectiveFunction();
+                std::cout << "Initial Value: " << objectiveFunction;
+
+                double best = objectiveFunction;
+                int cont = 0;
+                while(true)
+                {
+                    double result = localSearch(instance);
+                    if(result > best) best = result;
+                    else cont++;
+                    if(cont >= 10) break;
+                }
+                std::cout << "  ---  Final Value: " << best << std::endl;
+            
             }
             catch (char const *param)
             {

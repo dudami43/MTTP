@@ -243,16 +243,16 @@ class Instance {
          **/
 
         // Escolhe um ladrao aleatorio e troca a ordem de visitacao entre duas cidades do mesmo
-        void swap_cities(bool verbose = false)
+        void swap_cities(int choosed_thief, int city_1, int city_2, bool verbose = false)
         {
-            // Escolhe um ladrao aleatorio
+            /* // Escolhe um ladrao aleatorio
             int choosed_thief = rand() % this->thieves.size();
 
             // Escolhe aleatoriamente duas cidades distintas(e que nao sejam a inicial) do ladrao
             int city_1 = rand() % this->thieves[choosed_thief].second.route.size();
             while(city_1 == 0) city_1 = rand() % this->thieves[choosed_thief].second.route.size();
             int city_2 = rand() % this->thieves[choosed_thief].second.route.size();
-            while(city_2 == city_1 || city_2 == 0) city_2 = rand() % this->thieves[choosed_thief].second.route.size();
+            while(city_2 == city_1 || city_2 == 0) city_2 = rand() % this->thieves[choosed_thief].second.route.size(); */
 
             // Printa as cidades escolhidas
             if(verbose)
@@ -270,6 +270,7 @@ class Instance {
         }
 
         // Escolhe um ladrao aleatorio e troca a ordem em que uma cidade aleatoria eh visitada
+        //void move_cities(int choosed_thief, int choosed_city, int new_pos, bool verbose = false)
         void move_cities(bool verbose = false)
         {
             // Escolhe um ladrao aleatorio
@@ -310,6 +311,7 @@ class Instance {
         }
 
         // Escolhe dois ladroes aleatoriamente e troca dois itens(um de cada) entre eles
+        //void swap_items_btw_thieves(int thief_1, int thief_2, int item_1, int item_2, bool verbose = false)
         void swap_items_btw_thieves(bool verbose = false)
         {
             // Escolhe dois ladroes aleatoriamente
@@ -334,7 +336,19 @@ class Instance {
             }
             else
             {
-                ;
+                // Adquire a cidade mais proxima
+                int nearest = this->thieves[thief_1].second.route[0];
+                for(int i = this->thieves[thief_1].second.route[1]; i < this->thieves[thief_1].second.route.size(); i++)
+                {
+                    if(this->cities_distance[this->items[this->thieves[thief_2].second.items[item_2]].city_idx][this->thieves[thief_1].second.route[i]] < this->cities_distance[this->items[this->thieves[thief_2].second.items[item_2]].city_idx][nearest])
+                        nearest = this->thieves[thief_1].second.route[i];
+                }
+
+                // Insere a nova cidade logo apos a cidade mais proxima a ela
+                auto new_pos = std::find(this->thieves[thief_1].second.route.begin(), 
+                                    this->thieves[thief_1].second.route.end(), 
+                                    nearest);
+                this->thieves[thief_1].second.route.insert(new_pos, this->items[this->thieves[thief_2].second.items[item_2]].city_idx);
             }
 
             auto pos_2 = std::find(this->thieves[thief_2].second.route.begin(), 
@@ -347,7 +361,19 @@ class Instance {
             }
             else
             {
-                ;
+                // Adquire a cidade mais proxima
+                int nearest = this->thieves[thief_2].second.route[0];
+                for(int i = this->thieves[thief_2].second.route[1]; i < this->thieves[thief_2].second.route.size(); i++)
+                {
+                    if(this->cities_distance[this->items[this->thieves[thief_1].second.items[item_1]].city_idx][this->thieves[thief_2].second.route[i]] < this->cities_distance[this->items[this->thieves[thief_1].second.items[item_1]].city_idx][nearest])
+                        nearest = this->thieves[thief_2].second.route[i];
+                }
+
+                // Insere a nova cidade logo apos a cidade mais proxima a ela
+                auto new_pos = std::find(this->thieves[thief_2].second.route.begin(), 
+                                    this->thieves[thief_2].second.route.end(), 
+                                    nearest);
+                this->thieves[thief_2].second.route.insert(new_pos, this->items[this->thieves[thief_1].second.items[item_1]].city_idx);
             }
 
             // Retira os pesos dos itens dos ladroes:
@@ -388,7 +414,7 @@ class Instance {
 
         }
 
-        // Escolhe aleatoriamente um item de cada ladrao e troca com os outros
+        // Escolhe aleatoriamente um item de cada ladrao e troca com os outros (TODO)
         void swap_items_btw_all_thieves(bool verbose = false)
         {
             // Escolhe um item de cada ladrao
@@ -619,6 +645,7 @@ class Instance {
             }
         }
 
+        // Gera a saida aceita pela aplicacao web de visualizacao de solucao
         void output()
         {
             for(int i = 0; i < this->thieves.size(); i++)
@@ -686,7 +713,7 @@ class Instance {
             }
 
             // Calcula funcao maxZ
-            std::cout << "Profit " << total_value << " Rent " << time << std::endl;
+            //std::cout << "Profit " << total_value << " Rent " << time << std::endl;
             maxZ = total_value - this->renting_ratio*time;
             
             return maxZ;

@@ -270,17 +270,16 @@ class Instance {
         }
 
         // Escolhe um ladrao aleatorio e troca a ordem em que uma cidade aleatoria eh visitada
-        //void move_cities(int choosed_thief, int choosed_city, int new_pos, bool verbose = false)
-        void move_cities(bool verbose = false)
+        void move_cities(int choosed_thief, int choosed_city, int new_pos, bool verbose = false)
         {
-            // Escolhe um ladrao aleatorio
+            /* // Escolhe um ladrao aleatorio
             int choosed_thief = rand() % this->thieves.size();
 
             // Escolhe aleatoriamente uma cidade(diferente da inicial) e uma nova posicao(diferente da inicial) para move-la
             int choosed_city = rand() % this->thieves[choosed_thief].second.route.size();
             while(choosed_city == 0) choosed_city = rand() % this->thieves[choosed_thief].second.route.size();
             int new_pos = rand() % this->thieves[choosed_thief].second.route.size();
-            while(new_pos == 0 || choosed_city == new_pos) new_pos = rand() % this->thieves[choosed_thief].second.route.size();
+            while(new_pos == 0 || choosed_city == new_pos) new_pos = rand() % this->thieves[choosed_thief].second.route.size(); */
 
             // Printa as cidades escolhidas
             if(verbose)
@@ -311,17 +310,16 @@ class Instance {
         }
 
         // Escolhe dois ladroes aleatoriamente e troca dois itens(um de cada) entre eles
-        //void swap_items_btw_thieves(int thief_1, int thief_2, int item_1, int item_2, bool verbose = false)
-        void swap_items_btw_thieves(bool verbose = false)
+        void swap_items_btw_thieves(int thief_1, int thief_2, int item_1, int item_2, bool verbose = false)
         {
-            // Escolhe dois ladroes aleatoriamente
+            /* // Escolhe dois ladroes aleatoriamente
             int thief_1 = rand() % this->thieves.size();
             int thief_2 = rand() % this->thieves.size();
             while(thief_2 == thief_1) thief_2 = rand() % this->thieves.size();
 
             // Escolhe aleatoriamente um item de cada ladrao
             int item_1 = rand() % this->thieves[thief_1].second.items.size();
-            int item_2 = rand() % this->thieves[thief_2].second.items.size();
+            int item_2 = rand() % this->thieves[thief_2].second.items.size(); */
 
             // Verifica se a cidade que contem o novo item ja esta na rota do ladrao
             // Se sim, altera o peso adquirido na mesma
@@ -414,18 +412,10 @@ class Instance {
 
         }
 
-        // Escolhe aleatoriamente um item de cada ladrao e troca com os outros (TODO)
+        // Escolhe aleatoriamente um item de cada ladrao e troca com os outros
         void swap_items_btw_all_thieves(bool verbose = false)
         {
-            // Escolhe um item de cada ladrao
-            std::vector<int> choosed_items; 
-            for(int i = 0; i < this->thieves.size(); i++)
-            {
-                int aux = rand() % this->thieves[i].second.items.size();
-                choosed_items.push_back(aux);
-            }
-
-            // ...
+            // TODO
         }
 
         /**

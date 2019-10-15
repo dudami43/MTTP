@@ -37,24 +37,20 @@ int main(int argc, char *argv[])
                 instance.addThief(2);
                 instance.greedySolution();
                 
-                // instance.printRoutes();
-                // instance.printItems();
-                // instance.printWeights();
-                // instance.output();
+                //instance.printRoutes();
+                //instance.printItems();
+                //instance.printWeights();
+                //instance.output();
 
                 double objectiveFunction = instance.objectiveFunction();
                 std::cout << "Initial Value: " << objectiveFunction;
-
+                std::cout << std::endl; 
                 double best = objectiveFunction;
                 int cont = 0;
                 while(true)
                 {
-                    double result = first_improvement_trade(instance);
-                    if(result > best)
-                    {
-                        cont = 0;
-                        best = result;
-                    }
+                    double result = localSearch_x(instance);
+                    if(result > best) best = result;
                     else cont++;
                     if(cont >= 10) break;
                 }
@@ -64,7 +60,7 @@ int main(int argc, char *argv[])
             catch (char const *param)
             {
                 std::cout << param << std::endl;
-                return 0;
+                //return 0;
             }
         }
         file.close();

@@ -22,7 +22,7 @@ double localSearch(Instance& inst)
 
             // Muda para o proximo vizinho
             inst.swap_cities(thief, i, j);
-            
+
             // Valida solucao
             if(inst.solutionValid())
             {

@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
                 instance.addThief(2);
                 instance.greedySolution();
                 
-                // instance.printRoutes();
-                // instance.printItems();
-                // instance.printWeights();
-                // instance.output();
+                //instance.printRoutes();
+                //instance.printItems();
+                //instance.printWeights();
+                //instance.output();
 
-                double objectiveFunction = instance.objectiveFunction();
+                /*double objectiveFunction = instance.objectiveFunction();
                 std::cout << "Initial Value: " << objectiveFunction;
 
                 double best = objectiveFunction;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
                     else cont++;
                     if(cont >= 10) break;
                 }
-                std::cout << "  ---  Final Value: " << best << std::endl;
+                std::cout << "  ---  Final Value: " << best << std::endl;*/
             
             }
             catch (char const *param)

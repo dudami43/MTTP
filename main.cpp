@@ -42,25 +42,25 @@ int main(int argc, char *argv[])
                 //instance.printWeights();
                 //instance.output();
 
-                /*double objectiveFunction = instance.objectiveFunction();
+                double objectiveFunction = instance.objectiveFunction();
                 std::cout << "Initial Value: " << objectiveFunction;
-
+                std::cout << std::endl; 
                 double best = objectiveFunction;
                 int cont = 0;
                 while(true)
                 {
-                    double result = localSearch(instance);
+                    double result = localSearch_x(instance);
                     if(result > best) best = result;
                     else cont++;
                     if(cont >= 10) break;
                 }
-                std::cout << "  ---  Final Value: " << best << std::endl;*/
+                std::cout << "  ---  Final Value: " << best << std::endl;
             
             }
             catch (char const *param)
             {
                 std::cout << param << std::endl;
-                return 0;
+                //return 0;
             }
         }
         file.close();

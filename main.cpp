@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
                 int cont = 0;
                 while(true)
                 {
-                    double result = first_improvement_trade_ungetted(instance);
                     double result = localSearch(instance, "trade_ungetted");
                     if(result > best) 
                     {

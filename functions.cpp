@@ -44,7 +44,7 @@ double first_improvement_swap(Instance& inst)
     return best_value;
 }
 
-double localSearch_x(Instance& inst)
+double first_improvement_trade_ungetted(Instance& inst)
 {
     double current_value, best_value = inst.objectiveFunction();
     Instance initial_instance;
@@ -125,7 +125,7 @@ double first_improvement_move(Instance& inst)
     return best_value;
 }
 
-double first_improvement_trade(Instance& inst)
+double first_improvement_trade_thieves(Instance& inst)
 {
     double current_value, best_value = inst.objectiveFunction();
     Instance initial_instance;
@@ -167,4 +167,23 @@ double first_improvement_trade(Instance& inst)
     }
     
     return best_value;
+}
+
+double localSearch(Instance& inst, std::string method){
+    if(method.compare("swap"))
+    {
+        return first_improvement_swap(inst);
+    }
+    else if(method.compare("move"))
+    {
+        return first_improvement_move(inst);
+    }
+    else if(method.compare("trade_ungetted"))
+    {
+        return first_improvement_trade_ungetted(inst);
+    }
+    else if(method.compare("trade_btw_thieves"))
+    {
+        return first_improvement_trade_thieves(inst);
+    }
 }

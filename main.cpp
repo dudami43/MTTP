@@ -49,8 +49,13 @@ int main(int argc, char *argv[])
                 int cont = 0;
                 while(true)
                 {
-                    double result = localSearch_x(instance);
-                    if(result > best) best = result;
+                    double result = first_improvement_trade_ungetted(instance);
+                    double result = localSearch(instance, "trade_ungetted");
+                    if(result > best) 
+                    {
+                        cont = 0;
+                        best = result;
+                    }
                     else cont++;
                     if(cont >= 10) break;
                 }

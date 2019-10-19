@@ -42,23 +42,8 @@ int main(int argc, char *argv[])
                 //instance.printWeights();
                 //instance.output();
 
-                double objectiveFunction = instance.objectiveFunction();
-                std::cout << "Initial Value: " << objectiveFunction;
-                std::cout << std::endl; 
-                double best = objectiveFunction;
-                int cont = 0;
-                while(true)
-                {
-                    double result = localSearch(instance, "trade_ungetted");
-                    if(result > best) 
-                    {
-                        cont = 0;
-                        best = result;
-                    }
-                    else cont++;
-                    if(cont >= 10) break;
-                }
-                std::cout << "  ---  Final Value: " << best << std::endl;
+                
+                std::cout << "  ---  Final Value: " << call_localSearch(instance, "trade_ungetted") << std::endl;
             
             }
             catch (char const *param)

@@ -206,6 +206,7 @@ double call_localSearch(Instance& instance, std::string method)
         if(cont >= 10) break;
     }
     return best;
+}
 /**
  * Heuristicas
  **/

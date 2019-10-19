@@ -782,6 +782,33 @@ class Instance {
         }
 
         /**
+         *  Funcoes auxiliares
+         **/
+        void disturbe(int n_disturbe = 5)
+        {
+            // Escolhe uma vizinhanca aleatoriamente
+            int neighborhood = rand() % 4;
+
+            if(neighborhood == 0) // swap_cities
+            {
+                
+            }
+            else if(neighborhood == 1) // move_cities
+            {
+                
+            }
+            else if(neighborhood == 2) // swap_items_btw_thieves
+            {
+                
+            }
+            else // exchange_items
+            {
+                
+            }
+
+        }
+
+        /**
          * Funcoes de impressao
          **/
         

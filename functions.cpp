@@ -169,7 +169,8 @@ double first_improvement_trade_thieves(Instance& inst)
     return best_value;
 }
 
-double localSearch(Instance& inst, std::string method){
+double localSearch(Instance& inst, std::string method)
+{
     if(method.compare("swap"))
     {
         return first_improvement_swap(inst);
@@ -186,4 +187,69 @@ double localSearch(Instance& inst, std::string method){
     {
         return first_improvement_trade_thieves(inst);
     }
+}
+
+/**
+ * Heuristicas
+ **/
+
+double VNS(Instance& inst, int max_disturbance, bool verbose)
+{
+
+    // Inicializa o vector de vizinhanças
+    std::vector<std::string> neighborhoods;
+    neighborhoods.push_back("trade_ungetted");
+    neighborhoods.push_back("swap");
+    neighborhoods.push_back("move");
+    neighborhoods.push_back("trade_btw_thieves");
+
+    // Gera solucao inicial
+    inst.greedySolution();
+
+    // Seta instancia auxiliar
+    Instance aux_inst;
+    aux_inst = inst;
+
+    // Inicializa variaveis da vizinhança e da melhor solucao
+    int neighborhood = 0, n_disturbance = 0;
+    double best_value = inst.objectiveFunction(), current_value;
+
+    while(true)
+    {
+        // Aplica busca local com a vizinhanca atual
+        current_value = localSearch(inst, neighborhoods[neighborhood]);
+
+        // if(verbose) std::cout << "Valor atual: " << current_value << std::endl;
+
+        // Verifica se melhorou a solucao
+        if(current_value > best_value) 
+        {
+            // Se melhorou, volta para a vizinhanca inicial
+            best_value = current_value;
+            aux_inst = inst;
+            neighborhood = 0;
+        }
+        else
+        {
+            // Se piorou, tenta a proxima vizinhanca
+            inst = aux_inst;
+            neighborhood++;
+        }
+
+        // Caso n haja melhora na solucao, e a vizinhanca eh a ultima, entao perturba a solucao
+        if(neighborhood == (neighborhoods.size() - 1)){
+            
+            // Caso o numero de perturbacoes tenha chegado ao limite, entao termina o algoritmo
+            if(n_disturbance >= max_disturbance) break;
+
+            // Perturba
+            
+
+            // Reseta a vizinhanca
+            aux_inst = inst;
+            neighborhood = 0;
+        }
+    }
+
+    return best_value;
 }

@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
                 //instance.output();
 
                 double objectiveFunction = instance.objectiveFunction();
-                std::cout << "Initial Value: " << objectiveFunction;
-                std::cout << std::endl; 
                 double best = objectiveFunction;
-                int cont = 0;
+                double result = VNS(instance, 10);
+
+                /* int cont = 0;
                 while(true)
                 {
                     double result = localSearch(instance, "trade_ungetted");
@@ -57,8 +57,10 @@ int main(int argc, char *argv[])
                     }
                     else cont++;
                     if(cont >= 10) break;
-                }
-                std::cout << "  ---  Final Value: " << best << std::endl;
+                } */
+
+                std::cout << "Initial Value: " << objectiveFunction;
+                std::cout << "  ---  Final Value: " << result << std::endl;
             
             }
             catch (char const *param)

@@ -189,6 +189,23 @@ double localSearch(Instance& inst, std::string method)
     }
 }
 
+double call_localSearch(Instance& instance, std::string method)
+{
+    double objectiveFunction = instance.objectiveFunction();
+    double best = objectiveFunction;
+    int cont = 0;
+    while(true)
+    {
+        double result = localSearch(instance, method);
+        if(result > best) 
+        {
+            cont = 0;
+            best = result;
+        }
+        else cont++;
+        if(cont >= 10) break;
+    }
+    return best;
 /**
  * Heuristicas
  **/

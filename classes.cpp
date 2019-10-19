@@ -112,7 +112,7 @@ class Instance {
         std::vector<City> cities;
         std::vector<std::pair<double,Thief>> thieves; //<velocidade, ladrão>
         std::vector<Item> items;
-        std::vector<int> taked_items;
+        std::vector<int> caught_items;
 
         /**
          * Funcoes de inicializacao
@@ -148,7 +148,7 @@ class Instance {
             this->cities_distance.assign(num_cities, empty_distance);
 
             // Inicializa todos os items como "nao pego"
-            this->taked_items.assign(num_items, 0);
+            this->caught_items.assign(num_items, 0);
         }
 
         // Construtor de cópia
@@ -163,7 +163,7 @@ class Instance {
             this->max_speed = inst.max_speed;
             this->renting_ratio = inst.renting_ratio;
             this->cities_distance = inst.cities_distance;
-            this->taked_items = inst.taked_items;
+            this->caught_items = inst.caught_items;
 
             this->cities = inst.cities;
             this->thieves = inst.thieves; 
@@ -182,7 +182,7 @@ class Instance {
             this->max_speed = inst.max_speed;
             this->renting_ratio = inst.renting_ratio;
             this->cities_distance = inst.cities_distance;
-            this->taked_items = inst.taked_items;
+            this->caught_items = inst.caught_items;
 
             this->cities = inst.cities;
             this->thieves = inst.thieves; 
@@ -209,7 +209,7 @@ class Instance {
             this->cities_distance.assign(num_cities, empty_distance);
 
             // Inicializa todos os items como "nao pego"
-            this->taked_items.assign(num_items, 0);
+            this->caught_items.assign(num_items, 0);
         }
 
         // Adiciona n ladroes a instancia
@@ -224,8 +224,8 @@ class Instance {
         void cleanSolution()
         {
             // Inicializa todos os items como "nao pego"
-            this->taked_items.clear();
-            this->taked_items.assign(num_items, 0);
+            this->caught_items.clear();
+            this->caught_items.assign(num_items, 0);
 
             // Reinicializa a capacidade usada
             this->used_capacity = 0;
@@ -423,7 +423,7 @@ class Instance {
 
             if(this->thieves[choosed_thief].second.items.size() > remove_item)
             {
-                if(this->taked_items[insert_item] == 0)
+                if(this->caught_items[insert_item] == 0)
                 {
                     double p = ((double) rand() / (RAND_MAX));
                     if(p >= 0.5 && ((this->items[insert_item].weight + this->used_capacity - this->items[remove_item].weight) <= this->max_capacity))
@@ -440,7 +440,7 @@ class Instance {
                         }
                         
                         this->thieves[choosed_thief].second.items.erase(this->thieves[choosed_thief].second.items.begin() + remove_item); 
-                        taked_items[remove_item] = 0;
+                        caught_items[remove_item] = 0;
 
                         if(verbose) std::cout << "Removi item " << remove_item << std::endl;
 
@@ -454,7 +454,7 @@ class Instance {
                         
 
                         this->thieves[choosed_thief].second.items.push_back(insert_item);
-                        taked_items[insert_item] = 1;
+                        caught_items[insert_item] = 1;
                         if(verbose) std::cout << "Inseri item " << insert_item << std::endl;
 
                         if(pos == this->thieves[choosed_thief].second.route.end())
@@ -473,7 +473,7 @@ class Instance {
 
                         //se couber o novo item na mochila
                         //remover remove_item e cidade se precisar
-                        //setar taked_items
+                        //setar caught_items
                         //inserir insert_item
                         //colocar cidade na rota
                         //incrementar peso da mochila
@@ -495,7 +495,7 @@ class Instance {
                         {
                             this->thieves[choosed_thief].second.route.erase(pos);
                             this->thieves[choosed_thief].second.items.erase(this->thieves[choosed_thief].second.items.begin() + remove_item);
-                            taked_items[remove_item] = 0;
+                            caught_items[remove_item] = 0;
 
                             if(verbose) std::cout << "Removi item sem colocar outro " << remove_item << std::endl;
 
@@ -518,14 +518,14 @@ class Instance {
 
                 int tries = 0;
 
-                while(this->taked_items[insert_item] == 1 && tries <= this->items.size()/3)
+                while(this->caught_items[insert_item] == 1 && tries <= this->items.size()/3)
                 {
                     insert_item = rand() % this->items.size();
                 }
 
                 if(verbose) std::cout << "insert " << insert_item << " remove " << remove_item << std::endl;
 
-                if(this->taked_items[insert_item] == 0)
+                if(this->caught_items[insert_item] == 0)
                 {
                     double p = ((double) rand() / (RAND_MAX));
                     if(p >= 0.5 && ((this->items[insert_item].weight + this->used_capacity - this->items[remove_item].weight) <= this->max_capacity))
@@ -542,7 +542,7 @@ class Instance {
                         }
                         
                         this->thieves[i].second.items.erase(this->thieves[i].second.items.begin() + remove_item); 
-                        taked_items[remove_item] = 0;
+                        caught_items[remove_item] = 0;
 
                         if(verbose) std::cout << "Removi item " << remove_item << std::endl;
 
@@ -555,7 +555,7 @@ class Instance {
                         
 
                         this->thieves[i].second.items.push_back(insert_item);
-                        taked_items[insert_item] = 1;
+                        caught_items[insert_item] = 1;
                         if(verbose) std::cout << "Inseri item " << insert_item << std::endl;
 
                         if(pos == this->thieves[i].second.route.end())
@@ -571,7 +571,7 @@ class Instance {
 
                         //se couber o novo item na mochila
                         //remover remove_item e cidade se precisar
-                        //setar taked_items
+                        //setar caught_items
                         //inserir insert_item
                         //colocar cidade na rota
                         //incrementar peso da mochila
@@ -593,7 +593,7 @@ class Instance {
                         {
                             this->thieves[i].second.route.erase(pos);
                             this->thieves[i].second.items.erase(this->thieves[i].second.items.begin() + remove_item);
-                            taked_items[remove_item] = 0;
+                            caught_items[remove_item] = 0;
 
                             if(verbose) std::cout << "Removi item sem colocar outro " << remove_item << std::endl;
 
@@ -649,22 +649,22 @@ class Instance {
             });
 
             // Enquanto algum ladrao escolheu um item
-            bool taked = true;
-            while(taked)
+            bool caught = true;
+            while(caught)
             {
-                taked = false;
+                caught = false;
 
                 for(int j = 0; j < this->thieves.size(); j++)
                 {
                     for(int i = sorted_items_idx.size() - 1; i >= 0; i--)
                     {
                         // Se o item ainda n foi pego, e cabe na mochila
-                        if(!this->taked_items[sorted_items_idx[i]] && (this->items[sorted_items_idx[i]].weight < this->max_capacity - this->used_capacity))
+                        if(!this->caught_items[sorted_items_idx[i]] && (this->items[sorted_items_idx[i]].weight < this->max_capacity - this->used_capacity))
                         {
                             // Pega o item
-                            this->taked_items[sorted_items_idx[i]] = true;
+                            this->caught_items[sorted_items_idx[i]] = true;
                             this->used_capacity += this->items[sorted_items_idx[i]].weight;
-                            taked = true;
+                            caught = true;
 
                             // Adiciona o item a mochila do ladrao
                             this->thieves[j].second.items.push_back(sorted_items_idx[i]);
@@ -715,7 +715,7 @@ class Instance {
             this->cleanSolution();
 
             std::vector<int> better_item(this->thieves.size());
-            std::vector<int> aux_taked_items(this->items.size(), 0);
+            std::vector<int> aux_caught_items(this->items.size(), 0);
             bool items_remaining = true;
 
             int current_city = 0;
@@ -735,7 +735,7 @@ class Instance {
                     float cur_val = 0;
                     for(int j = 0; j < this->items.size(); j++)
                     {
-                        if(aux_taked_items[j] == 0)
+                        if(aux_caught_items[j] == 0)
                         {
                             cur_val = this->items[j].value / this->cities_distance[current_city][this->items[j].city_idx];
                             if(cur_val > best_val)
@@ -751,14 +751,14 @@ class Instance {
                         }
                     }
                     better_item[i] = best_index;
-                    aux_taked_items[best_index] = 1;
+                    aux_caught_items[best_index] = 1;
 
                     if(this->items[best_index].weight < this->max_capacity - this->used_capacity)
                     {
                         current_city = this->items[best_index].city_idx;
 
                         // Pega o item
-                        this->taked_items[best_index] = 1;
+                        this->caught_items[best_index] = 1;
                         this->used_capacity += this->items[best_index].weight;
 
                         // Adiciona o item a mochila do ladrao
@@ -784,28 +784,63 @@ class Instance {
         /**
          *  Funcoes auxiliares
          **/
-        void disturbe(int n_disturbe = 5)
+        void disturbe(int n_disturbe)
         {
-            // Escolhe uma vizinhanca aleatoriamente
-            int neighborhood = rand() % 4;
+            for(int i = 0; i < n_disturbe; i++)
+            {
+                // Escolhe uma vizinhanca aleatoriamente
+                int neighborhood = rand() % 3;
+                //int neighborhood = 2;
 
-            if(neighborhood == 0) // swap_cities
-            {
-                
-            }
-            else if(neighborhood == 1) // move_cities
-            {
-                
-            }
-            else if(neighborhood == 2) // swap_items_btw_thieves
-            {
-                
-            }
-            else // exchange_items
-            {
-                
-            }
+                if(neighborhood == 0) // swap_cities
+                {
+                    // Escolhe um ladrao aleatorio
+                    int choosed_thief = rand() % this->thieves.size();
 
+                    // Escolhe aleatoriamente duas cidades distintas(e que nao sejam a inicial) do ladrao
+                    int city_1 = rand() % this->thieves[choosed_thief].second.route.size();
+                    while(city_1 == 0) city_1 = rand() % this->thieves[choosed_thief].second.route.size();
+                    int city_2 = rand() % this->thieves[choosed_thief].second.route.size();
+                    while(city_2 == city_1 || city_2 == 0) city_2 = rand() % this->thieves[choosed_thief].second.route.size();
+                    
+                    // Aplica a perturbacao
+                    this->swap_cities(choosed_thief, city_1, city_2);
+                    
+                }
+                else if(neighborhood == 1) // move_cities
+                {
+                    // Escolhe um ladrao aleatorio
+                    int choosed_thief = rand() % this->thieves.size();
+
+                    // Escolhe aleatoriamente uma cidade(diferente da inicial) e uma nova posicao(diferente da inicial) para move-la
+                    int choosed_city = rand() % this->thieves[choosed_thief].second.route.size();
+                    while(choosed_city == 0) choosed_city = rand() % this->thieves[choosed_thief].second.route.size();
+                    int new_pos = rand() % this->thieves[choosed_thief].second.route.size();
+                    while(new_pos == 0 || choosed_city == new_pos) new_pos = rand() % this->thieves[choosed_thief].second.route.size();
+                    
+                    // Aplica a perturbacao
+                    this->move_cities(choosed_thief, choosed_city, new_pos);
+                }
+                /* else if(neighborhood == 2) // swap_items_btw_thieves
+                {
+                    // Escolhe dois ladroes aleatoriamente
+                    int thief_1 = rand() % this->thieves.size();
+                    int thief_2 = rand() % this->thieves.size();
+                    while(thief_2 == thief_1) thief_2 = rand() % this->thieves.size();
+
+                    // Escolhe aleatoriamente um item de cada ladrao
+                    int item_1 = rand() % this->thieves[thief_1].second.items.size();
+                    int item_2 = rand() % this->thieves[thief_2].second.items.size();
+                    
+                    // Aplica a perturbacao
+                    this->swap_items_btw_thieves(thief_1, thief_2, item_1, item_2);
+                } */
+                else // exchange_items
+                {
+                    // Aplica a perturbacao
+                    this->exchange_random_items();
+                }
+            }
         }
 
         /**
@@ -885,9 +920,9 @@ class Instance {
             long long int total_value = 0;
 
             // Soma todo os valores dos itens
-            for(int i = 0; i < this->taked_items.size(); i++)
+            for(int i = 0; i < this->caught_items.size(); i++)
             {
-                total_value += this->items[i].value*this->taked_items[i];
+                total_value += this->items[i].value*this->caught_items[i];
             }
 
             // Calcula custo do percurso para todos os ladroes

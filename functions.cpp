@@ -44,7 +44,7 @@ double first_improvement_swap(Instance& inst)
     return best_value;
 }
 
-double first_improvement_trade_ungetted(Instance& inst)
+double first_improvement_trade_ungotted(Instance& inst)
 {
     double current_value, best_value = inst.objectiveFunction();
     Instance initial_instance;
@@ -179,9 +179,9 @@ double localSearch(Instance& inst, std::string method)
     {
         return first_improvement_move(inst);
     }
-    else if(method.compare("trade_ungetted"))
+    else if(method.compare("trade_ungotted"))
     {
-        return first_improvement_trade_ungetted(inst);
+        return first_improvement_trade_ungotted(inst);
     }
     else if(method.compare("trade_btw_thieves"))
     {
@@ -198,7 +198,7 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
 
     // Inicializa o vector de vizinhanças
     std::vector<std::string> neighborhoods;
-    neighborhoods.push_back("trade_ungetted");
+    neighborhoods.push_back("trade_ungotted");
     neighborhoods.push_back("swap");
     neighborhoods.push_back("move");
     neighborhoods.push_back("trade_btw_thieves");
@@ -217,7 +217,14 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
     while(true)
     {
         // Aplica busca local com a vizinhanca atual
+        /* for(auto thief: inst.thieves){
+            std::cout << "Numero de itens: " << thief.second.items.size() << std::endl;
+            std::cout << "Numero de pesos: " << thief.second.backpack_weight.size() << std::endl;
+            std::cout << "Numero de cidades: " << thief.second.route.size() << std::endl;
+        }
+        std::cout << "start busca" << std::endl; */
         current_value = localSearch(inst, neighborhoods[neighborhood]);
+        //std::cout << "end busca" << std::endl << std::endl;
 
         // if(verbose) std::cout << "Valor atual: " << current_value << std::endl;
 
@@ -237,17 +244,17 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
         }
 
         // Caso n haja melhora na solucao, e a vizinhanca eh a ultima, entao perturba a solucao
-        if(neighborhood == (neighborhoods.size() - 1)){
-            
+        if(neighborhood == neighborhoods.size()){
             // Caso o numero de perturbacoes tenha chegado ao limite, entao termina o algoritmo
             if(n_disturbance >= max_disturbance) break;
-
-            // Perturba
-            
+            n_disturbance++;
 
             // Reseta a vizinhanca
             aux_inst = inst;
             neighborhood = 0;
+
+            // Perturba
+            inst.disturbe(5);
         }
     }
 

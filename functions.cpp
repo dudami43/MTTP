@@ -44,7 +44,7 @@ double first_improvement_swap(Instance& inst)
     return best_value;
 }
 
-double first_improvement_trade_ungetted(Instance& inst)
+double first_improvement_trade_ungotted(Instance& inst)
 {
     double current_value, best_value = inst.objectiveFunction();
     Instance initial_instance;
@@ -179,9 +179,9 @@ double localSearch(Instance& inst, std::string method)
     {
         return first_improvement_move(inst);
     }
-    else if(method.compare("trade_ungetted"))
+    else if(method.compare("trade_ungotted"))
     {
-        return first_improvement_trade_ungetted(inst);
+        return first_improvement_trade_ungotted(inst);
     }
     else if(method.compare("trade_btw_thieves"))
     {
@@ -216,7 +216,7 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
 
     // Inicializa o vector de vizinhanças
     std::vector<std::string> neighborhoods;
-    neighborhoods.push_back("trade_ungetted");
+    neighborhoods.push_back("trade_ungotted");
     neighborhoods.push_back("swap");
     neighborhoods.push_back("move");
     neighborhoods.push_back("trade_btw_thieves");
@@ -235,7 +235,14 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
     while(true)
     {
         // Aplica busca local com a vizinhanca atual
+        /* for(auto thief: inst.thieves){
+            std::cout << "Numero de itens: " << thief.second.items.size() << std::endl;
+            std::cout << "Numero de pesos: " << thief.second.backpack_weight.size() << std::endl;
+            std::cout << "Numero de cidades: " << thief.second.route.size() << std::endl;
+        }
+        std::cout << "start busca" << std::endl; */
         current_value = localSearch(inst, neighborhoods[neighborhood]);
+        //std::cout << "end busca" << std::endl << std::endl;
 
         // if(verbose) std::cout << "Valor atual: " << current_value << std::endl;
 
@@ -255,17 +262,17 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
         }
 
         // Caso n haja melhora na solucao, e a vizinhanca eh a ultima, entao perturba a solucao
-        if(neighborhood == (neighborhoods.size() - 1)){
-            
+        if(neighborhood == neighborhoods.size()){
             // Caso o numero de perturbacoes tenha chegado ao limite, entao termina o algoritmo
             if(n_disturbance >= max_disturbance) break;
-
-            // Perturba
-            
+            n_disturbance++;
 
             // Reseta a vizinhanca
             aux_inst = inst;
             neighborhood = 0;
+
+            // Perturba
+            inst.disturbe(5);
         }
     }
 
@@ -277,7 +284,7 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, bool verbose
     for(int i = 0; i <= 20; i++)
     {
         Instance instance = inst;
-        std::vector<int> aux_taked_items(instance.items.size(), 0);
+        std::vector<int> aux_caught_items(instance.items.size(), 0);
         for(int i = 0; i < instance.thieves.size(); i++)
         {
             instance.thieves[i].second.route.push_back(0);
@@ -294,13 +301,13 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, bool verbose
             {
                 rand_item = rand() % instance.items.size();
                 tries++;
-                if(aux_taked_items[rand_item] == 1)
+                if(aux_caught_items[rand_item] == 1)
                 {
                     items_available = false;
                 }
                 else
                 {
-                    aux_taked_items[rand_item] = 1;
+                    aux_caught_items[rand_item] = 1;
                     items_available = true;
                     break;
                 }
@@ -313,7 +320,7 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, bool verbose
                     int current_city = instance.items[rand_item].city_idx;
 
                     // Pega o item
-                    instance.taked_items[rand_item] = 1;
+                    instance.caught_items[rand_item] = 1;
                     instance.used_capacity += instance.items[rand_item].weight;
 
                     if(verbose) std::cout << "Peguei o item" << std::endl;
@@ -448,12 +455,12 @@ void mutation(std::vector<Instance>& generation, bool verbose)
         int remove_item = rand() % generation[i].thieves[rand_thief].second.items.size();
         int insert_item = rand() % generation[i].items.size();
         int tries = 0;
-        while(generation[i].taked_items[insert_item] == 1 && tries <= generation[i].items.size()/3)
+        while(generation[i].caught_items[insert_item] == 1 && tries <= generation[i].items.size()/3)
         {
             insert_item = rand() % generation[i].items.size();
             tries++;
         }
-        if(generation[i].taked_items[insert_item] == 0 && ((generation[i].items[insert_item].weight + generation[i].used_capacity) <= generation[i].used_capacity))
+        if(generation[i].caught_items[insert_item] == 0 && ((generation[i].items[insert_item].weight + generation[i].used_capacity) <= generation[i].used_capacity))
         {
             bool remove_city = true;
             for(int j = 0; j < generation[i].thieves[rand_thief].second.items.size(); j++)
@@ -467,7 +474,7 @@ void mutation(std::vector<Instance>& generation, bool verbose)
             }
                         
             generation[i].thieves[rand_thief].second.items.erase(generation[i].thieves[rand_thief].second.items.begin() + remove_item); 
-            generation[i].taked_items[remove_item] = 0;
+            generation[i].caught_items[remove_item] = 0;
             auto pos = std::find(generation[i].thieves[rand_thief].second.route.begin(), generation[i].thieves[rand_thief].second.route.end(), generation[i].items[remove_item].city_idx);
             int index_city = std::distance(generation[i].thieves[rand_thief].second.route.begin(), pos);
             generation[i].thieves[rand_thief].second.backpack_weight[index_city] -= generation[i].items[remove_item].weight;
@@ -482,7 +489,7 @@ void mutation(std::vector<Instance>& generation, bool verbose)
             }   
 
             generation[i].thieves[rand_thief].second.items.push_back(insert_item);
-            generation[i].taked_items[insert_item] = 1;
+            generation[i].caught_items[insert_item] = 1;
             generation[i].used_capacity += generation[i].items[insert_item].weight;
 
             if(verbose) std::cout << "Inseri item " << insert_item << std::endl;
@@ -516,7 +523,7 @@ void validation(std::vector<Instance>& generation, bool verbose)
         for(int j = 0; j < generation[i].items.size(); j++)
         {
             std::vector<std::pair<int,int>> occur; //<ladrao, pos_item>
-            if(generation[i].taked_items[j] == 1)
+            if(generation[i].caught_items[j] == 1)
             {
                 for(int k = 0; k < generation[i].thieves.size(); k++)
                 {

@@ -32,36 +32,10 @@ int main(int argc, char *argv[])
             Instance instance;
             try
             {
-                // std::cout << filename << "\n";
+                std::cout << filename << "\n";
                 instance = get_instance(filename);
-                instance.addThief(2);
-                instance.greedySolution();
-                
-                //instance.printRoutes();
-                //instance.printItems();
-                //instance.printWeights();
-                //instance.output();
-
-                double objectiveFunction = instance.objectiveFunction();
-                double best = objectiveFunction;
-                double result = VNS(instance, 10);
-
-                /* int cont = 0;
-                while(true)
-                {
-                    double result = localSearch(instance, "trade_ungetted");
-                    if(result > best) 
-                    {
-                        cont = 0;
-                        best = result;
-                    }
-                    else cont++;
-                    if(cont >= 10) break;
-                } */
-
-                std::cout << "Initial Value: " << objectiveFunction;
-                std::cout << "  ---  Final Value: " << result << std::endl;
-            
+                instance.addThief(3);
+                std::cout << geneticAlgorithm(instance) << std::endl; 
             }
             catch (char const *param)
             {

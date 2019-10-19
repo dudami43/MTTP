@@ -442,19 +442,23 @@ class Instance {
                         this->thieves[choosed_thief].second.items.erase(this->thieves[choosed_thief].second.items.begin() + remove_item); 
                         taked_items[remove_item] = 0;
 
+                        auto pos = std::find(this->thieves[choosed_thief].second.route.begin(), this->thieves[choosed_thief].second.route.end(), this->items[remove_item].city_idx);
+                        int index_city = std::distance(thieves[choosed_thief].second.route.begin(), pos);
+                        this->thieves[choosed_thief].second.backpack_weight[index_city] -= this->items[remove_item].weight;
+                        this->used_capacity -= this->items[remove_item].weight;
+
                         if(verbose) std::cout << "Removi item " << remove_item << std::endl;
 
-
-                        auto pos = std::find(this->thieves[choosed_thief].second.route.begin(), this->thieves[choosed_thief].second.route.end(), this->items[remove_item].city_idx);
                         if(remove_city && pos != this->thieves[choosed_thief].second.route.end())
                         {
                             this->thieves[choosed_thief].second.route.erase(pos);
                             if(verbose) std::cout << "Removi cidade " << this->items[remove_item].city_idx << std::endl;
                         }
-                        
 
                         this->thieves[choosed_thief].second.items.push_back(insert_item);
                         taked_items[insert_item] = 1;
+                        this->used_capacity += this->items[insert_item].weight;
+
                         if(verbose) std::cout << "Inseri item " << insert_item << std::endl;
 
                         if(pos == this->thieves[choosed_thief].second.route.end())
@@ -496,6 +500,9 @@ class Instance {
                             this->thieves[choosed_thief].second.route.erase(pos);
                             this->thieves[choosed_thief].second.items.erase(this->thieves[choosed_thief].second.items.begin() + remove_item);
                             taked_items[remove_item] = 0;
+                            int index_city = std::distance(thieves[choosed_thief].second.route.begin(), pos);
+                            this->thieves[choosed_thief].second.backpack_weight[index_city] -= this->items[remove_item].weight;
+                            this->used_capacity -= this->items[remove_item].weight;
 
                             if(verbose) std::cout << "Removi item sem colocar outro " << remove_item << std::endl;
 

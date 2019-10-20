@@ -281,9 +281,11 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
 
 void initial_pop(Instance& inst, std::vector<Instance>& population, bool verbose)
 {
+    inst.cleanSolution();
     for(int i = 0; i <= 20; i++)
     {
         Instance instance = inst;
+    
         std::vector<int> aux_caught_items(instance.items.size(), 0);
         for(int i = 0; i < instance.thieves.size(); i++)
         {
@@ -598,26 +600,33 @@ double geneticAlgorithm(Instance& instance, int num_generations, bool verbose)
     initial_pop(instance, population, verbose);
     if(verbose) std::cout << "Selection" << std::endl;
     selection(population, mating_pool, verbose);
-
+    int bestest = mating_pool[0].objectiveFunction();
+    for(auto inst: mating_pool)
+    {
+        int current = inst.objectiveFunction();   
+        if(bestest < current)
+        {
+            bestest = current;
+        }
+    }
+    std::cout << bestest << std::endl;
     for(int i = 0; i < num_generations; i++)
     {
         if(verbose) std::cout << "Crossover" << std::endl;
         crossover(mating_pool, generation, verbose);   
         if(verbose) std::cout << "Mutation" << std::endl;
-        mutation(generation, verbose);  
-    }
-    
-    if(verbose) std::cout << "Validation" << std::endl;
-    validation(generation, verbose);
-
-    int best = generation[0].objectiveFunction();
-    for(auto inst: generation)
-    {
-        int current = inst.objectiveFunction();
-        if(best > current)
+        mutation(generation, verbose);   
+        if(verbose) std::cout << "Validation" << std::endl;
+        validation(generation, verbose);
+        for(auto inst: generation)
         {
-            best = current;
+            int current = inst.objectiveFunction();   
+            if(bestest < current)
+            {
+                bestest = current;
+            }
         }
     }
-    return best;   
+
+    return bestest;   
 }

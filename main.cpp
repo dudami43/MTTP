@@ -35,20 +35,21 @@ int main(int argc, char *argv[])
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
                 instance.addThief(2);
-                instance.greedySolution();
+                std::cout << geneticAlgorithm(instance) << std::endl;
+                //instance.greedySolution();
                 
                 //instance.printRoutes();
                 //instance.printItems();
                 //instance.printWeights();
                 //instance.output();
 
-                double objectiveFunction = instance.objectiveFunction();
-                double best = objectiveFunction;
-                double result = VNS(instance, 10);
+                //double objectiveFunction = instance.objectiveFunction();
+                //double best = objectiveFunction;
+                //double result = VNS(instance, 10);
                 //double result = localSearch(instance, "trade_btw_thieves");
 
-                std::cout << "Initial Value: " << objectiveFunction;
-                std::cout << "  ---  Final Value: " << result << std::endl;
+                //std::cout << "Initial Value: " << objectiveFunction;
+                //std::cout << "  ---  Final Value: " << result << std::endl;
             
             }
             catch (char const *param)

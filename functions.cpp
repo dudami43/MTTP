@@ -285,7 +285,6 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, bool verbose
     for(int i = 0; i <= 20; i++)
     {
         Instance instance = inst;
-    
         std::vector<int> aux_caught_items(instance.items.size(), 0);
         for(int i = 0; i < instance.thieves.size(); i++)
         {
@@ -346,44 +345,49 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, bool verbose
             }        
         }
         population.push_back(instance);
-    }       
+    }  
+    if (verbose)
+    {
+        for(int i = 0; i < population.size(); i++)
+        {
+            std::cout << population[i].objectiveFunction() << " ";
+        }
+        std::cout << std::endl;
+    }        
 }
 
 void selection(std::vector<Instance>& population, std::vector<Instance>& mating_pool, bool verbose)
 {
-    int c = 0;
-    int smallest = population[0].objectiveFunction();
-    int smallest_index = 0;
-    for(int i = 1; i < population.size(); i++)
+    double smallest = population[0].objectiveFunction(); int smallest_index = 0;
+    for(int i = 0; i < 10; i++)
     {
-        int eval = population[i].objectiveFunction();
-        if(c < 10)
+        mating_pool.push_back(population[i]);
+        double current = population[i].objectiveFunction();
+        if(smallest > current)
         {
-            mating_pool.push_back(population[i]);
-            if(eval < smallest)
-            {
-                smallest = eval;
-                smallest_index = c;
-            }
-            c++;
+            smallest = current;
+            smallest_index = i;
         }
-        else
+    }   
+    for(int i = 10; i < population.size(); i++)
+    {
+        double current = population[i].objectiveFunction();
+        if(current > smallest)
         {
-            if(eval > smallest)
+            mating_pool[smallest_index] = population[i];
+            smallest  = mating_pool[0].objectiveFunction();
+            for(int j = 1; j < mating_pool.size(); j++)
             {
-                mating_pool[smallest_index] = population[i];
-            }
-            smallest_index = smallest = 0;
-            for(int j = 0; j < mating_pool.size(); j++)
-            {
-                if(eval < smallest)
+                double new_current = mating_pool[j].objectiveFunction();
+                if(new_current < smallest)
                 {
-                    smallest = eval;
+                    smallest = new_current;
                     smallest_index = j;
                 }
-            }
+            } 
         }
     }
+
     if (verbose)
     {
         for(int i = 0; i < mating_pool.size(); i++)
@@ -590,6 +594,7 @@ void validation(std::vector<Instance>& generation, bool verbose)
     }  
 
 }
+
 double geneticAlgorithm(Instance& instance, int num_generations, bool verbose)
 {
     std::vector<Instance> population;
@@ -598,9 +603,19 @@ double geneticAlgorithm(Instance& instance, int num_generations, bool verbose)
     
     if(verbose) std::cout << "Initial population" << std::endl;
     initial_pop(instance, population, verbose);
+    double bestest = population[0].objectiveFunction();
+    for(auto inst: population)
+    {
+        int current = inst.objectiveFunction();   
+        if(bestest < current)
+        {
+            bestest = current;
+        }
+    }
+    std::cout << bestest << std::endl;
     if(verbose) std::cout << "Selection" << std::endl;
     selection(population, mating_pool, verbose);
-    int bestest = mating_pool[0].objectiveFunction();
+    bestest = mating_pool[0].objectiveFunction();
     for(auto inst: mating_pool)
     {
         int current = inst.objectiveFunction();   

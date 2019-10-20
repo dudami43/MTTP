@@ -237,7 +237,7 @@ class Instance {
                 this->thieves[i].second.route.clear();
             }
         }
-
+        
         /**
          * Vizinhancas
          **/

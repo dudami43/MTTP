@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
             {
                 std::cout << filename << "\n";
                 instance = get_instance(filename);
+                instance.thieves.clear();
                 instance.addThief(2);
                 std::cout << geneticAlgorithm(instance) << std::endl;
                 //instance.greedySolution();

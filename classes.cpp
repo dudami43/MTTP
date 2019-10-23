@@ -742,7 +742,10 @@ class Instance {
                     {
                         if(aux_caught_items[j] == 0)
                         {
-                            cur_val = this->items[j].value / this->cities_distance[current_city][this->items[j].city_idx];
+                            if(this->cities_distance[current_city][this->items[j].city_idx] != 0) 
+                                cur_val = this->items[j].value / this->cities_distance[current_city][this->items[j].city_idx];
+                            else
+                                cur_val = this->items[j].value;
                             if(cur_val > best_val)
                             {
                                 best_val = cur_val;

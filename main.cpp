@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
                 instance = get_instance(filename);
                 instance.thieves.clear();
                 instance.addThief(2);
-                std::cout << geneticAlgorithm(instance) << std::endl;
+                //std::cout << geneticAlgorithm(instance) << std::endl;
                 //instance.greedySolution();
                 //instance.output();
                 //instance.printRoutes();
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
                 //instance.output();
 
                 //double best = objectiveFunction;
-                //double result = VNS(instance, 10);
+                double result = VNS(instance, 10);
                 //double result = localSearch(instance, "trade_btw_thieves");
 
                 //std::cout << "Initial Value: " << instance.objectiveFunction();

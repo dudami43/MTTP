@@ -259,11 +259,13 @@ class Instance {
                 std::cout << "Trocou a cidade " << this->thieves[choosed_thief].second.route[city_1] << " com a cidade " << this->thieves[choosed_thief].second.route[city_2] << std::endl;
 
             // Troca as cidades de lugar
+            //std::cout << "troca as cidades de lugar na rota" << std::endl;
             int aux = this->thieves[choosed_thief].second.route[city_1];
             this->thieves[choosed_thief].second.route[city_1] = this->thieves[choosed_thief].second.route[city_2];
             this->thieves[choosed_thief].second.route[city_2] = aux;
 
             // Troca os pesos referentes as cidades de lugar
+            //std::cout << "troca os pesos relativos as cidades de lugar" << std::endl;
             aux = this->thieves[choosed_thief].second.backpack_weight[city_1];
             this->thieves[choosed_thief].second.backpack_weight[city_1] = this->thieves[choosed_thief].second.backpack_weight[city_2];
             this->thieves[choosed_thief].second.backpack_weight[city_2] = aux;
@@ -289,20 +291,24 @@ class Instance {
             int weight_aux = this->thieves[choosed_thief].second.backpack_weight[choosed_city];
             if(new_pos < choosed_city)
             {
+                //std::cout << "remove cidade e depois insere"  << std::endl;
                 // Caso a nova posicao seja antes da posicao atual, entao remova a cidade da solucao antes de inseri-la novamente
                 this->thieves[choosed_thief].second.route.erase(this->thieves[choosed_thief].second.route.begin() + choosed_city);
                 this->thieves[choosed_thief].second.route.insert(this->thieves[choosed_thief].second.route.begin() + new_pos, aux);
 
+                //std::cout << "remove peso e depois insere"  << std::endl;
                 // O mesmo para o peso
                 this->thieves[choosed_thief].second.backpack_weight.erase(this->thieves[choosed_thief].second.backpack_weight.begin() + choosed_city);
                 this->thieves[choosed_thief].second.backpack_weight.insert(this->thieves[choosed_thief].second.backpack_weight.begin() + new_pos, weight_aux);
             }
             else
             {
+                //std::cout << "insere cidade e depois remove"  << std::endl;
                 // Caso a nova posicao seja depois da posicao atual, entao insira a cidade da solucao antes de remove-la
                 this->thieves[choosed_thief].second.route.insert(this->thieves[choosed_thief].second.route.begin() + new_pos + 1, aux);
                 this->thieves[choosed_thief].second.route.erase(this->thieves[choosed_thief].second.route.begin() + choosed_city);
 
+                //std::cout << "insere peso e depois remove"  << std::endl;
                 // O mesmo para o peso
                 this->thieves[choosed_thief].second.backpack_weight.insert(this->thieves[choosed_thief].second.backpack_weight.begin() + new_pos + 1, weight_aux);
                 this->thieves[choosed_thief].second.backpack_weight.erase(this->thieves[choosed_thief].second.backpack_weight.begin() + choosed_city);
@@ -330,10 +336,12 @@ class Instance {
             int int_pos_1 = std::distance(this->thieves[thief_1].second.route.begin(), pos_1);
             if(pos_1 != this->thieves[thief_1].second.route.end())
             {
+                //std::cout << "ladrao 1 -- *cidade ja consta na rota* -- adicionando item" << std::endl;
                 this->thieves[thief_1].second.backpack_weight[int_pos_1] += this->items[this->thieves[thief_2].second.items[item_2]].weight;
             }
             else
             {
+                //std::cout << "ladrao 1 -- *cidade nao consta na rota* -- adquirindo cidade mais proxima" << std::endl;
                 // Adquire a cidade mais proxima
                 int nearest = this->thieves[thief_1].second.route[0];
                 for(int i = this->thieves[thief_1].second.route[1]; i < this->thieves[thief_1].second.route.size(); i++)
@@ -342,6 +350,7 @@ class Instance {
                         nearest = this->thieves[thief_1].second.route[i];
                 }
 
+                //std::cout << "ladrao 1 -- *cidade nao consta na rota* -- inserindo cidade mais proxima" << std::endl;
                 // Insere a nova cidade logo apos a cidade mais proxima a ela
                 auto new_pos = std::find(this->thieves[thief_1].second.route.begin(), 
                                     this->thieves[thief_1].second.route.end(), 
@@ -355,10 +364,12 @@ class Instance {
             int int_pos_2 = std::distance(this->thieves[thief_2].second.route.begin(), pos_2);
             if(pos_2 != this->thieves[thief_2].second.route.end())
             {
+                //std::cout << "ladrao 2 -- *cidade ja consta na rota* -- adicionando item" << std::endl;
                 this->thieves[thief_2].second.backpack_weight[int_pos_2] += this->items[this->thieves[thief_1].second.items[item_1]].weight;
             }
             else
             {
+                //std::cout << "ladrao 2 -- *cidade nao consta na rota* -- adquirindo cidade mais proxima" << std::endl;
                 // Adquire a cidade mais proxima
                 int nearest = this->thieves[thief_2].second.route[0];
                 for(int i = this->thieves[thief_2].second.route[1]; i < this->thieves[thief_2].second.route.size(); i++)
@@ -367,6 +378,7 @@ class Instance {
                         nearest = this->thieves[thief_2].second.route[i];
                 }
 
+                //std::cout << "ladrao 2 -- *cidade nao consta na rota* -- inserindo cidade mais proxima" << std::endl;
                 // Insere a nova cidade logo apos a cidade mais proxima a ela
                 auto new_pos = std::find(this->thieves[thief_2].second.route.begin(), 
                                     this->thieves[thief_2].second.route.end(), 
@@ -382,11 +394,13 @@ class Instance {
                                                     this->items[this->thieves[thief_1].second.items[item_1]].city_idx));
             if(this->thieves[thief_1].second.backpack_weight[pos_item_1] == this->items[this->thieves[thief_1].second.items[item_1]].weight)
             {
+                //std::cout << "ladrao 1 -- *unico item da cidade trocado* --  removendo cidade da rota e o peso relativo a ela" << std::endl;
                 this->thieves[thief_1].second.route.erase(this->thieves[thief_1].second.route.begin() + pos_item_1);
                 this->thieves[thief_1].second.backpack_weight.erase(this->thieves[thief_1].second.backpack_weight.begin() + pos_item_1);
             }
             else
             {
+                //std::cout << "ladrao 1 -- *cidade ha mais itens* --  removendo o peso relativo a ela" << std::endl;
                 this->thieves[thief_1].second.backpack_weight[pos_item_1] -= this->items[this->thieves[thief_1].second.items[item_1]].weight;
             }
 
@@ -395,14 +409,17 @@ class Instance {
                                                     this->items[this->thieves[thief_2].second.items[item_2]].city_idx));
             if(this->thieves[thief_2].second.backpack_weight[pos_item_2] == this->items[this->thieves[thief_2].second.items[item_2]].weight)
             {
+                //std::cout << "ladrao 2 -- *unico item da cidade trocado* --  removendo cidade da rota e o peso relativo a ela" << std::endl;
                 this->thieves[thief_2].second.route.erase(this->thieves[thief_2].second.route.begin() + pos_item_2);
                 this->thieves[thief_2].second.backpack_weight.erase(this->thieves[thief_2].second.backpack_weight.begin() + pos_item_2);
             }
             else
             {
+                //std::cout << "ladrao 2 -- *cidade ha mais itens* --  removendo o peso relativo a ela" << std::endl;
                 this->thieves[thief_2].second.backpack_weight[pos_item_2] -= this->items[this->thieves[thief_2].second.items[item_2]].weight;
             }
         
+            //std::cout << "Troca os itens entre os ladroes" << std::endl;
             // Troca os itens entre os ladroes
             std::iter_swap(this->thieves[thief_1].second.items.begin() + item_1, this->thieves[thief_2].second.items.begin() + item_2);
 
@@ -795,7 +812,6 @@ class Instance {
             {
                 // Escolhe uma vizinhanca aleatoriamente
                 int neighborhood = rand() % 3;
-                //int neighborhood = 2;
 
                 if(neighborhood == 0) // swap_cities
                 {
@@ -840,11 +856,11 @@ class Instance {
                     // Aplica a perturbacao
                     this->swap_items_btw_thieves(thief_1, thief_2, item_1, item_2);
                 } */
-                else // exchange_items
+                /* else // exchange_items
                 {
                     // Aplica a perturbacao
                     this->exchange_random_items();
-                }
+                } */
             }
         }
 

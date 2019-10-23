@@ -140,13 +140,9 @@ double first_improvement_trade_thieves(Instance& inst)
         {
             // Salva o estado da instancia
             initial_instance = inst;
-
-            std::cout << "entrou - ";
             
             // Muda para o proximo vizinho
             inst.swap_items_btw_thieves(thief_1, thief_2, i, j);
-            
-            std::cout << "saiu" << std::endl;
 
             // Valida solucao
             if(inst.solutionValid())
@@ -171,19 +167,19 @@ double first_improvement_trade_thieves(Instance& inst)
 
 double localSearch(Instance& inst, std::string method)
 {
-    if(method.compare("swap"))
+    if(method.compare("swap") == 0)
     {
         return first_improvement_swap(inst);
     }
-    else if(method.compare("move"))
+    else if(method.compare("move") == 0)
     {
         return first_improvement_move(inst);
     }
-    else if(method.compare("trade_ungotted"))
+    else if(method.compare("trade_ungotted") == 0)
     {
         return first_improvement_trade_ungotted(inst);
     }
-    else if(method.compare("trade_btw_thieves"))
+    else if(method.compare("trade_btw_thieves") == 0)
     {
         return first_improvement_trade_thieves(inst);
     }
@@ -216,10 +212,10 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
 
     // Inicializa o vector de vizinhanças
     std::vector<std::string> neighborhoods;
-    neighborhoods.push_back("trade_ungotted");
     neighborhoods.push_back("swap");
     neighborhoods.push_back("move");
-    neighborhoods.push_back("trade_btw_thieves");
+    //neighborhoods.push_back("trade_btw_thieves");
+    //neighborhoods.push_back("trade_ungotted");
 
     // Gera solucao inicial
     inst.greedySolution();
@@ -239,10 +235,8 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
             std::cout << "Numero de itens: " << thief.second.items.size() << std::endl;
             std::cout << "Numero de pesos: " << thief.second.backpack_weight.size() << std::endl;
             std::cout << "Numero de cidades: " << thief.second.route.size() << std::endl;
-        }
-        std::cout << "start busca" << std::endl; */
+        } */
         current_value = localSearch(inst, neighborhoods[neighborhood]);
-        //std::cout << "end busca" << std::endl << std::endl;
 
         // if(verbose) std::cout << "Valor atual: " << current_value << std::endl;
 
@@ -259,6 +253,7 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
             // Se piorou, tenta a proxima vizinhanca
             inst = aux_inst;
             neighborhood++;
+            if(neighborhood >= neighborhoods.size()) break;
         }
 
         // Caso n haja melhora na solucao, e a vizinhanca eh a ultima, entao perturba a solucao

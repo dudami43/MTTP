@@ -286,29 +286,31 @@ class Instance {
             // Printa as cidades escolhidas
             if(verbose)
                 std::cout << "Moveu a cidade " << this->thieves[choosed_thief].second.route[choosed_city] << " para a posicao " << new_pos << " da rota." << std::endl;
-            
+
             int aux = this->thieves[choosed_thief].second.route[choosed_city];
             int weight_aux = this->thieves[choosed_thief].second.backpack_weight[choosed_city];
+
             if(new_pos < choosed_city)
             {
-                //std::cout << "remove cidade e depois insere"  << std::endl;
+                std::cout << "remove cidade e depois insere "  << this->thieves[choosed_thief].second.route[choosed_city] << std::endl;
                 // Caso a nova posicao seja antes da posicao atual, entao remova a cidade da solucao antes de inseri-la novamente
                 this->thieves[choosed_thief].second.route.erase(this->thieves[choosed_thief].second.route.begin() + choosed_city);
+                std::cout << "aqui\n";
                 this->thieves[choosed_thief].second.route.insert(this->thieves[choosed_thief].second.route.begin() + new_pos, aux);
 
-                //std::cout << "remove peso e depois insere"  << std::endl;
+                std::cout << "remove peso e depois insere"  << std::endl;
                 // O mesmo para o peso
                 this->thieves[choosed_thief].second.backpack_weight.erase(this->thieves[choosed_thief].second.backpack_weight.begin() + choosed_city);
                 this->thieves[choosed_thief].second.backpack_weight.insert(this->thieves[choosed_thief].second.backpack_weight.begin() + new_pos, weight_aux);
             }
             else
             {
-                //std::cout << "insere cidade e depois remove"  << std::endl;
+                std::cout << "insere cidade e depois remove"  << std::endl;
                 // Caso a nova posicao seja depois da posicao atual, entao insira a cidade da solucao antes de remove-la
                 this->thieves[choosed_thief].second.route.insert(this->thieves[choosed_thief].second.route.begin() + new_pos + 1, aux);
                 this->thieves[choosed_thief].second.route.erase(this->thieves[choosed_thief].second.route.begin() + choosed_city);
 
-                //std::cout << "insere peso e depois remove"  << std::endl;
+                std::cout << "insere peso e depois remove"  << std::endl;
                 // O mesmo para o peso
                 this->thieves[choosed_thief].second.backpack_weight.insert(this->thieves[choosed_thief].second.backpack_weight.begin() + new_pos + 1, weight_aux);
                 this->thieves[choosed_thief].second.backpack_weight.erase(this->thieves[choosed_thief].second.backpack_weight.begin() + choosed_city);

@@ -386,111 +386,65 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, int pop_size
 void selection(std::vector<Instance>& population, std::vector<Instance>& mating_pool, double alpha, int pop_size, bool verbose)
 {
     int pool_size = (1 - alpha) * pop_size;
-    std::vector<float> population_eval(population.size());
-    std::vector<float> probabilities(population.size());
-    float total_eval = 0;
-
-    for(int i = 0; i < population.size(); i++)
-    {
-        population_eval[i] = population[i].objectiveFunction();
-        total_eval += population_eval[i];
-    }
-    for(int i = 0; i < population.size(); i++)
-    {
-        if(i != 0)
-        {
-            for(int j = 0; j < i; j++)
-            {
-                probabilities[i] += probabilities[j];
-            }
-        }
-        probabilities[i] += population_eval[i]/total_eval;
-    }
-
+    
     for(int i = 0; i < pool_size; i++)
     {
-        double p = ((double) rand() / (RAND_MAX));
-        if(p < probabilities[0])
+        int c1 = rand() % population.size();
+        int c2 = rand() % population.size();
+        if(population[c1].objectiveFunction() > population[c2].objectiveFunction())
         {
-           mating_pool.push_back(population[0]); 
+            mating_pool.push_back(population[c1]);
         }
-        for(int j = 1; j < probabilities.size() - 1; j++)
+        else
         {
-            if(p >= probabilities[j -1] && p < probabilities[j])
-            {
-                mating_pool.push_back(population[j]);
-                break;
-            }
-        }
-        if(p >= probabilities[probabilities.size() - 1])
-        {
-            mating_pool.push_back(population[population.size() - 1]); 
+            mating_pool.push_back(population[c2]);
         }
     }
 }
+
 void crossover(std::vector<Instance>& mating_pool, std::vector<Instance>& next_gen, double alpha, int pop_size, bool verbose)
 {
     int num_pairs = alpha*pop_size;
     for(int i = 0; i < num_pairs; i+=2)
     {
-        int rand_thief_1 = rand() % mating_pool[i].thieves.size();
-        int rand_thief_2 = rand() % mating_pool[i].thieves.size();
+        int p1 = rand() % mating_pool.size();
+        int p2 = rand() % mating_pool.size();
 
-        int parent_1 = rand() % mating_pool.size();
-        int parent_2 = rand() % mating_pool.size();
+        int thief1 = rand() % mating_pool[p1].thieves.size();
+        int thief2 = rand() % mating_pool[p2].thieves.size();
 
-        next_gen.push_back(mating_pool[parent_1]);
-        next_gen.push_back(mating_pool[parent_2]);
+        next_gen.push_back(mating_pool[p1]);
+        next_gen.push_back(mating_pool[p2]);
 
-        int last = next_gen.size() - 1;
-        int seclast = next_gen.size() - 2;
+        int last_from_next = next_gen.size() - 1;
 
-        if(verbose) std::cout << rand_thief_1 << " " << rand_thief_2 << std::endl;
-
-        next_gen[seclast].thieves[rand_thief_1] = mating_pool[last].thieves[rand_thief_2];
-        next_gen[seclast].used_capacity = 0;
-        for(int j = 0; j < next_gen[seclast].thieves[rand_thief_1].second.route.size(); j++)
-        {
-            double weight_city = 0;
-            // Soma o peso de todos os itens pertencentes a cidade atual
-            for(auto stolen_item: next_gen[seclast].thieves[rand_thief_1].second.items)
-            {
-                if(next_gen[seclast].items[stolen_item].city_idx == next_gen[seclast].thieves[rand_thief_1].second.route[j]){
-                    weight_city += next_gen[seclast].items[stolen_item].weight;
-                }
-            }
-
-            // Seta o peso de quando sai da cidade atual como o peso calculado
-            next_gen[seclast].thieves[rand_thief_1].second.backpack_weight[j] = weight_city;
-            next_gen[seclast].used_capacity += weight_city;
-        }
-
-        next_gen[last].thieves[rand_thief_2] = mating_pool[seclast].thieves[rand_thief_1];
-        next_gen[last].used_capacity = 0;
-        for(int j = 0; j < next_gen[last].thieves[rand_thief_2].second.route.size(); j++)
-        {
-            double weight_city = 0;
-            // Soma o peso de todos os itens pertencentes a cidade atual
-            for(auto stolen_item: next_gen[last].thieves[rand_thief_2].second.items)
-            {
-                if(next_gen[last].items[stolen_item].city_idx == next_gen[last].thieves[rand_thief_2].second.route[j]){
-                    weight_city += next_gen[last].items[stolen_item].weight;
-                }
-            }
-
-            // Seta o peso de quando sai da cidade atual como o peso calculado
-            next_gen[last].thieves[rand_thief_2].second.backpack_weight[j] = weight_city;
-            next_gen[last].used_capacity += weight_city;
-        }
+        Thief aux = next_gen[last_from_next].thieves[thief1].second;
+        next_gen[last_from_next].thieves[thief1].second = next_gen[last_from_next - 1].thieves[thief2].second;
+        next_gen[last_from_next - 1].thieves[thief2].second = aux;
+       
     }
-    if(verbose)
+
+    for(int i = 0; i < next_gen.size(); i++)
     {
-        for(int i = 0; i < next_gen.size(); i++)
+        next_gen[i].used_capacity = 0;
+        for(int j = 0; j < next_gen[i].items.size(); j++)
         {
-            std::cout << next_gen[i].objectiveFunction() << " ";
+            next_gen[i].caught_items[j] = 0;
         }
-        std::cout << std::endl;
+
+        for(int j = 0; j < next_gen[i].thieves.size(); j++)
+        {
+            for(int k = 0; k < next_gen[i].thieves[j].second.items.size(); k++)
+            {
+                if(next_gen[i].caught_items[next_gen[i].thieves[j].second.items[k]] == 0)
+                {
+                    next_gen[i].used_capacity += next_gen[i].items[next_gen[i].thieves[j].second.items[k]].weight;
+                    next_gen[i].caught_items[next_gen[i].thieves[j].second.items[k]] = 1;
+                }
+            }
+        }
     }
+        
 }
 
 void mutation(std::vector<Instance>& generation, double beta, int pop_size, bool verbose)
@@ -502,11 +456,14 @@ void mutation(std::vector<Instance>& generation, double beta, int pop_size, bool
         int choosed_city = rand() % generation[i].thieves[choosed_thief].second.route.size();
         int new_pos = rand() % generation[i].thieves[choosed_thief].second.route.size();
         int individual = rand() % generation.size();
+        std::cout << "Alterar instancia " << individual << " movendo a cidade " << choosed_city << " do ladrao " << choosed_thief << " para a posicao " << new_pos << std::endl; 
         double p = ((double) rand() / (RAND_MAX)); 
-        generation[individual].move_cities(choosed_thief, choosed_city, new_pos);
-
+        std::cout << new_pos << " " << generation[i].thieves[choosed_thief].second.route.size() << std::endl;
+        generation[individual].move_cities(choosed_thief, choosed_city, new_pos, true);
+        std::cout << "Movi cidades\n";
         if(p >= 0.5)
         {
+            std::cout << "Movi itens\n";
             generation[individual].exchange_random_items();
         }
     }
@@ -531,13 +488,12 @@ void validation(std::vector<Instance>& generation, bool verbose)
             {
                 for(int k = 0; k < generation[i].thieves.size(); k++)
                 {
-                    for(int l = 0; l < generation[i].thieves[k].second.items.size(); l++)
+                    auto pos = std::find(generation[i].thieves[k].second.items.begin(), generation[i].thieves[k].second.items.end(), j);
+                    if(pos != generation[i].thieves[k].second.items.end())
                     {
-                        if(generation[i].thieves[k].second.items[l] == j)
-                        {
-                            occur.push_back(std::make_pair(k,l));
-                            break;
-                        }
+                        int index = std::distance(generation[i].thieves[k].second.items.begin(), pos);
+                        occur.push_back(std::make_pair(k,index));
+                        break;
                     }
                 }
             }
@@ -598,7 +554,6 @@ double geneticAlgorithm(Instance& instance, int num_generations, int pop_size, d
     std::vector<Instance> population;
     std::vector<Instance> generation;
     
-    
     initial_pop(instance, population, pop_size, verbose);
     double bestest = population[0].objectiveFunction();
     Instance best_individual;
@@ -607,22 +562,43 @@ double geneticAlgorithm(Instance& instance, int num_generations, int pop_size, d
         double current = individuo.objectiveFunction();
         if(bestest < current){ bestest = current; best_individual = individuo;}
     }
-
+    std::cout << "População inicial " << bestest << std::endl;
+    generation = population;
     for(int i = 0; i < num_generations; i++)
     {
-        selection(population, generation, alpha, pop_size, verbose);
+        std::vector<Instance> mating_pool;
+        selection(generation, mating_pool, alpha, pop_size, verbose);
+        for(auto individuo: mating_pool)
+        {
+            double current = individuo.objectiveFunction();
+            if(bestest <= current){ bestest = current; best_individual = individuo;}
+        }
+        std::cout << "\nSelection " << bestest << std::endl;
         std::vector<Instance> next_generation;
-        crossover(generation, next_generation, alpha, pop_size, verbose);   
+        crossover(mating_pool, next_generation, alpha, pop_size, verbose);   
+        for(auto individuo: next_generation)
+        {
+            double current = individuo.objectiveFunction();
+            if(bestest <= current){ bestest = current; best_individual = individuo;}
+        }
+        std::cout << "\nCrossover " << bestest << std::endl;
         mutation(next_generation, beta, pop_size, verbose);
+        for(auto individuo: next_generation)
+        {
+            double current = individuo.objectiveFunction();
+            if(bestest <= current){ bestest = current; best_individual = individuo;}
+        }
+        std::cout << "\nMutation " << bestest << std::endl;
         validation(next_generation, verbose);
+        generation = next_generation;   
         for(auto individuo: generation)
         {
             double current = individuo.objectiveFunction();
             if(bestest <= current){ bestest = current; best_individual = individuo;}
         }
-        generation = next_generation;   
+        std::cout << "\nValidation " << bestest << std::endl;
     }
-    
-    best_individual.output();
+    instance = best_individual;
+    std::cout << "Genetico " << bestest << std::endl;
     return bestest;   
 }

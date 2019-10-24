@@ -69,6 +69,16 @@ Instance get_instance(std::string filename)
 
         // Seta os dados adquiridos
         instance.setValues(num_cities, num_items, max_capacity, min_speed, max_speed, renting_ratio);
+        
+        /*std::cout << "Dados da instancia: " << std::endl;
+        std::cout << "-----Tipo de peso: " << weight_type << std::endl;
+        std::cout << "-----Numero de cidades: " << instance.num_cities << std::endl;
+        std::cout << "-----Numero de itens: " << instance.num_items << std::endl; 
+        std::cout << "-----Capacidade maxima: " << instance.max_capacity << std::endl;
+        std::cout << "-----Velocidade minima: " << instance.min_speed << std::endl; 
+        std::cout << "-----Velocidade maxima: " << instance.max_speed << std::endl;
+        std::cout << "-----Taxa da mochila: " << instance.renting_ratio << std::endl;
+        std::cout << std::endl;*/
 
         // Le o cabecalho dos vertices
         getline(file, line);
@@ -93,6 +103,14 @@ Instance get_instance(std::string filename)
             }
         }
 
+        /* std::cout << "Matriz de distancias: " << std::endl;
+        for(auto x: instance.cities_distance){
+            std::cout << "<<< ";
+            for(auto y: x){
+                std::cout << y << ", ";
+            }std::cout << ">>>" << std::endl;
+        }std::cout << std::endl; */
+
         // Le o cabecalho dos itens
         getline(file, line);
         // Le os itens
@@ -113,6 +131,17 @@ Instance get_instance(std::string filename)
             // Adiciona o item no vetor de itens da instancia
             instance.items.push_back(item_i);
         }
+
+        /*(for(auto x: instance.cities){
+            std::cout << std::endl;
+            std::cout << "Coordenada: (" << x.x << ", " << x.y << ")" << std::endl;
+            std::cout << "Itens: \n";
+            for(auto y: x.items_idx){
+                std::cout << "Item " << y << " => ";
+                std::cout << instance.items[y].value << " ";
+                std::cout << instance.items[y].weight << std::endl;
+            }
+        }std::cout << std::endl;*/
 
     }else
     {

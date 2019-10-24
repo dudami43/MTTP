@@ -32,17 +32,23 @@ int main(int argc, char *argv[])
             Instance instance;
             try
             {
-                std::cout << filename << "\n";
+                //std::cout << filename << "\n";
                 instance = get_instance(filename);
-                instance.thieves.clear();
-                instance.addThief(2);
-                grasp(instance, 10, true);
-               
+                for(int i = 1; i <= 5 ; i++){
+                
+                    instance.thieves.clear();
+                    instance.addThief(i);
+
+                    instance.greedySolution();
+                    instance.output();
+
+                    std::cout << instance.objectiveFunction() << std::endl;
+                    
+                }
             }
             catch (char const *param)
             {
                 std::cout << param << std::endl;
-                //return 0;
             }
         }
         file.close();

@@ -198,11 +198,18 @@ double call_localSearch(Instance& instance, std::string method)
             cont = 0;
             best = result;
         }
-        else cont++;
-        if(cont >= 10) break;
+        else 
+        {
+            cont++;
+        }
+        if(cont >= 10)
+        {
+            break;
+        } 
     }
     return best;
 }
+
 /**
  * Heuristicas
  **/
@@ -453,17 +460,13 @@ void mutation(std::vector<Instance>& generation, double beta, int pop_size, bool
     for(int i = 0; i < num_members; i++)
     {
         int choosed_thief = rand() % generation[i].thieves.size();
-        int choosed_city = rand() % generation[i].thieves[choosed_thief].second.route.size();
-        int new_pos = rand() % generation[i].thieves[choosed_thief].second.route.size();
+        int city_1 = rand() % generation[i].thieves[choosed_thief].second.route.size();
+        int city_2 = rand() % generation[i].thieves[choosed_thief].second.route.size();
         int individual = rand() % generation.size();
-        std::cout << "Alterar instancia " << individual << " movendo a cidade " << choosed_city << " do ladrao " << choosed_thief << " para a posicao " << new_pos << std::endl; 
         double p = ((double) rand() / (RAND_MAX)); 
-        std::cout << new_pos << " " << generation[i].thieves[choosed_thief].second.route.size() << std::endl;
-        generation[individual].move_cities(choosed_thief, choosed_city, new_pos, true);
-        std::cout << "Movi cidades\n";
+        generation[individual].swap_cities(choosed_thief, city_1, city_2);
         if(p >= 0.5)
         {
-            std::cout << "Movi itens\n";
             generation[individual].exchange_random_items();
         }
     }
@@ -601,4 +604,127 @@ double geneticAlgorithm(Instance& instance, int num_generations, int pop_size, d
     instance = best_individual;
     std::cout << "Genetico " << bestest << std::endl;
     return bestest;   
+}
+
+void random_greedy(Instance& instance, double size_rlc)
+{
+    instance.cleanSolution();
+    std::vector<std::vector<int>> better_items(instance.thieves.size()); //Cada vetor representa os n melhores itens pra um ladrão i
+    std::vector<int> aux_caught_items(instance.items.size(), 0);
+    bool items_remaining = true;
+    int current_city = 0;
+    for(int j = 0; j < instance.thieves.size(); j++)
+    {
+        instance.thieves[j].second.route.push_back(current_city);
+        instance.thieves[j].second.backpack_weight.push_back(0);
+    }
+    while(items_remaining)
+    {
+        for(int j = 0; j < instance.thieves.size(); j++)
+        {
+            better_items[j].assign(instance.items.size()*size_rlc, -1);
+            for(int k = 0; k < instance.items.size(); k++)
+            {
+                float cur_val = instance.items[k].value;
+                float aux_val = 0;
+                float out_val = instance.items[better_items[j][0]].value;
+                int out_ind = 0;
+                if(aux_caught_items[k] == 0)
+                {
+                    if(instance.cities_distance[current_city][instance.items[k].city_idx] != 0)                      
+                        cur_val = instance.items[k].value / instance.cities_distance[current_city][instance.items[k].city_idx];
+                    
+                    for(int l = 0; l < better_items[j].size(); l++)
+                    {
+                        if(instance.cities_distance[current_city][instance.items[better_items[j][l]].city_idx] != 0)     
+                            aux_val = instance.items[better_items[j][l]].value / instance.cities_distance[current_city][instance.items[better_items[j][l]].city_idx];
+                        else
+                            aux_val = instance.items[better_items[j][l]].value;
+
+                        if(aux_val < out_val)
+                        {
+                            out_val = aux_val;
+                            out_ind = l;
+                        }
+                    } // escolher qual valor pode ser substituido da lista de melhores
+                    if(cur_val > out_val)
+                    {
+                        better_items[j][out_ind] = k;
+                    }
+                    items_remaining = true;
+                }
+                else
+                {
+                    items_remaining = false;
+                } 
+            }
+            int item_to_take = rand() % better_items[j].size();
+            
+            while(better_items[j][item_to_take] == -1 && items_remaining)
+            {
+                item_to_take = rand() % better_items[j].size();
+            }
+            
+            if(better_items[j][item_to_take] != -1)
+            {
+                
+                aux_caught_items[better_items[j][item_to_take]] = 1;
+                
+
+                if(instance.items[better_items[j][item_to_take]].weight < instance.max_capacity - instance.used_capacity)
+                {
+                    
+                    current_city = instance.items[better_items[j][item_to_take]].city_idx;
+                    
+                    // Pega o item
+                    instance.caught_items[better_items[j][item_to_take]] = 1;
+                    instance.used_capacity += instance.items[better_items[j][item_to_take]].weight;
+
+                    // Adiciona o item a mochila do ladrao
+                    instance.thieves[j].second.items.push_back(better_items[j][item_to_take]);
+                    
+
+                    // Adiciona a cidade a rota
+                    auto pos = std::find(instance.thieves[j].second.route.begin(), instance.thieves[j].second.route.end(), instance.items[better_items[j][item_to_take]].city_idx);
+                    if(pos == instance.thieves[j].second.route.end())
+                    {
+                        instance.thieves[j].second.route.push_back(current_city);
+                        instance.thieves[j].second.backpack_weight.push_back(instance.items[better_items[j][item_to_take]].weight);
+                    }
+                    else
+                    {
+                        int index = std::distance(instance.thieves[j].second.route.begin(), pos);
+                        instance.thieves[j].second.backpack_weight[index] += instance.items[better_items[j][item_to_take]].weight;
+                    }
+                }   
+            }   
+        }
+    }
+}
+
+double grasp(Instance& instance, int imax, bool verbose)
+{
+    int i = 0;
+    
+    Instance best_individual = instance;
+    best_individual.greedySolution();
+    int current;
+    double best_value = best_individual.objectiveFunction();
+    if(verbose) std::cout << "Greedy " << best_value << std::endl;
+
+    while(i < imax)
+    {
+        random_greedy(instance, 0.05);
+        call_localSearch(instance, "swap");
+        current = instance.objectiveFunction();
+        //if(verbose) std::cout << current << std::endl;
+        if(best_value < current)
+        {
+            best_value = current;
+            best_individual = instance;
+        }
+        i++;
+    }
+    if(verbose) std::cout << "Grasp " << best_value << std::endl;
+    return best_value;
 }

@@ -36,29 +36,8 @@ int main(int argc, char *argv[])
                 instance = get_instance(filename);
                 instance.thieves.clear();
                 instance.addThief(2);
-
-                //instance.greedySolution();
-                //std::cout << "Guloso " << instance.objectiveFunction() << std::endl;
-
-                //double result = VNS(instance, 10);
-                //std::cout << "VNS + Greedy " << result << std::endl;
-
-                //instance.cleanSolution();
-                geneticAlgorithm(instance);
-                //instance.greedySolution();
-                //instance.output();
-                //instance.printRoutes();
-                //instance.printItems();
-                //instance.printWeights();
-                //instance.output();
-
-                //double best = objectiveFunction;
-                //result = VNS(instance, 10);
-                //double result = localSearch(instance, "trade_btw_thieves");
-
-                //std::cout << "Initial Value: " << instance.objectiveFunction();
-                //std::cout << "VNS + GA " << result << std::endl;
-            
+                grasp(instance, 10, true);
+               
             }
             catch (char const *param)
             {

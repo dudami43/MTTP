@@ -5,11 +5,197 @@
 /**
  *Busca Local
 **/
+double first_improvement_shuffle(Instance& inst)
+{
+    double current_value, best_value = inst.objectiveFunction();
+    Instance initial_instance;
+
+    // Escolhe o numero de ladroes
+    int n_thieves = 1;
+    if(inst.thieves.size() <= 1) return best_value;
+    else if(inst.thieves.size() == 2) n_thieves = 2;
+    else 
+    {
+        while(n_thieves <= 1) n_thieves = rand() % inst.thieves.size();
+    }
+
+    // Escolhe quais ladroes irao trocar de itens
+    std::vector<int> choosed_thieves;
+    choosed_thieves.assign(n_thieves, 0);
+    bool equals;
+    for(int i = 0; i < n_thieves; i++)
+    {
+        equals = true;
+        while(equals)
+        {
+            choosed_thieves[i] = rand() % inst.thieves.size();
+            equals = false;
+            for(int j = 0; j < i; j++)
+                if(choosed_thieves[i] == choosed_thieves[j])
+                    equals = true;
+        }
+    }
+    std::cout << choosed_thieves[0] << " - " << choosed_thieves[1] << std::endl;
+
+    for(int i = 0; i < inst.thieves[choosed_thieves[0]].items.size(); i++)
+    {
+        for(int j = 0; j < inst.thieves[choosed_thieves[1]].items.size(); j++)
+        {
+            std::vector<int> items_position;
+            items_position.push_back(inst.thieves[choosed_thieves[0]].items[i]);
+            items_position.push_back(inst.thieves[choosed_thieves[1]].items[j]);
+            inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position, true);
+
+            std::cout << "4" << std::endl;
+
+
+            // Valida solucao
+            if(inst.solutionValid())
+            {
+                // Avalia a nova solucao
+                current_value = inst.objectiveFunction();
+                
+                // Verifica se eh melhor que a atual
+                if(current_value > best_value)
+                {
+                    return current_value;
+                }
+            }
+
+            // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+            inst = initial_instance;
+        }
+    }
+
+    /* 
+    // Testa todas as combinacoes possiveis ate encontrar uma que melhora
+    // TODO: Pensar em uma alternativa, sao muitas possibilidades 
+    int items_position[n_thieves]; 
+    for(int i1 = 0; i1 < inst.thieves[choosed_thieves[0]].items.size(); i1++)
+    {
+        for(int i2 = 0; i2 < inst.thieves[choosed_thieves[1]].items.size(); i2++)
+        {
+            if(n_thieves < 3)
+            {
+                items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
+                items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
+
+                inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
+
+                // Valida solucao
+                if(inst.solutionValid())
+                {
+                    // Avalia a nova solucao
+                    current_value = inst.objectiveFunction();
+                    
+                    // Verifica se eh melhor que a atual
+                    if(current_value > best_value)
+                    {
+                        return current_value;
+                    }
+                }
+
+                // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+                inst = initial_instance;
+            }
+            else
+            {
+                for(int i3 = 0; i3 < inst.thieves[choosed_thieves[2]].items.size(); i3++)
+                {
+                    if(n_thieves < 4)
+                    {
+                        items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
+                        items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
+                        items_position[2] = inst.thieves[choosed_thieves[2]].items[i3];
+                        inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
+
+                        // Valida solucao
+                        if(inst.solutionValid())
+                        {
+                            // Avalia a nova solucao
+                            current_value = inst.objectiveFunction();
+                            
+                            // Verifica se eh melhor que a atual
+                            if(current_value > best_value)
+                            {
+                                return current_value;
+                            }
+                        }
+
+                        // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+                        inst = initial_instance;
+                    }
+                    else
+                    {
+                        for(int i4 = 0; i4 < inst.thieves[choosed_thieves[3]].items.size(); i4++)
+                        {
+                            if(n_thieves < 5)
+                            {
+                                items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
+                                items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
+                                items_position[2] = inst.thieves[choosed_thieves[2]].items[i3];
+                                items_position[3] = inst.thieves[choosed_thieves[3]].items[i4];
+                                inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
+
+                                // Valida solucao
+                                if(inst.solutionValid())
+                                {
+                                    // Avalia a nova solucao
+                                    current_value = inst.objectiveFunction();
+                                    
+                                    // Verifica se eh melhor que a atual
+                                    if(current_value > best_value)
+                                    {
+                                        return current_value;
+                                    }
+                                }
+
+                                // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+                                inst = initial_instance;
+                            }
+                            else
+                            {
+                                for(int i5 = 0; i5 < inst.thieves[choosed_thieves[4]].items.size(); i5++)
+                                {
+                                    items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
+                                    items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
+                                    items_position[2] = inst.thieves[choosed_thieves[2]].items[i3];
+                                    items_position[3] = inst.thieves[choosed_thieves[3]].items[i4]; 
+                                    items_position[4] = inst.thieves[choosed_thieves[4]].items[i5]; 
+                                    inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
+
+                                    // Valida solucao
+                                    if(inst.solutionValid())
+                                    {
+                                        // Avalia a nova solucao
+                                        current_value = inst.objectiveFunction();
+                                        
+                                        // Verifica se eh melhor que a atual
+                                        if(current_value > best_value)
+                                        {
+                                            return current_value;
+                                        }
+                                    }
+
+                                    // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+                                    inst = initial_instance;
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            }
+
+        }
+    } */
+}
+
 double first_improvement_swap(Instance& inst)
 {
     double current_value, best_value = inst.objectiveFunction();
     Instance initial_instance;
-    int tries = 0;
     int thief = rand() % inst.thieves.size();
 
     // Procura duas cidades que melhoram a solucao atual
@@ -44,50 +230,10 @@ double first_improvement_swap(Instance& inst)
     return best_value;
 }
 
-double first_improvement_trade_ungotted(Instance& inst)
-{
-    double current_value, best_value = inst.objectiveFunction();
-    Instance initial_instance;
-    int tries = 0;
-    int thief = rand() % inst.thieves.size();
-
-    // Procura dois itens que melhoram a solucao atual
-    for(int i = 1; i < inst.items.size(); i++)
-    {
-        for(int j = i + 1; j < inst.items.size(); j++)
-        {
-            // Salva o estado da instancia
-            initial_instance = inst;
-
-            // Muda para o proximo vizinho
-            inst.exchange_items(thief, i, j);
-
-            // Valida solucao
-            if(inst.solutionValid())
-            {
-                // Avalia a nova solucao
-                current_value = inst.objectiveFunction();
-                
-                // Verifica se eh melhor que a atual
-                if(current_value > best_value)
-                {
-                    return current_value;
-                }
-            }
-
-            // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
-            inst = initial_instance;
-        }
-    }
-    
-    return best_value;
-}
-
 double first_improvement_move(Instance& inst)
 {
     double current_value, best_value = inst.objectiveFunction();
     Instance initial_instance;
-    int tries = 0;
     int thief = rand() % inst.thieves.size();
 
     // Procura uma posicao para uma cidade, de maneira a melhorar a solucao
@@ -127,17 +273,17 @@ double first_improvement_move(Instance& inst)
 
 double localSearch(Instance& inst, std::string method)
 {
-    if(method.compare("swap") == 0)
+    if(method.compare("shuffle") == 0)
+    {
+        return first_improvement_shuffle(inst);
+    }
+    else if(method.compare("swap") == 0)
     {
         return first_improvement_swap(inst);
     }
     else if(method.compare("move") == 0)
     {
         return first_improvement_move(inst);
-    }
-    else if(method.compare("trade_ungotted") == 0)
-    {
-        return first_improvement_trade_ungotted(inst);
     }
 }
 
@@ -151,6 +297,7 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
 
     // Inicializa o vector de vizinhanças
     std::vector<std::string> neighborhoods;
+    neighborhoods.push_back("shuffle");
     neighborhoods.push_back("swap");
     neighborhoods.push_back("move");
 
@@ -532,3 +679,138 @@ double geneticAlgorithm(Instance& instance, int num_generations, int pop_size, d
     std::cout << "Genetico " << bestest << std::endl;
     return bestest;   
 }
+
+// GRASP 
+
+void random_greedy(Instance& instance, double size_rlc)
+{
+    instance.cleanSolution();
+
+    std::vector<std::vector<int>> better_items(instance.thieves.size()); //Cada vetor representa os n melhores itens pra um ladrão i
+    std::vector<int> aux_caught_items(instance.items.size(), 0);
+    bool items_remaining = true;
+    int current_city = 0;
+
+    for(int j = 0; j < instance.thieves.size(); j++)
+    {
+        instance.thieves[j].route.push_back(current_city);
+        instance.thieves[j].backpack_weight.push_back(0);
+    }
+
+    while(items_remaining)
+    {
+        for(int j = 0; j < instance.thieves.size(); j++)
+        {
+            better_items[j].assign(instance.items.size()*size_rlc + 0.5, -1);
+            for(int k = 0; k < instance.items.size(); k++)
+            {
+                float cur_val = instance.items[k].value;
+                float aux_val = 0;
+                float out_val = instance.items[better_items[j][0]].value;
+                int out_ind = 0;
+                if(aux_caught_items[k] == 0)
+                {
+                    if(instance.cities_distance[current_city][instance.items[k].city_idx] != 0)                      
+                        cur_val = instance.items[k].value / instance.cities_distance[current_city][instance.items[k].city_idx];
+
+                    for(int l = 0; l < better_items[j].size(); l++)
+                    {
+                        if(instance.cities_distance[current_city][instance.items[better_items[j][l]].city_idx] != 0)     
+                            aux_val = instance.items[better_items[j][l]].value / instance.cities_distance[current_city][instance.items[better_items[j][l]].city_idx];
+                        else
+                            aux_val = instance.items[better_items[j][l]].value;
+
+                        if(aux_val < out_val)
+                        {
+                            out_val = aux_val;
+                            out_ind = l;
+                        }
+                    } // escolher qual valor pode ser substituido da lista de melhores
+                    if(cur_val > out_val)
+                    {
+                        better_items[j][out_ind] = k;
+                    }
+                    items_remaining = true;
+                }
+                else
+                {
+                    items_remaining = false;
+                } 
+            }
+            int item_to_take = rand() % better_items[j].size();
+
+            while(better_items[j][item_to_take] == -1 && items_remaining)
+            {
+                item_to_take = rand() % better_items[j].size();
+            }
+
+            if(better_items[j][item_to_take] != -1)
+            {
+
+                aux_caught_items[better_items[j][item_to_take]] = 1;
+
+
+                if(instance.items[better_items[j][item_to_take]].weight < instance.max_capacity - instance.used_capacity)
+                {
+
+                    current_city = instance.items[better_items[j][item_to_take]].city_idx;
+
+                    // Pega o item
+                    instance.caught_items[better_items[j][item_to_take]] = 1;
+                    instance.used_capacity += instance.items[better_items[j][item_to_take]].weight;
+
+                    // Adiciona o item a mochila do ladrao
+                    instance.thieves[j].items.push_back(better_items[j][item_to_take]);
+
+
+                    // Adiciona a cidade a rota
+                    auto pos = std::find(instance.thieves[j].route.begin(), instance.thieves[j].route.end(), instance.items[better_items[j][item_to_take]].city_idx);
+                    if(pos == instance.thieves[j].route.end())
+                    {
+                        instance.thieves[j].route.push_back(current_city);
+                        instance.thieves[j].backpack_weight.push_back(instance.items[better_items[j][item_to_take]].weight);
+                    }
+                    else
+                    {
+                        int index = std::distance(instance.thieves[j].route.begin(), pos);
+                        instance.thieves[j].backpack_weight[index] += instance.items[better_items[j][item_to_take]].weight;
+                    }
+                }   
+            }   
+        }
+    }
+}
+
+double grasp(Instance& instance, int imax, bool verbose)
+{
+    Instance best_solution = instance;
+    best_solution.greedySolution();
+    double best_value = best_solution.objectiveFunction();
+
+    if(verbose) std::cout << "Solucao inicial do GRASP: " << best_value << std::endl;
+
+    int i = 0;
+    while(i < imax)
+    {
+        Instance aux_instance = instance;
+        std::cout << "hm1" << std::endl;
+        random_greedy(aux_instance, 0.05);
+        std::cout << "hm2" << std::endl;
+        localSearch(aux_instance, "swap");
+        std::cout << "hm3" << std::endl;
+        double current = aux_instance.objectiveFunction();
+
+        if(verbose) std::cout << "Iteracao " << i << ": " << best_value << std::endl;
+
+        if(best_value < current)
+        {
+            best_value = current;
+            best_solution = aux_instance;
+        }
+        i++;
+    }
+    if(verbose) std::cout << "Melhor valor encontrado: " << best_value << std::endl;
+    instance = best_solution;
+
+    return best_value;
+} 

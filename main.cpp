@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
             Instance instance;
             try
             {
-                //std::cout << filename << "\n";
+                std::cout << filename << "\n";
                 instance = get_instance(filename);
                 for(int i = 1; i <= 5 ; i++){
                 
@@ -40,9 +40,22 @@ int main(int argc, char *argv[])
                     instance.addThief(i);
 
                     instance.greedySolution();
-                    instance.output();
+                    //instance.output();
 
-                    std::cout << instance.objectiveFunction() << std::endl;
+                    std::cout << "Solucao inicial: " << instance.objectiveFunction() << std::endl;
+                    VNS(instance, 5);
+                    std::cout << "VNS: " << instance.objectiveFunction() << std::endl;
+
+                    /**
+                     * TODO:
+                     * Fazer uma funcao que "recupera" solucoes com valor negativo
+                     * (vai tirando itens por ordem de menor custo beneficio ate que 
+                     * o valor da mesma se torne >= 0)
+                     * 
+                     * Refazer a vizinhanca de troca de itens entre ladroes
+                     * (fazer com um numero aleatorio de ladroes ao inves de 2)
+                     * 
+                     **/
                     
                 }
             }

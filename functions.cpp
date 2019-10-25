@@ -13,9 +13,9 @@ double first_improvement_swap(Instance& inst)
     int thief = rand() % inst.thieves.size();
 
     // Procura duas cidades que melhoram a solucao atual
-    for(int i = 1; i < inst.thieves[thief].second.route.size(); i++)
+    for(int i = 1; i < inst.thieves[thief].route.size(); i++)
     {
-        for(int j = i + 1; j < inst.thieves[thief].second.route.size(); j++)
+        for(int j = i + 1; j < inst.thieves[thief].route.size(); j++)
         {
             // Salva o estado da instancia
             initial_instance = inst;
@@ -91,9 +91,9 @@ double first_improvement_move(Instance& inst)
     int thief = rand() % inst.thieves.size();
 
     // Procura uma posicao para uma cidade, de maneira a melhorar a solucao
-    for(int i = 1; i < inst.thieves[thief].second.route.size(); i++)
+    for(int i = 1; i < inst.thieves[thief].route.size(); i++)
     {
-        for(int j = 1; j < inst.thieves[thief].second.route.size(); j++)
+        for(int j = 1; j < inst.thieves[thief].route.size(); j++)
         {
             // Caso a nova posicao seja a mesma posicao, passa para a proxima tentativa
             if(i == j) continue;
@@ -153,7 +153,6 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
     std::vector<std::string> neighborhoods;
     neighborhoods.push_back("swap");
     neighborhoods.push_back("move");
-    //neighborhoods.push_back("trade_ungotted");
 
     // Gera solucao inicial
     inst.greedySolution();
@@ -168,15 +167,9 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
 
     while(true)
     {
-        // Aplica busca local com a vizinhanca atual
-        /* for(auto thief: inst.thieves){
-            std::cout << "Numero de itens: " << thief.second.items.size() << std::endl;
-            std::cout << "Numero de pesos: " << thief.second.backpack_weight.size() << std::endl;
-            std::cout << "Numero de cidades: " << thief.second.route.size() << std::endl;
-        } */
         current_value = localSearch(inst, neighborhoods[neighborhood]);
 
-        // if(verbose) std::cout << "Valor atual: " << current_value << std::endl;
+        if(verbose) std::cout << "Valor atual: " << current_value << std::endl;
 
         // Verifica se melhorou a solucao
         if(current_value > best_value) 
@@ -191,21 +184,19 @@ double VNS(Instance& inst, int max_disturbance, bool verbose)
             // Se piorou, tenta a proxima vizinhanca
             inst = aux_inst;
             neighborhood++;
-            if(neighborhood >= neighborhoods.size()) break;
         }
-
+        
         // Caso n haja melhora na solucao, e a vizinhanca eh a ultima, entao perturba a solucao
         if(neighborhood == neighborhoods.size()){
             // Caso o numero de perturbacoes tenha chegado ao limite, entao termina o algoritmo
             if(n_disturbance >= max_disturbance) break;
-            n_disturbance++;
 
             // Reseta a vizinhanca
-            aux_inst = inst;
             neighborhood = 0;
 
             // Perturba
-            inst.disturbe(5);
+            if(!inst.disturbe(5)) break;
+            n_disturbance++;
         }
     }
 
@@ -225,8 +216,8 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, int pop_size
         int current_city = 0;
         for(int j = 0; j < instance.thieves.size(); j++)
         {
-            instance.thieves[j].second.route.push_back(current_city);
-            instance.thieves[j].second.backpack_weight.push_back(0);
+            instance.thieves[j].route.push_back(current_city);
+            instance.thieves[j].backpack_weight.push_back(0);
         }
         while(items_remaining)
         {
@@ -291,20 +282,20 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, int pop_size
                         instance.used_capacity += instance.items[better_items[j][item_to_take]].weight;
 
                         // Adiciona o item a mochila do ladrao
-                        instance.thieves[j].second.items.push_back(better_items[j][item_to_take]);
+                        instance.thieves[j].items.push_back(better_items[j][item_to_take]);
                         
 
                         // Adiciona a cidade a rota
-                        auto pos = std::find(instance.thieves[j].second.route.begin(), instance.thieves[j].second.route.end(), instance.items[better_items[j][item_to_take]].city_idx);
-                        if(pos == instance.thieves[j].second.route.end())
+                        auto pos = std::find(instance.thieves[j].route.begin(), instance.thieves[j].route.end(), instance.items[better_items[j][item_to_take]].city_idx);
+                        if(pos == instance.thieves[j].route.end())
                         {
-                            instance.thieves[j].second.route.push_back(current_city);
-                            instance.thieves[j].second.backpack_weight.push_back(instance.items[better_items[j][item_to_take]].weight);
+                            instance.thieves[j].route.push_back(current_city);
+                            instance.thieves[j].backpack_weight.push_back(instance.items[better_items[j][item_to_take]].weight);
                         }
                         else
                         {
-                            int index = std::distance(instance.thieves[j].second.route.begin(), pos);
-                            instance.thieves[j].second.backpack_weight[index] += instance.items[better_items[j][item_to_take]].weight;
+                            int index = std::distance(instance.thieves[j].route.begin(), pos);
+                            instance.thieves[j].backpack_weight[index] += instance.items[better_items[j][item_to_take]].weight;
                         }
                     }   
                 }   
@@ -357,9 +348,9 @@ void crossover(std::vector<Instance>& mating_pool, std::vector<Instance>& next_g
 
         int last_from_next = next_gen.size() - 1;
 
-        Thief aux = next_gen[last_from_next].thieves[thief1].second;
-        next_gen[last_from_next].thieves[thief1].second = next_gen[last_from_next - 1].thieves[thief2].second;
-        next_gen[last_from_next - 1].thieves[thief2].second = aux;
+        Thief aux = next_gen[last_from_next].thieves[thief1];
+        next_gen[last_from_next].thieves[thief1] = next_gen[last_from_next - 1].thieves[thief2];
+        next_gen[last_from_next - 1].thieves[thief2] = aux;
        
     }
 
@@ -373,12 +364,12 @@ void crossover(std::vector<Instance>& mating_pool, std::vector<Instance>& next_g
 
         for(int j = 0; j < next_gen[i].thieves.size(); j++)
         {
-            for(int k = 0; k < next_gen[i].thieves[j].second.items.size(); k++)
+            for(int k = 0; k < next_gen[i].thieves[j].items.size(); k++)
             {
-                if(next_gen[i].caught_items[next_gen[i].thieves[j].second.items[k]] == 0)
+                if(next_gen[i].caught_items[next_gen[i].thieves[j].items[k]] == 0)
                 {
-                    next_gen[i].used_capacity += next_gen[i].items[next_gen[i].thieves[j].second.items[k]].weight;
-                    next_gen[i].caught_items[next_gen[i].thieves[j].second.items[k]] = 1;
+                    next_gen[i].used_capacity += next_gen[i].items[next_gen[i].thieves[j].items[k]].weight;
+                    next_gen[i].caught_items[next_gen[i].thieves[j].items[k]] = 1;
                 }
             }
         }
@@ -392,12 +383,12 @@ void mutation(std::vector<Instance>& generation, double beta, int pop_size, bool
     for(int i = 0; i < num_members; i++)
     {
         int choosed_thief = rand() % generation[i].thieves.size();
-        int choosed_city = rand() % generation[i].thieves[choosed_thief].second.route.size();
-        int new_pos = rand() % generation[i].thieves[choosed_thief].second.route.size();
+        int choosed_city = rand() % generation[i].thieves[choosed_thief].route.size();
+        int new_pos = rand() % generation[i].thieves[choosed_thief].route.size();
         int individual = rand() % generation.size();
         std::cout << "Alterar instancia " << individual << " movendo a cidade " << choosed_city << " do ladrao " << choosed_thief << " para a posicao " << new_pos << std::endl; 
         double p = ((double) rand() / (RAND_MAX)); 
-        std::cout << new_pos << " " << generation[i].thieves[choosed_thief].second.route.size() << std::endl;
+        std::cout << new_pos << " " << generation[i].thieves[choosed_thief].route.size() << std::endl;
         generation[individual].move_cities(choosed_thief, choosed_city, new_pos, true);
         std::cout << "Movi cidades\n";
         if(p >= 0.5)
@@ -427,10 +418,10 @@ void validation(std::vector<Instance>& generation, bool verbose)
             {
                 for(int k = 0; k < generation[i].thieves.size(); k++)
                 {
-                    auto pos = std::find(generation[i].thieves[k].second.items.begin(), generation[i].thieves[k].second.items.end(), j);
-                    if(pos != generation[i].thieves[k].second.items.end())
+                    auto pos = std::find(generation[i].thieves[k].items.begin(), generation[i].thieves[k].items.end(), j);
+                    if(pos != generation[i].thieves[k].items.end())
                     {
-                        int index = std::distance(generation[i].thieves[k].second.items.begin(), pos);
+                        int index = std::distance(generation[i].thieves[k].items.begin(), pos);
                         occur.push_back(std::make_pair(k,index));
                         break;
                     }
@@ -442,12 +433,12 @@ void validation(std::vector<Instance>& generation, bool verbose)
                 {
                     int thief = occur[k].first;
                     int pos_item = occur[k].second;
-                    generation[i].thieves[thief].second.items.erase(generation[i].thieves[thief].second.items.begin() + pos_item); 
-                    auto pos = std::find(generation[i].thieves[thief].second.route.begin(), generation[i].thieves[thief].second.route.end(), generation[i].items[pos_item].city_idx);
-                    if(pos != generation[i].thieves[thief].second.route.end())
+                    generation[i].thieves[thief].items.erase(generation[i].thieves[thief].items.begin() + pos_item); 
+                    auto pos = std::find(generation[i].thieves[thief].route.begin(), generation[i].thieves[thief].route.end(), generation[i].items[pos_item].city_idx);
+                    if(pos != generation[i].thieves[thief].route.end())
                     {
-                        int index_city = std::distance(generation[i].thieves[thief].second.route.begin(), pos);
-                        generation[i].thieves[thief].second.backpack_weight[index_city] -= generation[i].items[pos_item].weight;
+                        int index_city = std::distance(generation[i].thieves[thief].route.begin(), pos);
+                        generation[i].thieves[thief].backpack_weight[index_city] -= generation[i].items[pos_item].weight;
                     
                     }
                     generation[i].used_capacity -= generation[i].items[pos_item].weight;
@@ -455,18 +446,18 @@ void validation(std::vector<Instance>& generation, bool verbose)
                     if(verbose) std::cout << "Removi item " << pos_item << std::endl;
 
                     bool remove_city = true;
-                    for(int l = 0; l < generation[i].thieves[thief].second.items.size(); l++)
+                    for(int l = 0; l < generation[i].thieves[thief].items.size(); l++)
                     {
-                        int thief_item = generation[i].thieves[thief].second.items[l];
+                        int thief_item = generation[i].thieves[thief].items[l];
                         if(generation[i].items[pos_item].city_idx == generation[i].items[thief_item].city_idx && thief_item != pos_item)
                         {
                             remove_city = false;
                             break;
                         }
                     }
-                    if(remove_city && pos != generation[i].thieves[thief].second.route.end())
+                    if(remove_city && pos != generation[i].thieves[thief].route.end())
                     {
-                        generation[i].thieves[thief].second.route.erase(pos);
+                        generation[i].thieves[thief].route.erase(pos);
                         if(verbose) std::cout << "Removi cidade " << generation[i].items[pos_item].city_idx << std::endl;
                     }   
 

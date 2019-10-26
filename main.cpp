@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
                     std::cout << "Solucao inicial: " << instance.objectiveFunction() << std::endl;
                     std::cout << "Local search: " << localSearch(instance, "items") << std::endl;
                     std::cout << "Funcao objetivo: " << instance.objectiveFunction(true) << std::endl;
+                    instance.output();
                     //std::cout << "VNS: " << VNS(instance, 5) << std::endl;
 
 

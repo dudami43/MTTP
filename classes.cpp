@@ -356,6 +356,8 @@ class Instance {
 
                         this->thieves[choosed_thief].items.push_back(insert_item);
                         caught_items[insert_item] = 1;
+                        this->used_capacity += this->items[insert_item].weight;
+
                         if(verbose) std::cout << "Inseri item " << insert_item << std::endl;
 
                         pos = std::find(this->thieves[choosed_thief].route.begin(), this->thieves[choosed_thief].route.end(), this->items[insert_item].city_idx);
@@ -392,7 +394,6 @@ class Instance {
                     }
                 }
             }
-           
         }
 
         void exchange_random_items(bool verbose = false)
@@ -849,6 +850,7 @@ class Instance {
             {
                 total_weight += this->items[i].weight*this->caught_items[i];
             }
+            if(verbose) std::cout << "Used capacity: " << this->used_capacity << std::endl;
             if(verbose) std::cout << "Weight: " << total_weight << std::endl;
 
 

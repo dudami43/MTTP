@@ -841,6 +841,8 @@ class Instance {
                 time += (this->cities_distance[current_city][0])/(this->max_speed - (v*Wx_n));
             }
 
+            if(verbose) std::cout << "Penality: " << time << std::endl;
+
             // Soma todo os valores de peso
             double total_weight = 0;
             for(int i = 0; i < this->caught_items.size(); i++)
@@ -849,8 +851,8 @@ class Instance {
             }
             if(verbose) std::cout << "Weight: " << total_weight << std::endl;
 
+
             // Calcula funcao maxZ
-            //std::cout << "Profit " << total_value << " Rent " << time << std::endl;
             maxZ = total_value - this->renting_ratio*time;
             
             return maxZ;

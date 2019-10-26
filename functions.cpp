@@ -17,7 +17,7 @@ double first_improvement_shuffle(Instance& inst)
     {
        n_thieves = 2 + (rand() % inst.thieves.size() - 1);
     }
-    n_thieves = 2;
+    
     std::vector<int> choosed_thieves;
     choosed_thieves.assign(n_thieves, 0);
     bool equals;
@@ -36,15 +36,35 @@ double first_improvement_shuffle(Instance& inst)
         }
     }
 
-    std::vector<int> items_position;
-    for(int i = 0; i < choosed_thieves.size(); i++)
+    for(int j = 0; j < 50; j++) // maximo de iteracoes
     {
-        int item_rand = rand() % inst.thieves[choosed_thieves[i]].items.size();
-        items_position.push_back(item_rand);
-    }
-    
-    inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
+        std::vector<int> items_position;
+        for(int i = 0; i < choosed_thieves.size(); i++)
+        {
+            int item_rand = rand() % inst.thieves[choosed_thieves[i]].items.size();
+            items_position.push_back(item_rand);
+        }
+        
+        inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
 
+        // Valida solucao
+        if(inst.solutionValid())
+        {
+            // Avalia a nova solucao
+            current_value = inst.objectiveFunction();
+            
+            // Verifica se eh melhor que a atual
+            if(current_value > best_value)
+            {
+                return current_value;
+            }
+        }
+
+        // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+        inst = initial_instance;
+    }
+
+    return best_value;
 }
 
 double first_improvement_swap(Instance& inst)

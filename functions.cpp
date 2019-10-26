@@ -10,16 +10,14 @@ double first_improvement_shuffle(Instance& inst)
     double current_value, best_value = inst.objectiveFunction();
     Instance initial_instance;
 
-    // Escolhe o numero de ladroes
     int n_thieves = 1;
     if(inst.thieves.size() <= 1) return best_value;
     else if(inst.thieves.size() == 2) n_thieves = 2;
     else 
     {
-        while(n_thieves <= 1) n_thieves = rand() % inst.thieves.size();
+       n_thieves = 2 + (rand() % inst.thieves.size() - 1);
     }
-
-    // Escolhe quais ladroes irao trocar de itens
+    n_thieves = 2;
     std::vector<int> choosed_thieves;
     choosed_thieves.assign(n_thieves, 0);
     bool equals;
@@ -31,165 +29,22 @@ double first_improvement_shuffle(Instance& inst)
             choosed_thieves[i] = rand() % inst.thieves.size();
             equals = false;
             for(int j = 0; j < i; j++)
+            {
                 if(choosed_thieves[i] == choosed_thieves[j])
-                    equals = true;
-        }
-    }
-    std::cout << choosed_thieves[0] << " - " << choosed_thieves[1] << std::endl;
-
-    for(int i = 0; i < inst.thieves[choosed_thieves[0]].items.size(); i++)
-    {
-        for(int j = 0; j < inst.thieves[choosed_thieves[1]].items.size(); j++)
-        {
-            std::vector<int> items_position;
-            items_position.push_back(inst.thieves[choosed_thieves[0]].items[i]);
-            items_position.push_back(inst.thieves[choosed_thieves[1]].items[j]);
-            inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position, true);
-
-            std::cout << "4" << std::endl;
-
-
-            // Valida solucao
-            if(inst.solutionValid())
-            {
-                // Avalia a nova solucao
-                current_value = inst.objectiveFunction();
-                
-                // Verifica se eh melhor que a atual
-                if(current_value > best_value)
-                {
-                    return current_value;
-                }
+                    equals = true;        
             }
-
-            // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
-            inst = initial_instance;
         }
     }
 
-    /* 
-    // Testa todas as combinacoes possiveis ate encontrar uma que melhora
-    // TODO: Pensar em uma alternativa, sao muitas possibilidades 
-    int items_position[n_thieves]; 
-    for(int i1 = 0; i1 < inst.thieves[choosed_thieves[0]].items.size(); i1++)
+    std::vector<int> items_position;
+    for(int i = 0; i < choosed_thieves.size(); i++)
     {
-        for(int i2 = 0; i2 < inst.thieves[choosed_thieves[1]].items.size(); i2++)
-        {
-            if(n_thieves < 3)
-            {
-                items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
-                items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
+        int item_rand = rand() % inst.thieves[choosed_thieves[i]].items.size();
+        items_position.push_back(item_rand);
+    }
+    
+    inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
 
-                inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
-
-                // Valida solucao
-                if(inst.solutionValid())
-                {
-                    // Avalia a nova solucao
-                    current_value = inst.objectiveFunction();
-                    
-                    // Verifica se eh melhor que a atual
-                    if(current_value > best_value)
-                    {
-                        return current_value;
-                    }
-                }
-
-                // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
-                inst = initial_instance;
-            }
-            else
-            {
-                for(int i3 = 0; i3 < inst.thieves[choosed_thieves[2]].items.size(); i3++)
-                {
-                    if(n_thieves < 4)
-                    {
-                        items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
-                        items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
-                        items_position[2] = inst.thieves[choosed_thieves[2]].items[i3];
-                        inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
-
-                        // Valida solucao
-                        if(inst.solutionValid())
-                        {
-                            // Avalia a nova solucao
-                            current_value = inst.objectiveFunction();
-                            
-                            // Verifica se eh melhor que a atual
-                            if(current_value > best_value)
-                            {
-                                return current_value;
-                            }
-                        }
-
-                        // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
-                        inst = initial_instance;
-                    }
-                    else
-                    {
-                        for(int i4 = 0; i4 < inst.thieves[choosed_thieves[3]].items.size(); i4++)
-                        {
-                            if(n_thieves < 5)
-                            {
-                                items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
-                                items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
-                                items_position[2] = inst.thieves[choosed_thieves[2]].items[i3];
-                                items_position[3] = inst.thieves[choosed_thieves[3]].items[i4];
-                                inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
-
-                                // Valida solucao
-                                if(inst.solutionValid())
-                                {
-                                    // Avalia a nova solucao
-                                    current_value = inst.objectiveFunction();
-                                    
-                                    // Verifica se eh melhor que a atual
-                                    if(current_value > best_value)
-                                    {
-                                        return current_value;
-                                    }
-                                }
-
-                                // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
-                                inst = initial_instance;
-                            }
-                            else
-                            {
-                                for(int i5 = 0; i5 < inst.thieves[choosed_thieves[4]].items.size(); i5++)
-                                {
-                                    items_position[0] = inst.thieves[choosed_thieves[0]].items[i1];
-                                    items_position[1] = inst.thieves[choosed_thieves[1]].items[i2];
-                                    items_position[2] = inst.thieves[choosed_thieves[2]].items[i3];
-                                    items_position[3] = inst.thieves[choosed_thieves[3]].items[i4]; 
-                                    items_position[4] = inst.thieves[choosed_thieves[4]].items[i5]; 
-                                    inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
-
-                                    // Valida solucao
-                                    if(inst.solutionValid())
-                                    {
-                                        // Avalia a nova solucao
-                                        current_value = inst.objectiveFunction();
-                                        
-                                        // Verifica se eh melhor que a atual
-                                        if(current_value > best_value)
-                                        {
-                                            return current_value;
-                                        }
-                                    }
-
-                                    // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
-                                    inst = initial_instance;
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-            }
-
-        }
-    } */
 }
 
 double first_improvement_swap(Instance& inst)
@@ -271,6 +126,44 @@ double first_improvement_move(Instance& inst)
     return best_value;
 }
 
+double first_improvement_trade_ungotten(Instance& inst)
+{
+    double current_value, best_value = inst.objectiveFunction();
+    Instance initial_instance;
+    int tries = 0;
+    int thief = rand() % inst.thieves.size();
+
+    // Procura dois itens que melhoram a solucao atual
+    for(int i = 1; i < inst.thieves[thief].items.size(); i++)
+    {
+        for(int j = i + 1; j < inst.items.size(); j++)
+        {
+            // Salva o estado da instancia
+            initial_instance = inst;
+
+            // Muda para o proximo vizinho
+            inst.exchange_items(thief, i, j);
+
+            // Valida solucao
+            if(inst.solutionValid())
+            {
+                // Avalia a nova solucao
+                current_value = inst.objectiveFunction();
+                
+                // Verifica se eh melhor que a atual
+                if(current_value > best_value)
+                {
+                    return current_value;
+                }
+            }
+            // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+            inst = initial_instance;
+        }
+    }
+    
+    return best_value;
+}
+
 double localSearch(Instance& inst, std::string method)
 {
     if(method.compare("shuffle") == 0)
@@ -284,6 +177,10 @@ double localSearch(Instance& inst, std::string method)
     else if(method.compare("move") == 0)
     {
         return first_improvement_move(inst);
+    }
+    else if(method.compare("items") == 0)
+    {
+        return first_improvement_trade_ungotten(inst);
     }
 }
 

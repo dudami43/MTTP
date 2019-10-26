@@ -43,9 +43,11 @@ int main(int argc, char *argv[])
                     //instance.output();
 
                     std::cout << "Solucao inicial: " << instance.objectiveFunction() << std::endl;
-                    VNS(instance, 5);
-                    std::cout << "VNS: " << instance.objectiveFunction() << std::endl;
-
+                    //VNS(instance, 5);
+                    //std::cout << "VNS: " << instance.objectiveFunction() << std::endl;
+                    std::cout << localSearch(instance, "items") << std::endl;
+                    instance.objectiveFunction(true);
+                    instance.output();
                     /**
                      * TODO:
                      * Fazer uma funcao que "recupera" solucoes com valor negativo

@@ -11,7 +11,7 @@ Encontrar a rota e o plano de coleta de máximo benefício, com as seguintes con
 - thief.items
 - thief.route
 - thief.backpack_weight
-- caught_weight
+- caught_items
 - used_capacity
 
 # Rastrear desde o começo: #

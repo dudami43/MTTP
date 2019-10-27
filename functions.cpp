@@ -162,7 +162,7 @@ double first_improvement_trade_ungotten(Instance& inst)
             initial_instance = inst;
 
             // Muda para o proximo vizinho
-            inst.exchange_items(thief, i, j);
+            inst.new_exchange(thief, i, j);
 
             // Valida solucao
             if(inst.solutionValid())

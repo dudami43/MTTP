@@ -571,7 +571,7 @@ class Instance {
 
         // Adiciona o item a mochila do ladrao e retorna
         // true se adicionou e false caso contrario
-        bool add_item(int thief, int item, bool verbose = false)
+        bool add_item(int thief, int item, bool in_back = false, bool verbose = false)
         {
 
             if(verbose) std::cout << "Adicionando item..." << std::endl;
@@ -594,6 +594,11 @@ class Instance {
             if(in_route)
             {
                 this->thieves[thief].backpack_weight[pos_in_route] += this->items[item].weight;
+            }
+            else if(in_back)
+            {
+                this->thieves[thief].route.push_back(this->items[item].city_idx);
+                this->thieves[thief].backpack_weight.push_back(this->items[item].weight);
             }
             else
             {

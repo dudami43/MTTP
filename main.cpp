@@ -43,9 +43,8 @@ int main(int argc, char *argv[])
 
                     std::cout << i << " ladrao(oes) - ";
 
-                    std::cout << "Solucao inicial: " << instance.objectiveFunction();
-                    //std::cout << " - VNS: " << VNS(instance, 5);
-                    std::cout << localSearch(instance, "shuffle");
+                    std::cout << "Solucao inicial: " << instance.objectiveFunction() << std::endl;
+                    std::cout << geneticAlgorithm(instance);
                     std::cout << " - Funcao objetivo: " << instance.objectiveFunction() << std::endl;
                     //instance.output();
 

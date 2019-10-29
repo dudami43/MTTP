@@ -576,17 +576,28 @@ class Instance {
 
             if(verbose) std::cout << "Adicionando item..." << std::endl;
 
-            if(this->items[item].weight + this->used_capacity > this->max_capacity) return false;
+            if(this->items[item].weight + this->used_capacity > this->max_capacity){ 
+                std::cout << "entrou" << std::endl;
+                return false;
+            }
+
+            std::cout << "a1" << std::endl;
 
             bool in_route = false;
             auto iter_city = std::find(this->thieves[thief].route.begin(), this->thieves[thief].route.end(), this->items[item].city_idx);
             int pos_in_route;
+
+            std::cout << "a2" << std::endl;
+
 
             if(iter_city != this->thieves[thief].route.end())
             {
                 pos_in_route = std::distance(this->thieves[thief].route.begin(), iter_city);
                 in_route = true;
             }
+
+            std::cout << "a3" << std::endl;
+
 
             if(verbose) std::cout << "Verifica a rota" << std::endl;
             this->used_capacity +=this->items[item].weight;

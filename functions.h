@@ -4,7 +4,7 @@ double first_improvement_move(Instance& inst);
 double first_improvement_trade_ungotten(Instance& inst);
 double localSearch(Instance& inst, std::string method);
 
-double VNS(Instance& inst, int max_disturbance, bool verbose = false);
+double VNS(Instance& inst, int max_disturbance, int n_disturbe = 5, bool verbose = false);
 
 void initial_pop(Instance& inst, std::vector<Instance>& population, int pop_size, bool verbose = false);
 void selection(std::vector<Instance>& population, std::vector<Instance>& mating_pool, int alpha, int pop_size, bool verbose = false);

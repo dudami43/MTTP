@@ -3,12 +3,36 @@
 #include "functions.h"
 
 /**
- *Busca Local
+ * Funcoes auxiliares
+**/
+// Pega o proximo item de um ladrao e retorna a posicao que sera incrementada na proxima iteracao
+int get_next(Instance& inst, std::vector<int>& choosed_thieves, std::vector<int>& actual_items, int next_position)
+{
+    actual_items[next_position]++;
+
+    for(int i = 0; i < next_position; i++)
+    {
+        actual_items[i] = 0;
+        next_position = 0;
+    }
+
+    while( actual_items[next_position] == (inst.thieves[choosed_thieves[next_position]].items.size() - 1) )
+    {
+        next_position++;
+    }
+
+    if(next_position == choosed_thieves.size()) return -1;
+
+    return next_position;
+}
+
+/**
+ * Busca Local
 **/
 double first_improvement_shuffle(Instance& inst)
 {
     double current_value, best_value = inst.objectiveFunction();
-    Instance initial_instance;
+    Instance initial_instance = inst;
 
     int n_thieves = 1;
     if(inst.thieves.size() <= 1) return best_value;
@@ -36,7 +60,33 @@ double first_improvement_shuffle(Instance& inst)
         }
     }
 
-    for(int j = 0; j < 50; j++) // maximo de iteracoes
+    std::vector<int> items_position;
+    items_position.assign(choosed_thieves.size(), 0);
+    int next_increment = get_next(inst, choosed_thieves, items_position, 0);
+    while(next_increment != -1){
+        
+        inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
+
+        // Valida solucao
+        if(inst.solutionValid())
+        {
+            // Avalia a nova solucao
+            current_value = inst.objectiveFunction();
+            
+            // Verifica se eh melhor que a atual
+            if(current_value > best_value)
+            {
+                return current_value;
+            }
+        }
+
+        // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+        inst = initial_instance;
+        
+        next_increment = get_next(inst, choosed_thieves, items_position, next_increment);
+    }
+
+    /* for(int j = 0; j < 50; j++) // maximo de iteracoes
     {
         std::vector<int> items_position;
         for(int i = 0; i < choosed_thieves.size(); i++)
@@ -62,7 +112,7 @@ double first_improvement_shuffle(Instance& inst)
 
         // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
         inst = initial_instance;
-    }
+    } */
 
     return best_value;
 }
@@ -211,12 +261,12 @@ double localSearch(Instance& inst, std::string method)
 // VNS
 double VNS(Instance& inst, int max_disturbance, bool verbose)
 {
-
     // Inicializa o vector de vizinhanças
     std::vector<std::string> neighborhoods;
+    neighborhoods.push_back("items");
+    neighborhoods.push_back("move");
     neighborhoods.push_back("shuffle");
     neighborhoods.push_back("swap");
-    neighborhoods.push_back("move");
 
     // Gera solucao inicial
     inst.greedySolution();
@@ -710,11 +760,8 @@ double grasp(Instance& instance, int imax, bool verbose)
     while(i < imax)
     {
         Instance aux_instance = instance;
-        std::cout << "hm1" << std::endl;
         random_greedy(aux_instance, 0.05);
-        std::cout << "hm2" << std::endl;
-        localSearch(aux_instance, "swap");
-        std::cout << "hm3" << std::endl;
+        localSearch(aux_instance, "items");
         double current = aux_instance.objectiveFunction();
 
         if(verbose) std::cout << "Iteracao " << i << ": " << best_value << std::endl;

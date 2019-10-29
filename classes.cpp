@@ -298,7 +298,11 @@ class Instance {
             items_in_solution.assign(n_thieves, 0);
 
             for(int i = 0; i < n_thieves; i++)
+            {
+                if(verbose) std::cout << "Ladrao escolhido: " << choosed_thieves[i] << " / " << this->thieves.size() << std::endl;
+                if(verbose) std::cout << "Posicao do item: " << items_position[i] << " / " << this->thieves[choosed_thieves[i]].items.size() << std::endl;
                 items_in_solution[i] = this->remove_item(choosed_thieves[i], items_position[i], verbose);
+            }
 
             if(verbose) std::cout << "Removeu os itens da mochila" << std::endl;
 
@@ -321,7 +325,7 @@ class Instance {
             if(verbose) std::cout << "Adicionou os itens na mochila" << std::endl;
         }
 
-        void exchange_items(int choosed_thief, int remove_item, int insert_item, bool verbose = false)
+        void new_exchange(int choosed_thief, int remove_item, int insert_item, bool verbose = false)
         {
             this->remove_item(choosed_thief, remove_item);
             int pos_item = this->thieves[choosed_thief].items[remove_item];
@@ -599,7 +603,7 @@ class Instance {
                 this->thieves[thief].backpack_weight.insert(this->thieves[thief].backpack_weight.begin() + new_pos, this->items[item].weight);
             }
 
-            if(verbose) std::cout << "Retirou o item da mochiça" << std::endl;
+            if(verbose) std::cout << "Retirou o item da mochila" << std::endl;
 
             this->thieves[thief].items.push_back(item);
             caught_items[item] = 1;

@@ -40,16 +40,14 @@ int main(int argc, char *argv[])
                     instance.addThief(i);
 
                     instance.greedySolution();
-                    //instance.output();
 
-                    std::cout << "Solucao inicial: " << instance.objectiveFunction() << std::endl;
-                    std::cout << "Local search: " << localSearch(instance, "items") << std::endl;
-                    std::cout << "Funcao objetivo: " << instance.objectiveFunction(true) << std::endl;
+                    std::cout << i << " ladrao(oes) - ";
+
+                    std::cout << "Solucao inicial: " << instance.objectiveFunction();
+                    std::cout << " - VNS: " << VNS(instance, 5);
+                    std::cout << " - Funcao objetivo: " << instance.objectiveFunction() << std::endl;
                     instance.output();
-                    //std::cout << "VNS: " << VNS(instance, 5) << std::endl;
 
-
-                    //instance.output();
                     /**
                      * TODO:
                      * Fazer uma funcao que "recupera" solucoes com valor negativo
@@ -69,7 +67,6 @@ int main(int argc, char *argv[])
             }
         }
         file.close();
-        
     }
     else
     {

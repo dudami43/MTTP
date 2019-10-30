@@ -14,4 +14,4 @@ void validation(std::vector<Instance>& generation, bool verbose);
 double geneticAlgorithm(Instance& instance, int num_generations = 10, int pop_size = 20, double alpha = 0.8, double beta = 0.08, bool verbose = false);
 
 void random_greedy(Instance& instance, double size_rlc);
-double grasp(Instance& instance, int imax = 10, bool verbose = false);
+double grasp(Instance& instance, int imax = 20, double size_rlc = 0.1, bool verbose = false);

@@ -27,38 +27,25 @@ int main(int argc, char *argv[])
 
     if (file.is_open())
     {
+        std::cout << "instancia, numero de ladroes, funcao objetivo, tamanho rlc \n";
         while (getline(file, filename))
         {
             Instance instance;
             try
             {
-                std::cout << filename << "\n";
                 instance = get_instance(filename);
                 for(int i = 1; i <= 5 ; i++){
                 
-                    instance.thieves.clear();
-                    instance.addThief(i);
-
-                    instance.greedySolution();
-
-                    std::cout << i << " ladrao(oes) - ";
-
-                    std::cout << "Solucao inicial: " << instance.objectiveFunction();
-                    VNS(instance, 5);
-                    std::cout << " - Funcao objetivo: " << instance.objectiveFunction() << std::endl;
-                    instance.output();
-
-                    /**
-                     * TODO:
-                     * Fazer uma funcao que "recupera" solucoes com valor negativo
-                     * (vai tirando itens por ordem de menor custo beneficio ate que 
-                     * o valor da mesma se torne >= 0)
-                     * 
-                     * Refazer a vizinhanca de troca de itens entre ladroes
-                     * (fazer com um numero aleatorio de ladroes ao inves de 2)
-                     * 
-                     **/
-                    
+                    //teste grasp
+                    for(double k = 0.1; k < 1.0; k+=0.1)
+                    {
+                        for(int j = 0; j < 10; j++)
+                        {
+                            instance.thieves.clear();
+                            instance.addThief(i);
+                            std::cout << filename << "," << i << "," << grasp(instance, 20, k, false) << "," << k <<  std::endl;
+                        }
+                    }                
                 }
             }
             catch (char const *param)

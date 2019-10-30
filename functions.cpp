@@ -615,7 +615,7 @@ void random_greedy(Instance& instance, double size_rlc)
     }
 }
 
-double grasp(Instance& instance, int imax, bool verbose)
+double grasp(Instance& instance, int imax, double size_rlc, bool verbose)
 {
     Instance best_solution = instance;
     best_solution.greedySolution();
@@ -627,7 +627,7 @@ double grasp(Instance& instance, int imax, bool verbose)
     while(i < imax)
     {
         Instance aux_instance = instance;
-        random_greedy(aux_instance, 0.30);
+        random_greedy(aux_instance, size_rlc);
         int cont = 0;
         double best = aux_instance.objectiveFunction();
         double result = localSearch(aux_instance, "items");

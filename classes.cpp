@@ -310,7 +310,7 @@ class Instance {
             {
                 std::random_shuffle(items_in_solution.begin(), items_in_solution.end());
             }
-            else
+            else if(n_thieves == 2)
             {
                 int aux = items_in_solution[0];
                 items_in_solution[0] = items_in_solution[1];
@@ -320,7 +320,7 @@ class Instance {
             if(verbose) std::cout << "Embaralhou os itens para mudar quem pega o mesmo" << std::endl;
 
             for(int i = 0; i < n_thieves; i++)
-                this->add_item(choosed_thieves[i], items_in_solution[i], verbose);
+                this->add_item(choosed_thieves[i], items_in_solution[i], false, verbose);
 
             if(verbose) std::cout << "Adicionou os itens na mochila" << std::endl;
         }
@@ -573,31 +573,21 @@ class Instance {
         // true se adicionou e false caso contrario
         bool add_item(int thief, int item, bool in_back = false, bool verbose = false)
         {
-
             if(verbose) std::cout << "Adicionando item..." << std::endl;
 
             if(this->items[item].weight + this->used_capacity > this->max_capacity){ 
-                std::cout << "entrou" << std::endl;
                 return false;
             }
-
-            std::cout << "a1" << std::endl;
 
             bool in_route = false;
             auto iter_city = std::find(this->thieves[thief].route.begin(), this->thieves[thief].route.end(), this->items[item].city_idx);
             int pos_in_route;
-
-            std::cout << "a2" << std::endl;
-
 
             if(iter_city != this->thieves[thief].route.end())
             {
                 pos_in_route = std::distance(this->thieves[thief].route.begin(), iter_city);
                 in_route = true;
             }
-
-            std::cout << "a3" << std::endl;
-
 
             if(verbose) std::cout << "Verifica a rota" << std::endl;
             this->used_capacity +=this->items[item].weight;

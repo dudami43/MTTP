@@ -19,9 +19,8 @@ int get_next(Instance& inst, std::vector<int>& choosed_thieves, std::vector<int>
     while( actual_items[next_position] == (inst.thieves[choosed_thieves[next_position]].items.size() - 1) )
     {
         next_position++;
+        if(next_position == actual_items.size()) return -1;
     }
-
-    if(next_position == choosed_thieves.size()) return -1;
 
     return next_position;
 }
@@ -39,7 +38,8 @@ double first_improvement_shuffle(Instance& inst)
     else if(inst.thieves.size() == 2) n_thieves = 2;
     else 
     {
-       n_thieves = 2 + (rand() % inst.thieves.size() - 1);
+       n_thieves = rand() % inst.thieves.size();
+       while(n_thieves < 2) n_thieves = rand() % inst.thieves.size();
     }
     
     std::vector<int> choosed_thieves;
@@ -65,9 +65,7 @@ double first_improvement_shuffle(Instance& inst)
     int next_increment = 0;
     while(next_increment != -1){
         
-        inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position, true);
-
-        std::cout << "1" << std::endl;
+        inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
 
         // Valida solucao
         if(inst.solutionValid())
@@ -75,31 +73,19 @@ double first_improvement_shuffle(Instance& inst)
             // Avalia a nova solucao
             current_value = inst.objectiveFunction();
 
-            std::cout << "2" << std::endl;
-
-            
             // Verifica se eh melhor que a atual
             if(current_value > best_value)
             {
-                std::cout << "3" << std::endl;        
                 return current_value;
             }
-            std::cout << "4" << std::endl;
 
         }
 
-        std::cout << "5" << std::endl;
-
         // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
         inst = initial_instance;
-        std::cout << "6" << std::endl;
-        
         next_increment = get_next(inst, choosed_thieves, items_position, next_increment);
-        
-        std::cout << "7" << std::endl;
-
     }
-
+    
     return best_value;
 }
 

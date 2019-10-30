@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
 
                     std::cout << i << " ladrao(oes) - ";
 
-                    std::cout << "Solucao inicial: " << instance.objectiveFunction() << std::endl;
-                    std::cout << geneticAlgorithm(instance);
+                    std::cout << "Solucao inicial: " << instance.objectiveFunction();
+                    VNS(instance, 5);
                     std::cout << " - Funcao objetivo: " << instance.objectiveFunction() << std::endl;
-                    //instance.output();
+                    instance.output();
 
                     /**
                      * TODO:

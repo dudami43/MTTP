@@ -296,7 +296,7 @@ void initial_pop(Instance& inst, std::vector<Instance>& population, int pop_size
     {
         inst.cleanSolution();
         Instance instance = inst;
-        random_greedy(instance, 0.3);
+        random_greedy(instance, 2, 0.3);
         population.push_back(instance);
     }  
     if (true)
@@ -493,7 +493,7 @@ double geneticAlgorithm(Instance& instance, int num_generations, int pop_size, d
 
 // GRASP 
 
-void random_greedy(Instance& instance, double size_rlc)
+void random_greedy(Instance& instance, int ir_max, double size_rlc)
 {
     instance.cleanSolution();
 
@@ -511,7 +511,7 @@ void random_greedy(Instance& instance, double size_rlc)
     
     bool items_available = true;
     int iterations = 0;
-    while(items_available && iterations < 2)
+    while(items_available && iterations < ir_max)
     {
         for(int i = 0; i < instance.thieves.size(); i++)
         {
@@ -615,7 +615,7 @@ void random_greedy(Instance& instance, double size_rlc)
     }
 }
 
-double grasp(Instance& instance, int imax, double size_rlc, bool verbose)
+double grasp(Instance& instance, int imax, int ir_max, double size_rlc, bool verbose)
 {
     Instance best_solution = instance;
     best_solution.greedySolution();
@@ -627,7 +627,7 @@ double grasp(Instance& instance, int imax, double size_rlc, bool verbose)
     while(i < imax)
     {
         Instance aux_instance = instance;
-        random_greedy(aux_instance, size_rlc);
+        random_greedy(aux_instance, ir_max, size_rlc);
         int cont = 0;
         double best = aux_instance.objectiveFunction();
         double result = localSearch(aux_instance, "items");

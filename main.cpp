@@ -27,26 +27,18 @@ int main(int argc, char *argv[])
 
     if (file.is_open())
     {
-        std::cout << "instancia, numero de ladroes, funcao objetivo, tamanho rlc \n";
         while (getline(file, filename))
         {
             Instance instance;
             try
             {
                 instance = get_instance(filename);
-                for(int i = 1; i <= 5 ; i++){
-                
-                    //teste grasp
-                    for(double k = 0.1; k < 1.0; k+=0.1)
-                    {
-                        for(int j = 0; j < 10; j++)
-                        {
-                            instance.thieves.clear();
-                            instance.addThief(i);
-                            std::cout << filename << "," << i << "," << grasp(instance, 20, k, false) << "," << k <<  std::endl;
-                        }
-                    }                
-                }
+                std::cout << filename << std::endl;
+                instance.thieves.clear();
+                instance.addThief(2);
+                std::cout << VNS(instance, 5, 10) <<  std::endl;
+                std::cout << instance.objectiveFunction(true) << std::endl;
+                instance.output(); 
             }
             catch (char const *param)
             {

@@ -14,9 +14,13 @@ Encontrar a rota e o plano de coleta de máximo benefício, com as seguintes con
 - caught_items
 - used_capacity
 
-# Rastrear desde o começo: #
-- função de avaliação
-- guloso
-- vizinhanças
-- busca local
-- heurísticas
+# Para calibrar os parâmetros #
+- Gerar o executável
+        make clean
+        make
+- Colocar o executável na pasta bin
+- Rodar o irace
+        sh run_irace.sh
+- As instâncias de teste ficam na pasta bin
+- Os parâmetros testados no arquivo parameters.txt
+- Algumas outras configurações são encontradas em scenario.txt

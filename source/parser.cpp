@@ -6,8 +6,8 @@ Instance get_instance(std::string filename)
 {
     // Abre o arquivo com os dados da instancia
     std::ifstream file;
-
-    std::string name = "data/" + filename;
+    //std::string name = "data/" + filename;
+    std::string name = filename;
     //std::cout << name << "" << std::endl;
     if(name[name.size()-1] == '\r')
         file.open(name.substr(0,name.length() - 1));

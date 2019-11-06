@@ -23,7 +23,7 @@ bool get_next(Instance& inst, std::vector<int>& choosed_thieves, std::vector<int
         return false;
     }
 
-    for(int j = i; j >= 0 && i > 0; j--)
+    for(int j = i - 2; j >= 0 && i > 0; j--)
     {
         actual_items[i] = 0;
     }

@@ -299,7 +299,7 @@ class Instance {
 
             for(int i = 0; i < n_thieves; i++)
             {
-                if(verbose) std::cout << "Ladrao escolhido: " << choosed_thieves[i] << " / " << this->thieves.size() << std::endl;
+                if(verbose) std::cout << "Ladrao escolhido: " << choosed_thieves[i]<< " / " << this->thieves.size() << std::endl;
                 if(verbose) std::cout << "Posicao do item: " << items_position[i] << " / " << this->thieves[choosed_thieves[i]].items.size() << std::endl;
                 items_in_solution[i] = this->remove_item(choosed_thieves[i], items_position[i], verbose);
             }
@@ -320,7 +320,7 @@ class Instance {
             if(verbose) std::cout << "Embaralhou os itens para mudar quem pega o mesmo" << std::endl;
 
             for(int i = 0; i < n_thieves; i++)
-                this->add_item(choosed_thieves[i], items_in_solution[i], false, verbose);
+                this->add_item(choosed_thieves[i], items_in_solution[i], true, verbose);
 
             if(verbose) std::cout << "Adicionou os itens na mochila" << std::endl;
         }
@@ -535,7 +535,6 @@ class Instance {
         // mesmo na instancia
         int remove_item(int thief, int item, bool verbose = false)
         {
-
             if(verbose) std::cout << "Removendo item..." << std::endl;
 
             int pos_in_solution = this->thieves[thief].items[item];
@@ -594,6 +593,7 @@ class Instance {
 
             if(in_route)
             {
+                
                 this->thieves[thief].backpack_weight[pos_in_route] += this->items[item].weight;
             }
             else if(in_back)

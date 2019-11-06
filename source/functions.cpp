@@ -6,23 +6,38 @@
  * Funcoes auxiliares
 **/
 // Pega o proximo item de um ladrao e retorna a posicao que sera incrementada na proxima iteracao
-int get_next(Instance& inst, std::vector<int>& choosed_thieves, std::vector<int>& actual_items, int next_position)
-{
-    actual_items[next_position]++;
+bool get_next(Instance& inst, std::vector<int>& choosed_thieves, std::vector<int>& actual_items)
+{  
+    int i = 0;
+    for(; i < actual_items.size(); i++)
+    {
+        if( actual_items[i] < (inst.thieves[choosed_thieves[i]].items.size() - 1) )
+        {
+            actual_items[i]++;
+            break;
+        }
+    }
 
-    for(int i = 0; i < next_position; i++)
+    if(i == actual_items.size())
+    {
+        return false;
+    }
+
+    for(int j = i; j >= 0 && i > 0; j--)
     {
         actual_items[i] = 0;
-        next_position = 0;
     }
 
-    while( actual_items[next_position] == (inst.thieves[choosed_thieves[next_position]].items.size() - 1) )
-    {
-        next_position++;
-        if(next_position == actual_items.size()) return -1;
-    }
+    return true;
+}
 
-    return next_position;
+int number_of_empty_thieves(Instance& inst){
+    int n_empty_thieves = 0;
+    for(int i = 0; i < inst.thieves.size(); i++){
+        if(inst.thieves[i].items.size() == 0) n_empty_thieves++;
+
+    }
+    return n_empty_thieves;
 }
 
 /**
@@ -34,24 +49,32 @@ double first_improvement_shuffle(Instance& inst)
     Instance initial_instance = inst;
 
     int n_thieves = 1;
-    if(inst.thieves.size() <= 1) return best_value;
-    else if(inst.thieves.size() == 2) n_thieves = 2;
+
+    int n_empty_thieves = number_of_empty_thieves(inst);
+
+    if(n_empty_thieves <= 1) return best_value;
+    else if(n_empty_thieves == 2) n_thieves = 2;
     else 
     {
-       n_thieves = rand() % inst.thieves.size();
-       while(n_thieves < 2) n_thieves = rand() % inst.thieves.size();
+       n_thieves = rand() % n_empty_thieves;
+       while(n_thieves < 2) n_thieves = rand() % n_empty_thieves;
     }
     
     std::vector<int> choosed_thieves;
     choosed_thieves.assign(n_thieves, 0);
-    bool equals;
+    bool equals, empty_thief;
     for(int i = 0; i < n_thieves; i++)
     {
         equals = true;
-        while(equals)
+        while(equals or empty_thief)
         {
-            choosed_thieves[i] = rand() % inst.thieves.size();
             equals = false;
+            empty_thief = false;
+
+            choosed_thieves[i] = rand() % inst.thieves.size();
+            if(inst.thieves[choosed_thieves[i]].items.size() == 0)
+                empty_thief = true;
+
             for(int j = 0; j < i; j++)
             {
                 if(choosed_thieves[i] == choosed_thieves[j])
@@ -62,9 +85,8 @@ double first_improvement_shuffle(Instance& inst)
 
     std::vector<int> items_position;
     items_position.assign(choosed_thieves.size(), 0);
-    int next_increment = 0;
-    while(next_increment != -1){
-        
+    while(true){
+
         inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
 
         // Valida solucao
@@ -83,7 +105,7 @@ double first_improvement_shuffle(Instance& inst)
 
         // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
         inst = initial_instance;
-        next_increment = get_next(inst, choosed_thieves, items_position, next_increment);
+        if(!get_next(inst, choosed_thieves, items_position)) break;
     }
     
     return best_value;

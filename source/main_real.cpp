@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include "classes.cpp"
-#include "parser.h"
+#include "parser_antiga.h"
 #include "functions.h"
 
 // Para compilar com g++11: g++ -std=c++11 main.cpp parser.cpp functions.cpp
@@ -34,11 +34,15 @@ int main(int argc, char *argv[])
             {
                 instance = get_instance(filename);
                 std::cout << filename << std::endl;
-                instance.thieves.clear();
-                instance.addThief(2);
-                std::cout << VNS(instance, 5, 10) <<  std::endl;
-                std::cout << instance.objectiveFunction(true) << std::endl;
-                instance.output(); 
+                for(int i = 1; i <= 5; i++)
+                {
+                    instance.thieves.clear();
+                    instance.addThief(i);
+                    std::cout << i << " ladroes: ";
+                    std::cout << VNS(instance, 5, 5) <<  " --- ";
+                    std::cout << instance.objectiveFunction(true) << std::endl;
+                    instance.output(); 
+                }
             }
             catch (char const *param)
             {

@@ -228,6 +228,79 @@ double first_improvement_trade_ungotten(Instance& inst)
     return best_value;
 }
 
+double first_improvement_remove_item(Instance& inst)
+{
+    double current_value, best_value = inst.objectiveFunction();
+    Instance initial_instance;
+    int thief = rand() % inst.thieves.size();
+
+    // Procura duas cidades que melhoram a solucao atual
+    for(int j = 0; j < inst.thieves[thief].items.size(); j++)
+    {
+        // Salva o estado da instancia
+        initial_instance = inst;
+        
+        // Remove o item
+        inst.remove_item(thief, j);
+
+        // Valida solucao
+        if(inst.solutionValid())
+        {
+            // Avalia a nova solucao
+            current_value = inst.objectiveFunction();
+            
+            // Verifica se eh melhor que a atual
+            if(current_value > best_value)
+            {
+                return current_value;
+            }
+        }
+
+        // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+        inst = initial_instance;
+    }
+    
+    return best_value;
+}
+
+double first_improvement_add_item(Instance& inst)
+{
+    double current_value, best_value = inst.objectiveFunction();
+    Instance initial_instance;
+    int thief = rand() % inst.thieves.size();
+
+    // Procura duas cidades que melhoram a solucao atual
+    for(int j = 0; j < inst.items.size(); j++)
+    {
+        if(inst.caught_items[j] == 0)
+        {
+            // Salva o estado da instancia
+            initial_instance = inst;
+            
+            // Remove o item
+            inst.add_item(thief, j, true);
+
+            // Valida solucao
+            if(inst.solutionValid())
+            {
+                // Avalia a nova solucao
+                current_value = inst.objectiveFunction();
+                
+                // Verifica se eh melhor que a atual
+                if(current_value > best_value)
+                {
+                    return current_value;
+                }
+            }
+
+            // Caso nao melhore ou a nova solucao n seja valida, retorne a solucao inicial
+            inst = initial_instance;
+        }
+    }
+    
+    return best_value;
+}
+
 double localSearch(Instance& inst, std::string method)
 {
     if(method.compare("shuffle") == 0)
@@ -245,7 +318,13 @@ double localSearch(Instance& inst, std::string method)
     else if(method.compare("items") == 0)
     {
         return first_improvement_trade_ungotten(inst);
-    }
+    }else if(method.compare("remove") == 0)
+    {
+        return first_improvement_remove_item(inst);
+    }else if(method.compare("add") == 0)
+    {
+        return first_improvement_add_item(inst);
+    } 
 }
 
 /**
@@ -261,6 +340,8 @@ double VNS(Instance& inst, int max_disturbance, int n_disturbe, bool verbose)
     neighborhoods.push_back("move");
     neighborhoods.push_back("shuffle");
     neighborhoods.push_back("swap");
+    neighborhoods.push_back("remove");
+    neighborhoods.push_back("add");
 
     // Gera solucao inicial
     inst.greedySolution();

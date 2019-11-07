@@ -33,15 +33,14 @@ int main(int argc, char *argv[])
             try
             {
                 instance = get_instance(filename);
-                std::cout << filename << std::endl;
+                //std::cout << filename << std::endl;
                 for(int i = 1; i <= 5; i++)
                 {
                     instance.thieves.clear();
                     instance.addThief(i);
-                    std::cout << i << " ladroes: ";
-                    std::cout << VNS(instance, 5, 5) <<  " --- ";
-                    std::cout << instance.objectiveFunction(true) << std::endl;
-                    instance.output(); 
+                    //std::cout << "ladrao " << i << ": ";
+                    std::cout << VNS(instance, 5, 5) << std::endl;
+                    //instance.output(); 
                 }
             }
             catch (char const *param)

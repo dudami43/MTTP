@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     {
         while (getline(file, filename))
         {
+            std::cout << filename << std::endl;
             Instance instance;
             try
             {
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
                     instance.thieves.clear();
                     instance.addThief(i);
                     //std::cout << "ladrao " << i << ": ";
-                    std::cout << VNS(instance, 5, 5) << std::endl;
+                    std::cout << grasp(instance) << std::endl;
                     //instance.output(); 
                 }
             }

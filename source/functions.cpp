@@ -721,7 +721,7 @@ void random_greedy(Instance& instance, int ir_max, double size_rlc)
 double grasp(Instance& instance, int imax, int ir_max, double size_rlc, bool verbose)
 {
     Instance best_solution = instance;
-    best_solution.greedySolution();
+    random_greedy(best_solution, ir_max, size_rlc);
     double best_value = best_solution.objectiveFunction();
 
     if(verbose) std::cout << "Solucao inicial do GRASP: " << best_value << std::endl;

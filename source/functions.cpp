@@ -718,10 +718,133 @@ void random_greedy(Instance& instance, int ir_max, double size_rlc)
     }
 }
 
-double grasp(Instance& instance, int imax, int ir_max, double size_rlc, bool verbose)
+void random_greedy2(Instance& instance, int ir_max, double size_rlc)
+{
+    instance.cleanSolution();
+
+    std::vector<std::vector<int>> best_options(instance.thieves.size());
+    std::vector<int> better_item(instance.thieves.size());
+    int current_city = 0;
+    std::vector<int> aux_caught_items(instance.items.size(), 0);
+
+    for(int j = 0; j < instance.thieves.size(); j++)
+    {
+        instance.thieves[j].route.push_back(current_city);
+        instance.thieves[j].backpack_weight.push_back(0);
+        best_options[j].assign(instance.items.size() * size_rlc, -1);
+    }
+    
+    bool items_available = true;
+    int iterations = 0;
+    while(items_available && iterations < ir_max)
+    {
+        for(int i = 0; i < instance.thieves.size(); i++)
+        {
+            double smallest = -1;
+            int smallest_index = 0;
+            items_available = false;
+            for(int j = 0; j < instance.items.size(); j++)
+            {
+                if(aux_caught_items[j] == 0 && ((instance.items[j].weight + instance.used_capacity) <= instance.max_capacity))
+                {
+                    items_available = true;
+                    double A = 1, B = 0.25, C = 1;
+                    double cost_benefit = instance.items[j].value / (A*instance.cities_distance[current_city][instance.items[j].city_idx] *  C*instance.renting_ratio + B*instance.items[j].weight );
+                            
+                    if(cost_benefit > smallest)
+                    {
+                        best_options[i][smallest_index] = j;
+                        smallest = best_options[i][0];
+                        for(int k = 0; k < best_options[i].size(); k++)
+                        {
+                            if(smallest > best_options[i][k])
+                            {
+                                smallest = best_options[i][k];
+                                smallest_index = k;
+                            }
+                        }                    
+                    }
+                }
+            }
+            int get_this = rand() % best_options[i].size();
+
+            while(get_this == -1 && items_available)
+            {
+                get_this = rand() % best_options[i].size();
+            }
+
+            current_city = instance.items[best_options[i][get_this]].city_idx;
+            aux_caught_items[best_options[i][get_this]] = 1;
+            instance.add_item(i, best_options[i][get_this], true);
+
+            if(!items_available) break;
+        }
+        iterations++;
+    }
+    while(items_available)
+    {
+        for(int i = 0; i < instance.thieves.size(); i++)
+        {
+            float best_val = 0;
+            int best_index = 0;
+            float cur_val = 0;
+            for(int j = 0; j < instance.items.size(); j++)
+            {
+                if(aux_caught_items[j] == 0)
+                {
+                    double A = 1, B = 0.25, C = 1;
+                    cur_val = instance.items[j].value / (A*instance.cities_distance[current_city][instance.items[j].city_idx] *  C*instance.renting_ratio + B*instance.items[j].weight );
+                    
+                    if(cur_val > best_val)
+                    {
+                        best_val = cur_val;
+                        best_index = j;
+                    }
+                    items_available = true;
+                }
+                else
+                {
+                    items_available = false;
+                }
+            }
+            better_item[i] = best_index;
+            aux_caught_items[best_index] = 1;
+
+            if(instance.items[best_index].weight < instance.max_capacity - instance.used_capacity)
+            {
+                current_city = instance.items[best_index].city_idx;
+                // Pega o item
+                instance.caught_items[best_index] = 1;
+                instance.used_capacity += instance.items[best_index].weight;
+
+                // Adiciona o item a mochila do ladrao
+                instance.thieves[i].items.push_back(best_index);
+                
+                // Adiciona a cidade a rota
+                auto pos = std::find(instance.thieves[i].route.begin(), instance.thieves[i].route.end(), instance.items[best_index].city_idx);
+                if(pos == instance.thieves[i].route.end())
+                {
+                    instance.thieves[i].route.push_back(current_city);
+                    instance.thieves[i].backpack_weight.push_back(instance.items[best_index].weight);
+                }
+                else
+                {
+                    int index = std::distance(instance.thieves[i].route.begin(), pos);
+                    instance.thieves[i].backpack_weight[index] += instance.items[best_index].weight;
+                }
+            }
+        }    
+    }
+}
+
+double grasp(Instance& instance, int imax, int ir_max, double size_rlc, bool verbose, int func)
 {
     Instance best_solution = instance;
-    random_greedy(best_solution, ir_max, size_rlc);
+    if(func == 1)
+        random_greedy(best_solution, ir_max, size_rlc);
+    else
+        random_greedy2(best_solution, ir_max, size_rlc);
+
     double best_value = best_solution.objectiveFunction();
 
     if(verbose) std::cout << "Solucao inicial do GRASP: " << best_value << std::endl;
@@ -730,7 +853,11 @@ double grasp(Instance& instance, int imax, int ir_max, double size_rlc, bool ver
     while(i < imax)
     {
         Instance aux_instance = instance;
-        random_greedy(aux_instance, ir_max, size_rlc);
+        if(func == 1)
+            random_greedy(aux_instance, ir_max, size_rlc);
+        else
+            random_greedy2(aux_instance, ir_max, size_rlc);
+            
         int cont = 0;
         double best = aux_instance.objectiveFunction();
         double result = localSearch(aux_instance, "items");

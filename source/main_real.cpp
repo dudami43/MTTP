@@ -24,7 +24,8 @@ int main(int argc, char *argv[])
 
     // Delete referencia para o nome do arquivo
     delete file_name;
-
+    std::vector<int> melhoria(6, 0);
+    int total = 0;
     if (file.is_open())
     {
         while (getline(file, filename))
@@ -39,10 +40,18 @@ int main(int argc, char *argv[])
                 {
                     instance.thieves.clear();
                     instance.addThief(i);
-                    //std::cout << "ladrao " << i << ": ";
-                    std::cout << grasp(instance) << std::endl;
+                    std::cout << "ladrao " << i << ": ";
+                    grasp(instance, 20, 2, 0.1, true, 1);
+                    double greedy1 = instance.objectiveFunction();
+                    grasp(instance, 20, 2, 0.1, true, 2);
+                    double greedy2 = instance.objectiveFunction();
+                    if(greedy2 > greedy1)
+                        melhoria[i] ++;
+                    std::cout << greedy2 - greedy1 << std::endl;
+                    //std::cout << grasp(instance) << std::endl;
                     //instance.output(); 
                 }
+                total ++;
             }
             catch (char const *param)
             {
@@ -50,6 +59,12 @@ int main(int argc, char *argv[])
             }
         }
         file.close();
+        
+        for(int i = 1; i <= 5; i++)
+        {   
+            double a = melhoria[i]/total;
+            std::cout << melhoria[i] << " " << total << " " << a << std::endl;
+        }
     }
     else
     {

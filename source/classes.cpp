@@ -467,9 +467,82 @@ class Instance {
                         if(aux_caught_items[j] == 0)
                         {
                             if(this->cities_distance[current_city][this->items[j].city_idx] != 0) 
-                                cur_val = this->items[j].value / this->cities_distance[current_city][this->items[j].city_idx];
+                                cur_val = this->items[j].value / (this->cities_distance[current_city][this->items[j].city_idx]);
                             else
                                 cur_val = this->items[j].value;
+                            if(cur_val > best_val)
+                            {
+                                best_val = cur_val;
+                                best_index = j;
+                            }
+                            items_remaining = true;
+                        }
+                        else
+                        {
+                            items_remaining = false;
+                        }
+                    }
+                    better_item[i] = best_index;
+                    aux_caught_items[best_index] = 1;
+
+                    if(this->items[best_index].weight < this->max_capacity - this->used_capacity)
+                    {
+                        current_city = this->items[best_index].city_idx;
+
+                        // Pega o item
+                        this->caught_items[best_index] = 1;
+                        this->used_capacity += this->items[best_index].weight;
+
+                        // Adiciona o item a mochila do ladrao
+                        this->thieves[i].items.push_back(best_index);
+                        
+                        // Adiciona a cidade a rota
+                        auto pos = std::find(this->thieves[i].route.begin(), this->thieves[i].route.end(), this->items[best_index].city_idx);
+                        if(pos == this->thieves[i].route.end())
+                        {
+                            this->thieves[i].route.push_back(current_city);
+                            this->thieves[i].backpack_weight.push_back(this->items[best_index].weight);
+                        }
+                        else
+                        {
+                            int index = std::distance(thieves[i].route.begin(), pos);
+                            this->thieves[i].backpack_weight[index] += this->items[best_index].weight;
+                        }
+                    }
+                }    
+            }
+        }
+
+        //Guloso: valor/(distancia*renting + peso)
+        void greedySolution2()
+        {
+            this->cleanSolution();
+
+            std::vector<int> better_item(this->thieves.size());
+            std::vector<int> aux_caught_items(this->items.size(), 0);
+            bool items_remaining = true;
+
+            int current_city = 0;
+
+            for(int i = 0; i < this->thieves.size(); i++)
+            {
+                this->thieves[i].route.push_back(current_city);
+                this->thieves[i].backpack_weight.push_back(0);
+            }
+
+            while(items_remaining)
+            {
+                for(int i = 0; i < this->thieves.size(); i++)
+                {
+                    float best_val = 0;
+                    int best_index = 0;
+                    float cur_val = 0;
+                    for(int j = 0; j < this->items.size(); j++)
+                    {
+                        if(aux_caught_items[j] == 0)
+                        {
+                            double A = 1, B = 0.25, C = 1;
+                            cur_val = this->items[j].value / (A*this->cities_distance[current_city][this->items[j].city_idx] *  C*this->renting_ratio + B*this->items[j].weight );
                             if(cur_val > best_val)
                             {
                                 best_val = cur_val;

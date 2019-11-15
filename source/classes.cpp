@@ -699,7 +699,7 @@ class Instance {
             for(int i = 0; i < n_disturbe; i++)
             {
                 // Escolhe uma vizinhanca aleatoriamente
-                int neighborhood = rand() % 2;
+                int neighborhood = rand() % 4;
 
                 if(neighborhood == 0) // swap_cities
                 {
@@ -745,6 +745,21 @@ class Instance {
                     
                     // Aplica a perturbacao
                     this->move_cities(choosed_thief, choosed_city, new_pos, verbose);
+                }
+                else if(neighborhood == 2) // remove
+                {
+                    int thief = rand() % this->thieves.size();
+                    int item = rand() % this->thieves[thief].items.size();
+                    
+                    this->remove_item(thief, item);
+                }
+                else if(neighborhood == 3) // add
+                {
+                    int thief = rand() % this->thieves.size();
+                    int item = rand() % this->items.size();
+                    while(this->caught_items[item]) rand() % this->items.size();
+                    
+                    this->add_item(thief, item, true);
                 }
             }
             return result;

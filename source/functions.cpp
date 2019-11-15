@@ -334,6 +334,10 @@ double localSearch(Instance& inst, std::string method)
 // VNS
 double VNS(Instance& inst, int max_disturbance, int n_disturbe, bool verbose)
 {
+    // Adquire o tempo em que comeca o algoritmo
+    using namespace std::chrono;
+    high_resolution_clock::time_point t_i = high_resolution_clock::now();
+
     // Inicializa o vector de vizinhanças
     std::vector<std::string> neighborhoods;
     neighborhoods.push_back("items");
@@ -354,7 +358,8 @@ double VNS(Instance& inst, int max_disturbance, int n_disturbe, bool verbose)
     int neighborhood = 0, n_disturbance = 0;
     double best_value = inst.objectiveFunction(), current_value;
 
-    while(true)
+    // Enquanto nao passou 10min de execucao
+    while( duration_cast<duration<double>>(high_resolution_clock::now() - t_i).count() <= 600 )
     {
         current_value = localSearch(inst, neighborhoods[neighborhood]);
 

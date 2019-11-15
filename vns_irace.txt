@@ -1,0 +1,189 @@
+#------------------------------------------------------------------------------
+# irace: An implementation in R of (Elitist) Iterated Racing
+# Version: 3.3.2238:2239
+# Copyright (C) 2010-2019
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Jeremie Dubois-Lacoste  
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# irace builds upon previous code from the race package:
+#     race: Racing methods for the selection of the best
+#     Copyright (C) 2003 Mauro Birattari
+#------------------------------------------------------------------------------
+# installed at: /home/rafaelbraz/R/x86_64-pc-linux-gnu-library/3.4/irace
+# called with: 
+Warning: A default scenario file './scenario.txt' has been found and will be read
+# 2019-11-14 10:10:47 -03: Initialization
+# Elitist race
+# Elitist new instances: 1
+# Elitist limit: 2
+# nbIterations: 4
+# minNbSurvival: 4
+# nbParameters: 4
+# seed: 786433
+# confidence level: 0.95
+# budget: 1000
+# mu: 5
+# deterministic: FALSE
+
+# 2019-11-14 10:10:47 -03: Iteration 1 of 4
+# experimentsUsedSoFar: 0
+# remainingBudget: 1000
+# currentBudget: 250
+# nbConfigurations: 41
+  Markers:
+     x No test is performed.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          1|         41|          1|    45633.10000|         41|00:02:31|   NA|  NA|    NA|
+|x|          2|         41|          1|    31538.80000|         82|00:00:12|+1.00|1.00|0.0000|
+|=|          3|         41|          1|    31145.13333|        123|02:35:53|+1.00|1.00|0.0000|
+|=|          4|         41|          1|    33377.10000|        164|00:09:23|+1.00|1.00|0.0000|
+|=|          5|         41|          1|    36115.10000|        205|00:06:39|+1.00|1.00|0.0000|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:           1    mean value:     36115.10000
+Description of the best-so-far configuration:
+  .ID. algorithm ir_grasp size_rcl max_disturbance n_disturbe .PARENT.
+1    1       vns       NA       NA               9          9       NA
+
+# 2019-11-14 13:05:28 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+  algorithm ir_grasp size_rcl max_disturbance n_disturbe
+1       vns       NA       NA               9          9
+2       vns       NA       NA              10          6
+3       vns       NA       NA               7         10
+4       vns       NA       NA               7          5
+# 2019-11-14 13:05:28 -03: Iteration 2 of 4
+# experimentsUsedSoFar: 205
+# remainingBudget: 795
+# currentBudget: 265
+# nbConfigurations: 40
+  Markers:
+     x No test is performed.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          6|         40|          4|    9170.110000|         40|00:00:00|   NA|  NA|    NA|
+|x|          1|         40|          4|    27401.60500|         76|00:02:35|+0.00|0.50|0.4875|
+|=|          5|         40|          4|    33956.77000|        112|00:05:45|+0.00|0.33|0.3250|
+|=|          4|         40|          4|    35485.82750|        148|00:09:16|+0.00|0.25|0.2437|
+|=|          3|         40|          4|    34460.22200|        184|02:30:12|+0.00|0.20|0.1950|
+|=|          2|         40|          4|    31624.26833|        220|00:00:14|+0.00|0.17|0.1625|
+|=|          7|         40|          4|    33648.24429|        260|00:05:13|+0.00|0.14|0.1393|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:           4    mean value:     33648.24429
+Description of the best-so-far configuration:
+  .ID. algorithm ir_grasp size_rcl max_disturbance n_disturbe .PARENT.
+4    4       vns       NA       NA               7          5       NA
+
+# 2019-11-14 15:58:46 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   algorithm ir_grasp size_rcl max_disturbance n_disturbe
+4        vns       NA       NA               7          5
+42       vns       NA       NA               7          9
+44       vns       NA       NA               7          7
+47       vns       NA       NA               7          9
+# 2019-11-14 15:58:46 -03: Iteration 3 of 4
+# experimentsUsedSoFar: 465
+# remainingBudget: 535
+# currentBudget: 267
+# nbConfigurations: 36
+  Markers:
+     x No test is performed.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          8|         36|          4|    49868.70000|         36|00:01:06|   NA|  NA|    NA|
+|x|          6|         36|          4|    29519.40500|         68|00:00:00|+0.00|0.50|0.4861|
+|=|          1|         36|          4|    34890.63667|        100|00:02:17|+0.00|0.33|0.3241|
+|=|          3|         36|          4|    33757.42750|        132|02:08:18|+0.00|0.25|0.2431|
+|=|          7|         36|          4|    36164.36200|        164|00:03:52|+0.00|0.20|0.1944|
+|=|          2|         36|          4|    33044.38500|        196|00:00:12|+0.00|0.17|0.1620|
+|=|          4|         36|          4|    34048.47286|        228|00:07:15|+0.00|0.14|0.1389|
+|=|          5|         36|          4|    35675.80125|        260|00:05:11|+0.00|0.12|0.1215|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:           4    mean value:     35675.80125
+Description of the best-so-far configuration:
+  .ID. algorithm ir_grasp size_rcl max_disturbance n_disturbe .PARENT.
+4    4       vns       NA       NA               7          5       NA
+
+# 2019-11-14 18:27:00 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   algorithm ir_grasp size_rcl max_disturbance n_disturbe
+4        vns       NA       NA               7          5
+42       vns       NA       NA               7          9
+44       vns       NA       NA               7          7
+47       vns       NA       NA               7          9
+# 2019-11-14 18:27:00 -03: Iteration 4 of 4
+# experimentsUsedSoFar: 725
+# remainingBudget: 275
+# currentBudget: 275
+# nbConfigurations: 34
+  Markers:
+     x No test is performed.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          9|         34|         42|    4901.750000|         34|00:00:01|   NA|  NA|    NA|
+|x|          8|         34|         42|    27385.22500|         64|00:00:51|+0.00|0.50|0.4853|
+|=|          4|         34|         42|    31300.31250|        124|00:06:24|+0.00|0.25|0.2426|
+|=|          2|         34|         42|    28529.15000|        154|00:00:11|+0.00|0.20|0.1941|
+|=|          1|         34|         42|    31379.80833|        184|00:02:08|+0.00|0.17|0.1618|
+|=|          7|         34|         42|    33438.70714|        214|00:03:29|+0.00|0.14|0.1387|
+|=|          5|         34|         42|    35142.25625|        244|00:04:52|+0.00|0.12|0.1213|
+|=|          6|         34|         42|    32256.46222|        274|00:00:00|-0.05|0.06|0.2267|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          42    mean value:     32256.46222
+Description of the best-so-far configuration:
+   .ID. algorithm ir_grasp size_rcl max_disturbance n_disturbe .PARENT.
+42   42       vns       NA       NA               7          9        1
+
+# 2019-11-14 20:37:59 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    algorithm ir_grasp size_rcl max_disturbance n_disturbe
+42        vns       NA       NA               7          9
+44        vns       NA       NA               7          7
+47        vns       NA       NA               7          9
+110       vns       NA       NA               5          7
+# 2019-11-14 20:37:59 -03: Stopped because there is not enough budget left to race more than the minimum (4)
+# You may either increase the budget or set 'minNbSurvival' to a lower value
+# Iteration: 5
+# nbIterations: 5
+# experimentsUsedSoFar: 999
+# timeUsed: 0
+# remainingBudget: 1
+# currentBudget: 1
+# number of elites: 4
+# nbConfigurations: 3
+# Best configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    algorithm ir_grasp size_rcl max_disturbance n_disturbe
+42        vns       NA       NA               7          9
+44        vns       NA       NA               7          7
+47        vns       NA       NA               7          9
+110       vns       NA       NA               5          7
+# Best configurations as commandlines (first number is the configuration ID; same order as above):
+42   --alg vns --MAX_DIST 7 --N_DIST 9
+44   --alg vns --MAX_DIST 7 --N_DIST 7
+47   --alg vns --MAX_DIST 7 --N_DIST 9
+110  --alg vns --MAX_DIST 5 --N_DIST 7

@@ -41,15 +41,7 @@ int main(int argc, char *argv[])
                     instance.thieves.clear();
                     instance.addThief(i);
                     std::cout << "ladrao " << i << ": ";
-                    grasp(instance, 20, 2, 0.1, true, 1);
-                    double greedy1 = instance.objectiveFunction();
-                    grasp(instance, 20, 2, 0.1, true, 2);
-                    double greedy2 = instance.objectiveFunction();
-                    if(greedy2 > greedy1)
-                        melhoria[i] ++;
-                    std::cout << greedy2 - greedy1 << std::endl;
-                    //std::cout << grasp(instance) << std::endl;
-                    //instance.output(); 
+                    std::cout << VNS(instance, 5) << std::endl;
                 }
                 total ++;
             }

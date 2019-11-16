@@ -2,6 +2,8 @@
 #include "classes.cpp"
 #include "functions.h"
 
+using namespace std::chrono;
+
 /**
  * Funcoes auxiliares
 **/
@@ -334,8 +336,7 @@ double localSearch(Instance& inst, std::string method)
 // VNS
 double VNS(Instance& inst, int max_disturbance, int n_disturbe, bool verbose)
 {
-    // Adquire o tempo em que comeca o algoritmo
-    using namespace std::chrono;
+    // Adquire o tempo inicial
     high_resolution_clock::time_point t_i = high_resolution_clock::now();
 
     // Inicializa o vector de vizinhanças
@@ -358,8 +359,8 @@ double VNS(Instance& inst, int max_disturbance, int n_disturbe, bool verbose)
     int neighborhood = 0, n_disturbance = 0;
     double best_value = inst.objectiveFunction(), current_value;
 
-    // Enquanto nao passou 10min de execucao
-    while( duration_cast<duration<double>>(high_resolution_clock::now() - t_i).count() <= 600 )
+    // Enquanto nao passou 10 minutos
+    while(duration_cast<duration<double>>(high_resolution_clock::now() - t_i).count())
     {
         current_value = localSearch(inst, neighborhoods[neighborhood]);
 
@@ -397,210 +398,7 @@ double VNS(Instance& inst, int max_disturbance, int n_disturbe, bool verbose)
     return best_value;
 }
 
-// GA
-void initial_pop(Instance& inst, std::vector<Instance>& population, int pop_size, bool verbose)
-{
-    for(int i = 0; i < pop_size; i++)
-    {
-        inst.cleanSolution();
-        Instance instance = inst;
-        random_greedy(instance, 2, 0.3);
-        population.push_back(instance);
-    }  
-    if (true)
-    {
-        for(int i = 0; i < population.size(); i++)
-        {
-            std::cout << population[i].objectiveFunction() << " ";
-        }
-        std::cout << std::endl;
-    }        
-}
-
-void selection(std::vector<Instance>& population, std::vector<Instance>& mating_pool, double alpha, int pop_size, bool verbose)
-{
-    int pool_size = (1 - alpha) * pop_size;
-    
-    for(int i = 0; i < pool_size; i++)
-    {
-        int c1 = rand() % population.size();
-        int c2 = rand() % population.size();
-        if(population[c1].objectiveFunction() > population[c2].objectiveFunction())
-        {
-            mating_pool.push_back(population[c1]);
-        }
-        else
-        {
-            mating_pool.push_back(population[c2]);
-        }
-    }
-}
-
-void crossover(std::vector<Instance>& mating_pool, std::vector<Instance>& next_gen, double alpha, int pop_size, bool verbose)
-{
-    int num_pairs = alpha*pop_size;
-    for(int i = 0; i < num_pairs; i+=2)
-    {
-        int p1 = rand() % mating_pool.size();
-        int p2 = rand() % mating_pool.size();
-
-        int thief1 = rand() % mating_pool[p1].thieves.size();
-        int thief2 = rand() % mating_pool[p2].thieves.size();
-
-        next_gen.push_back(mating_pool[p1]);
-        next_gen.push_back(mating_pool[p2]);
-
-        int last_from_next = next_gen.size() - 1;
-
-        Thief aux = next_gen[last_from_next].thieves[thief1];
-        next_gen[last_from_next].thieves[thief1] = next_gen[last_from_next - 1].thieves[thief2];
-        next_gen[last_from_next - 1].thieves[thief2] = aux;
-       
-    }
-
-    for(int i = 0; i < next_gen.size(); i++)
-    {
-        next_gen[i].used_capacity = 0;
-        for(int j = 0; j < next_gen[i].items.size(); j++)
-        {
-            next_gen[i].caught_items[j] = 0;
-        }
-
-        for(int j = 0; j < next_gen[i].thieves.size(); j++)
-        {
-            for(int k = 0; k < next_gen[i].thieves[j].items.size(); k++)
-            {
-                if(next_gen[i].caught_items[next_gen[i].thieves[j].items[k]] == 0)
-                {
-                    next_gen[i].used_capacity += next_gen[i].items[next_gen[i].thieves[j].items[k]].weight;
-                    next_gen[i].caught_items[next_gen[i].thieves[j].items[k]] = 1;
-                }
-            }
-        }
-    }
-        
-}
-
-void mutation(std::vector<Instance>& generation, double beta, int pop_size, bool verbose)
-{
-    int num_members = beta*pop_size;
-    for(int i = 0; i < num_members; i++)
-    {
-        int choosed_thief = rand() % generation[i].thieves.size();
-        int city_1 = rand() % generation[i].thieves[choosed_thief].route.size();
-        int city_2 = rand() % generation[i].thieves[choosed_thief].route.size();
-        if(city_1 == 0) city_1 = 1;
-        if(city_2 == 0) city_2 = 1;
-        int individual = rand() % generation.size();
-        double p = ((double) rand() / (RAND_MAX)); 
-        generation[individual].swap_cities(choosed_thief, city_1, city_2, true);
-        if(p >= 0.5)
-        {
-            generation[individual].exchange_random_items();
-        }
-    }
-    if(verbose)
-    {
-        for(int i = 0; i < generation.size(); i++)
-        {
-            std::cout << generation[i].objectiveFunction() << " ";
-        }
-        std::cout << std::endl;
-    }
-}
-
-void validation(std::vector<Instance>& generation, bool verbose)
-{
-    for(int i = 0; i < generation.size(); i++)
-    {
-        for(int j = 0; j < generation[i].items.size(); j++)
-        {
-            std::vector<std::pair<int,int>> occur; //<ladrao, pos_item>
-            if(generation[i].caught_items[j] == 1)
-            {
-                for(int k = 0; k < generation[i].thieves.size(); k++)
-                {
-                    auto pos = std::find(generation[i].thieves[k].items.begin(), generation[i].thieves[k].items.end(), j);
-                    if(pos != generation[i].thieves[k].items.end())
-                    {
-                        int index = std::distance(generation[i].thieves[k].items.begin(), pos);
-                        occur.push_back(std::make_pair(k,index));
-                        break;
-                    }
-                }
-            }
-            if(occur.size() > 1)
-            {
-                for(int k = 0; k < occur.size() - 1; k++)
-                {
-                    int thief = occur[k].first;
-                    int pos_item = occur[k].second;
-                    generation[i].thieves[thief].items.erase(generation[i].thieves[thief].items.begin() + pos_item); 
-                    auto pos = std::find(generation[i].thieves[thief].route.begin(), generation[i].thieves[thief].route.end(), generation[i].items[pos_item].city_idx);
-                    if(pos != generation[i].thieves[thief].route.end())
-                    {
-                        int index_city = std::distance(generation[i].thieves[thief].route.begin(), pos);
-                        generation[i].thieves[thief].backpack_weight[index_city] -= generation[i].items[pos_item].weight;
-                    
-                    }
-                    generation[i].used_capacity -= generation[i].items[pos_item].weight;
-
-                    if(verbose) std::cout << "Removi item " << pos_item << std::endl;
-
-                    bool remove_city = true;
-                    for(int l = 0; l < generation[i].thieves[thief].items.size(); l++)
-                    {
-                        int thief_item = generation[i].thieves[thief].items[l];
-                        if(generation[i].items[pos_item].city_idx == generation[i].items[thief_item].city_idx && thief_item != pos_item)
-                        {
-                            remove_city = false;
-                            break;
-                        }
-                    }
-                    if(remove_city && pos != generation[i].thieves[thief].route.end())
-                    {
-                        generation[i].thieves[thief].route.erase(pos);
-                        if(verbose) std::cout << "Removi cidade " << generation[i].items[pos_item].city_idx << std::endl;
-                    }   
-
-                    //tirar item da solução de todos - 1 ladrão
-                    //se a cidade dele n tiver mais nenhum item, tirar a cidade
-                    //tirar o peso da mochila
-                }    
-            }
-        }
-    }  
-    if(verbose)
-    {
-        for(int i = 0; i < generation.size(); i++)
-        {
-            std::cout << generation[i].objectiveFunction() << " ";
-        }
-        std::cout << std::endl;  
-    }  
-
-}
-
-double geneticAlgorithm(Instance& instance, int num_generations, int pop_size, double alpha, double beta, bool verbose)
-{
-    std::vector<Instance> population;
-    std::vector<Instance> generation;
-    
-    initial_pop(instance, population, pop_size, verbose);
-    double bestest = population[0].objectiveFunction();
-    Instance best_individual;
-    for(auto individuo: population)
-    {
-        double current = individuo.objectiveFunction();
-        if(bestest < current){ bestest = current; best_individual = individuo;}
-    }
-    std::cout << "População inicial " << bestest << std::endl;
-    instance = best_individual;
-    return bestest;   
-}
-
-// GRASP 
-
+// GRASP
 void random_greedy(Instance& instance, int ir_max, double size_rlc)
 {
     instance.cleanSolution();

@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
 
     ////////////////////////
-    instance.greedySolution1();
+    instance.greedySolution();
     double objectiveFunction = instance.objectiveFunction();
     std::cout << instance.objectiveFunction() << " ";
     Instance teste;

@@ -1,0 +1,42 @@
+berlin52_n153_uncorr-similar-weights_03.ttp
+ladrao 1: GRASP ( Valor: 11134.83 Tempo: 0.03 sec ) -- VNS ( Valor: 18678.83 Tempo: 5.19 sec )
+ladrao 2: GRASP ( Valor: 2088.26 Tempo: 0.10 sec ) -- VNS ( Valor: 18895.48 Tempo: 2.19 sec )
+ladrao 3: GRASP ( Valor: -12128.32 Tempo: 0.10 sec ) -- VNS ( Valor: 16749.26 Tempo: 1.20 sec )
+ladrao 4: GRASP ( Valor: -17900.61 Tempo: 0.08 sec ) -- VNS ( Valor: 16146.08 Tempo: 1.38 sec )
+ladrao 5: GRASP ( Valor: -20147.94 Tempo: 0.07 sec ) -- VNS ( Valor: 13743.12 Tempo: 0.51 sec )
+berlin52_n510_uncorr_07.ttp
+ladrao 1: GRASP ( Valor: -14461.10 Tempo: 0.36 sec ) -- VNS ( Valor: 72054.56 Tempo: 603.51 sec )
+ladrao 2: GRASP ( Valor: -89281.41 Tempo: 0.40 sec ) -- VNS ( Valor: 35548.92 Tempo: 273.71 sec )
+ladrao 3: GRASP ( Valor: -133438.27 Tempo: 0.45 sec ) -- VNS ( Valor: 6632.83 Tempo: 256.64 sec )
+ladrao 4: GRASP ( Valor: -163899.41 Tempo: 0.65 sec ) -- VNS ( Valor: -25064.76 Tempo: 223.66 sec )
+ladrao 5: GRASP ( Valor: -249903.28 Tempo: 0.52 sec ) -- VNS ( Valor: -45006.97 Tempo: 183.80 sec )
+rat195_n1940_bounded-strongly-corr_07.ttp
+ladrao 1: GRASP ( Valor: 88312.32 Tempo: 6.19 sec ) -- VNS ( Valor: 194257.09 Tempo: 668.43 sec )
+ladrao 2: GRASP ( Valor: -338339.00 Tempo: 12.81 sec ) -- VNS ( Valor: -95991.46 Tempo: 601.14 sec )
+ladrao 3: GRASP ( Valor: -914004.22 Tempo: 21.28 sec ) -- VNS ( Valor: -564955.62 Tempo: 601.40 sec )
+ladrao 4: GRASP ( Valor: -1271705.27 Tempo: 19.93 sec ) -- VNS ( Valor: -1071901.18 Tempo: 618.36 sec )
+ladrao 5: GRASP ( Valor: -1499717.34 Tempo: 24.52 sec ) -- VNS ( Valor: -1567812.03 Tempo: 667.72 sec )
+a280_n837_bounded-strongly-corr_03.ttp
+ladrao 1: GRASP ( Valor: 105761.03 Tempo: 0.90 sec ) -- VNS ( Valor: 145944.23 Tempo: 627.05 sec )
+ladrao 2: GRASP ( Valor: 54192.29 Tempo: 3.38 sec ) -- VNS ( Valor: 155803.08 Tempo: 610.91 sec )
+ladrao 3: GRASP ( Valor: -39118.39 Tempo: 3.08 sec ) -- VNS ( Valor: 134273.69 Tempo: 607.94 sec )
+ladrao 4: GRASP ( Valor: -94288.78 Tempo: 3.49 sec ) -- VNS ( Valor: 123495.26 Tempo: 606.13 sec )
+ladrao 5: GRASP ( Valor: -177929.58 Tempo: 5.42 sec ) -- VNS ( Valor: 110102.89 Tempo: 600.43 sec )
+rat783_n2346_bounded-strongly-corr_03.ttp
+ladrao 1: GRASP ( Valor: 351207.74 Tempo: 8.64 sec ) -- VNS ( Valor: 354085.57 Tempo: 694.08 sec )
+ladrao 2: GRASP ( Valor: 272277.17 Tempo: 32.44 sec ) -- VNS ( Valor: 361840.39 Tempo: 612.23 sec )
+ladrao 3: GRASP ( Valor: 92635.71 Tempo: 23.11 sec ) -- VNS ( Valor: 249796.60 Tempo: 640.63 sec )
+ladrao 4: GRASP ( Valor: -73176.13 Tempo: 46.78 sec ) -- VNS ( Valor: 179247.86 Tempo: 618.35 sec )
+ladrao 5: GRASP ( Valor: -190320.78 Tempo: 37.69 sec ) -- VNS ( Valor: 101795.60 Tempo: 668.65 sec )
+dsj1000_n2997_uncorr_07.ttp
+ladrao 1: GRASP ( Valor: 67557.72 Tempo: 29.96 sec ) -- VNS ( Valor: -456511.21 Tempo: 605.32 sec )
+ladrao 2: GRASP ( Valor: -307608.55 Tempo: 101.44 sec ) -- VNS ( Valor: -305317.06 Tempo: 656.58 sec )
+ladrao 3: GRASP ( Valor: -501613.96 Tempo: 51.13 sec ) -- VNS ( Valor: -667048.37 Tempo: 606.19 sec )
+ladrao 4: GRASP ( Valor: -645346.17 Tempo: 17.66 sec ) -- VNS ( Valor: -915334.53 Tempo: 603.49 sec )
+ladrao 5: GRASP ( Valor: -840325.25 Tempo: 28.21 sec ) -- VNS ( Valor: -1183364.83 Tempo: 648.21 sec )
+pcb3038_n9111_uncorr-similar-weights_07.ttp
+ladrao 1: GRASP ( Valor: 559937.21 Tempo: 43.15 sec ) -- VNS ( Valor: 722188.88 Tempo: 622.24 sec )
+ladrao 2: GRASP ( Valor: -226624.40 Tempo: 896.11 sec ) -- VNS ( Valor: 73338.61 Tempo: 621.61 sec )
+ladrao 3: GRASP ( Valor: -1079869.24 Tempo: 434.03 sec ) -- VNS ( Valor: -640424.22 Tempo: 652.01 sec )
+ladrao 4: GRASP ( Valor: -1814100.07 Tempo: 805.68 sec ) -- VNS ( Valor: -1136476.37 Tempo: 609.00 sec )
+ladrao 5: GRASP ( Valor: -1474013.77 Tempo: 581.18 sec ) -- VNS ( Valor: -1643550.83 Tempo: 702.98 sec )

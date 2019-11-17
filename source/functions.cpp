@@ -85,9 +85,13 @@ double first_improvement_shuffle(Instance& inst)
         }
     }
 
+    high_resolution_clock::time_point t_i_busca = high_resolution_clock::now();
+
     std::vector<int> items_position;
     items_position.assign(choosed_thieves.size(), 0);
     while(true){
+
+        if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
 
         inst.shuffles_thieves_items(n_thieves, choosed_thieves, items_position);
 
@@ -119,11 +123,17 @@ double first_improvement_swap(Instance& inst)
     Instance initial_instance;
     int thief = rand() % inst.thieves.size();
 
+    high_resolution_clock::time_point t_i_busca = high_resolution_clock::now();
+
     // Procura duas cidades que melhoram a solucao atual
     for(int i = 1; i < inst.thieves[thief].route.size(); i++)
     {
+        if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
         for(int j = i + 1; j < inst.thieves[thief].route.size(); j++)
         {
+            if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
             // Salva o estado da instancia
             initial_instance = inst;
             
@@ -157,11 +167,17 @@ double first_improvement_move(Instance& inst)
     Instance initial_instance;
     int thief = rand() % inst.thieves.size();
 
+    high_resolution_clock::time_point t_i_busca = high_resolution_clock::now();
+
     // Procura uma posicao para uma cidade, de maneira a melhorar a solucao
     for(int i = 1; i < inst.thieves[thief].route.size(); i++)
     {
+        if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
         for(int j = 1; j < inst.thieves[thief].route.size(); j++)
         {
+            if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
             // Caso a nova posicao seja a mesma posicao, passa para a proxima tentativa
             if(i == j) continue;
 
@@ -199,11 +215,17 @@ double first_improvement_trade_ungotten(Instance& inst)
     int tries = 0;
     int thief = rand() % inst.thieves.size();
 
+    high_resolution_clock::time_point t_i_busca = high_resolution_clock::now();
+
     // Procura dois itens que melhoram a solucao atual
     for(int i = 1; i < inst.thieves[thief].items.size(); i++)
     {
+        if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
         for(int j = i + 1; j < inst.items.size(); j++)
         {
+            if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
             // Salva o estado da instancia
             initial_instance = inst;
 
@@ -236,9 +258,13 @@ double first_improvement_remove_item(Instance& inst)
     Instance initial_instance;
     int thief = rand() % inst.thieves.size();
 
+    high_resolution_clock::time_point t_i_busca = high_resolution_clock::now();
+
     // Procura duas cidades que melhoram a solucao atual
     for(int j = 0; j < inst.thieves[thief].items.size(); j++)
     {
+        if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
         // Salva o estado da instancia
         initial_instance = inst;
         
@@ -271,9 +297,13 @@ double first_improvement_add_item(Instance& inst)
     Instance initial_instance;
     int thief = rand() % inst.thieves.size();
 
+    high_resolution_clock::time_point t_i_busca = high_resolution_clock::now();
+
     // Procura duas cidades que melhoram a solucao atual
     for(int j = 0; j < inst.items.size(); j++)
     {
+        if(duration_cast<duration<double>>(high_resolution_clock::now() - t_i_busca).count() > 200) break;
+
         if(inst.caught_items[j] == 0)
         {
             // Salva o estado da instancia
@@ -360,7 +390,7 @@ double VNS(Instance& inst, int max_disturbance, int n_disturbe, bool verbose)
     double best_value = inst.objectiveFunction(), current_value;
 
     // Enquanto nao passou 10 minutos
-    while(duration_cast<duration<double>>(high_resolution_clock::now() - t_i).count())
+    while(duration_cast<duration<double>>(high_resolution_clock::now() - t_i).count() < 600)
     {
         current_value = localSearch(inst, neighborhoods[neighborhood]);
 
